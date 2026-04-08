@@ -3,19 +3,40 @@
 set -e
 cd "$(dirname "$0")"
 
-# Load .env into shell
-if [ -f ../.env ]; then
-  export $(grep -v '^#' ../.env | xargs)
+toolkit_installed() {
+  command -v nvidia-ctk &>/dev/null && return 0
+
+  if command -v dpkg &>/dev/null; then
+    dpkg -s nvidia-container-toolkit &>/dev/null && return 0
+  fi
+
+  if command -v rpm &>/dev/null; then
+    rpm -q nvidia-container-toolkit &>/dev/null && return 0
+  fi
+
+  return 1
+}
+
+if toolkit_installed; then
+  echo "✅ NVIDIA Container Toolkit is already installed."
 else
-  echo "No .env file found, defaulting to CPU mode"
-  USE_GPU=false
+  echo "Installing NVIDIA Container Toolkit..."
+
+  # Detect package manager
+  if command -v apt-get &>/dev/null; then
+    sudo apt-get update
+    sudo apt-get install -y nvidia-container-toolkit
+    sudo systemctl restart docker
+  elif command -v dnf &>/dev/null; then
+    sudo dnf install -y nvidia-container-toolkit
+    sudo systemctl restart docker
+  else
+    echo "Unsupported OS. Please install the toolkit manually:"
+    echo "https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html"
+    exit 1
+  fi
+
+  echo "✅ NVIDIA Container Toolkit installed."
 fi
 
-# Run docker compose based on USE_GPU
-if [ "$USE_GPU" = "true" ]; then
-  echo "Starting with GPU support..."
-  docker compose -f ../docker-compose.yml -f ../docker-compose.gpu.override.yml up -d
-else
-  echo "Starting in CPU-only mode..."
-  docker compose -f ../docker-compose.yml up -d
-fi
+docker compose -f ../docker-compose.yml up -d
