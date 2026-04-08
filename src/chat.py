@@ -15,17 +15,14 @@ while True:
         if not prompt:
             continue
 
-        response = requests.post(URL, json={"prompt": prompt})
-
-        if response.status_code != 200:
-            print("⚠️ Error:", response.text)
-            continue
-
-        data = response.json()
-        answer = data.get("response", "")
+        response = requests.post(URL, json={"prompt": prompt}, stream=True)
 
         print("\nAssistant:\n")
-        print(answer)
+
+        for chunk in response.iter_content(chunk_size=1024):
+            if chunk:
+                print(chunk.decode("utf-8"), end="", flush=True)
+
         print("\n" + "-" * 60 + "\n")
 
     except KeyboardInterrupt:

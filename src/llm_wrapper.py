@@ -2,8 +2,9 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import requests
 import time
+import json
 from prometheus_client import Counter, Histogram, Gauge, generate_latest
-from fastapi.responses import Response
+from fastapi.responses import Response, StreamingResponse
 from transformers import AutoTokenizer
 
 app = FastAPI()
@@ -18,7 +19,7 @@ LATENCY = Histogram("llm_latency_seconds", "LLM request latency")
 TOKENS_OUT = Counter("llm_output_tokens_total", "Generated tokens")
 TOKENS_IN = Counter("llm_input_tokens_total", "Input tokens")
 TOKENS_PER_SEC = Gauge("llm_tokens_per_second", "Throughput")
-CONTEXT_LENGTH = Histogram("llm_context_length_tokens", "Total context length (input + output)")
+CONTEXT_LENGTH = Histogram("llm_context_length_tokens", "Total context length")
 
 OLLAMA_URL = "http://ollama:11434/api/generate"
 
@@ -26,35 +27,49 @@ OLLAMA_URL = "http://ollama:11434/api/generate"
 def generate(req: GenerateRequest):
     prompt = req.prompt
 
-    start = time.time()
     REQUESTS.inc()
+    start = time.time()
 
-    response = requests.post(OLLAMA_URL, json={
-        "model": "ministral-3:8b-instruct-2512-q4_K_M",
-        "prompt": prompt,
-        "stream": False
-    })
+    response = requests.post(
+        OLLAMA_URL,
+        json={
+            "model": "ministral-3:8b-instruct-2512-q4_K_M",
+            "prompt": prompt,
+            "stream": True
+        },
+        stream=True
+    )
 
-    data = response.json()
+    def stream_generator():
+        output_text = ""
 
-    latency = time.time() - start
-    LATENCY.observe(latency)
+        for line in response.iter_lines():
+            if not line:
+                continue
 
-    output_text = data.get("response", "")
+            chunk = json.loads(line.decode("utf-8"))
+            token = chunk.get("response", "")
 
-    tokens_in = len(tokenizer.encode(prompt))
-    tokens_out = len(tokenizer.encode(output_text))
+            output_text += token
 
-    TOKENS_IN.inc(tokens_in)
-    TOKENS_OUT.inc(tokens_out)
+            yield token
 
-    if latency > 0:
-        TOKENS_PER_SEC.set(tokens_out / latency)
+        latency = time.time() - start
+        LATENCY.observe(latency)
 
-    context_len = tokens_in + tokens_out
-    CONTEXT_LENGTH.observe(context_len)
+        tokens_in = len(tokenizer.encode(prompt))
+        tokens_out = len(tokenizer.encode(output_text))
 
-    return data
+        TOKENS_IN.inc(tokens_in)
+        TOKENS_OUT.inc(tokens_out)
+
+        if latency > 0:
+            TOKENS_PER_SEC.set(tokens_out / latency)
+
+        CONTEXT_LENGTH.observe(tokens_in + tokens_out)
+
+    return StreamingResponse(stream_generator(), media_type="text/plain")
+
 
 @app.get("/metrics")
 def metrics():
