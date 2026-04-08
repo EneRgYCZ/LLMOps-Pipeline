@@ -18,6 +18,19 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
 
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ./otelcol.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "8889:8889"
+    networks:
+      - llmnet
+
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -27,6 +40,8 @@ services:
       - "9090:9090"
     networks:
       - llmnet
+    depends_on:
+      - otel-collector
 
   grafana:
     image: grafana/grafana
@@ -56,16 +71,6 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
     ports:
       - "9400:9400"
-    networks:
-      - llmnet
-
-  llm-metrics-wrapper:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    container_name: llm-metrics-wrapper
-    ports:
-      - "8000:8000"
     networks:
       - llmnet
 

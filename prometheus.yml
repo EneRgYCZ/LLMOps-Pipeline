@@ -2,9 +2,9 @@ global:
   scrape_interval: 5s
 
 scrape_configs:
-  - job_name: "ollama"
+  - job_name: "otel-llm"
     static_configs:
-      - targets: ["ollama:11434"]
+      - targets: ["otel-collector:8889"]
 
   - job_name: "node"
     static_configs:
@@ -13,7 +13,3 @@ scrape_configs:
   - job_name: "gpu"
     static_configs:
       - targets: ["dcgm-exporter:9400"]
-
-  - job_name: "llm"
-    static_configs:
-      - targets: ["llm-metrics-wrapper:8000"]
