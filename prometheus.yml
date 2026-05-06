@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "otel-llm"
+    static_configs:
+      - targets: ["otel-collector:8889"]
+
+  - job_name: "node"
+    static_configs:
+      - targets: ["node-exporter:9100"]
+
+  - job_name: "gpu"
+    static_configs:
+      - targets: ["dcgm-exporter:9400"]
