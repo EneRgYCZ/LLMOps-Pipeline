@@ -8,4 +8,4 @@ transformers==4.48.0
 openlit==1.36.2
 ollama==0.4.7
 python-dotenv==1.0.1
-torch==2.5.1+cu124
+torch==2.8.0
