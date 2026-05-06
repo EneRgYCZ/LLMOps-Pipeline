@@ -1,0 +1,55 @@
+# DaemonSet deploys the NVIDIA DCGM exporter on every GPU-equipped node.
+# Each instance exposes per-GPU telemetry (utilisation, VRAM, temperature, SM clock)
+# with labels that include gpu_uuid and Hostname, enabling per-replica GPU drill-down
+# even when multiple Ollama pods share the same node.
+#
+# Prerequisites:
+#   - NVIDIA GPU Operator or manual DCGM installation on each node.
+#   - nvidia-container-runtime configured as the default runtime.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dcgm-exporter
+  namespace: llmops
+  labels:
+    app: dcgm-exporter
+spec:
+  selector:
+    matchLabels:
+      app: dcgm-exporter
+  template:
+    metadata:
+      labels:
+        app: dcgm-exporter
+    spec:
+      containers:
+        - name: dcgm-exporter
+          image: nvcr.io/nvidia/k8s/dcgm-exporter:3.3.5-3.4.0-ubuntu22.04
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "all"
+          ports:
+            - name: metrics
+              containerPort: 9400
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+          volumeMounts:
+            - name: pod-gpu-resources
+              mountPath: /var/lib/kubelet/pod-resources
+              readOnly: true
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+      volumes:
+        - name: pod-gpu-resources
+          hostPath:
+            path: /var/lib/kubelet/pod-resources

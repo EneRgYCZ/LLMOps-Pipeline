@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: llmops
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+
+    # Recording rules for HPA scaling metric and derived observability signals.
+    rule_files:
+      - /etc/prometheus/rules/*.yml
+
+    scrape_configs:
+      # LLM-layer metrics from the OpenTelemetry collector (TTFT, token throughput,
+      # operation latency).  These are aggregate across all chat-app instances.
+      - job_name: "otel-llm"
+        static_configs:
+          - targets: ["otel-collector:8889"]
+
+      # Per-pod metrics from chat-app wrapper (llm_active_requests, request counters).
+      # Pods are discovered automatically; only pods with the scrape annotation are scraped.
+      - job_name: "chat-app-pods"
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names: ["llmops"]
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: "true"
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          # Attach pod and namespace labels so prometheus-adapter can map metrics to K8s resources.
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            target_label: app
+
+      # Node-level host metrics (CPU, memory, disk, network).
+      - job_name: "node"
+        static_configs:
+          - targets: ["node-exporter:9100"]
+
+      # Per-GPU hardware telemetry via DCGM exporter (utilisation, VRAM, temperature).
+      # Labels include gpu_uuid and gpu_model, enabling per-replica GPU drill-down.
+      - job_name: "gpu"
+        static_configs:
+          - targets: ["dcgm-exporter:9400"]
+
+      # Kubernetes control-plane metrics (replica counts, HPA status, pod restarts).
+      - job_name: "kube-state-metrics"
+        static_configs:
+          - targets: ["kube-state-metrics.kube-system.svc.cluster.local:8080"]
+
+  rules.yml: |
+    groups:
+      - name: llm_scaling
+        interval: 15s
+        rules:
+          # Total in-flight LLM requests across all chat-app pods.
+          # Used by the HPA as the primary scaling signal for the Ollama Deployment.
+          - record: llm:active_requests:total
+            expr: sum(llm_active_requests) or vector(0)
+
+          # Request rate (req/s) derived from the wrapper counter.
+          - record: llm:request_rate:1m
+            expr: sum(rate(llm_requests_total[1m])) or vector(0)
+
+          # Average end-to-end latency across all wrapper pods.
+          - record: llm:request_duration_p50
+            expr: >
+              histogram_quantile(0.50,
+                sum(rate(llm_request_duration_seconds_bucket[5m])) by (le))
+
+          - record: llm:request_duration_p95
+            expr: >
+              histogram_quantile(0.95,
+                sum(rate(llm_request_duration_seconds_bucket[5m])) by (le))
+
+          # Little's Law approximation of queue depth:
+          #   L ≈ λ × W  (arrival_rate × average_service_time)
+          # Provides a cross-check on the active_requests gauge.
+          - record: llm:queue_depth_littles_law
+            expr: >
+              (sum(rate(llm_requests_total[2m])) or vector(0))
+              * (
+                (sum(rate(llm_request_duration_seconds_sum[2m])) or vector(0))
+                / (sum(rate(llm_request_duration_seconds_count[2m])) > 0 or vector(1))
+              )
+
+          # Error rate for alerting and dashboard visibility.
+          - record: llm:error_rate:1m
+            expr: >
+              sum(rate(llm_request_errors_total[1m])) or vector(0)
+
+      - name: ollama_replicas
+        interval: 30s
+        rules:
+          # Track Ollama replica count from kube-state-metrics for scaling event correlation.
+          - record: ollama:replica_count
+            expr: >
+              kube_deployment_status_replicas_ready{namespace="llmops", deployment="ollama"}
+              or vector(0)

@@ -1,0 +1,16 @@
+# Shared model storage for all Ollama replicas.
+# Requires a StorageClass that supports ReadWriteMany (e.g. NFS, CephFS, AWS EFS).
+# For single-node testing with hostPath, replace with a ReadWriteOnce PVC and run
+# `kubectl exec -it <pod> -- ollama pull <model>` on the first replica only.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ollama-models
+  namespace: llmops
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 30Gi
+  storageClassName: nfs  # replace with your cluster's RWX storage class

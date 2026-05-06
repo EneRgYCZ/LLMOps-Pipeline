@@ -1,0 +1,51 @@
+# Horizontal Pod Autoscaler for the Ollama Deployment.
+#
+# Scaling signal: llm_active_requests_total (External metric exposed by prometheus-adapter).
+# This is the sum of in-flight requests across all chat-app pods, computed as a recording
+# rule in Prometheus.  Using AverageValue, the HPA divides the total by the current replica
+# count and compares against the target, implementing the feedback loop:
+#
+#   desiredReplicas = ceil(currentReplicas × (totalActiveRequests / (target × currentReplicas)))
+#                   = ceil(totalActiveRequests / target)
+#
+# Target of 3 means: provision enough Ollama replicas so that no more than 3 concurrent
+# requests are routed to each GPU.  Adjust to match your GPU throughput budget.
+#
+# Prerequisites: prometheus-adapter must be running and serving external.metrics.k8s.io.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ollama-hpa
+  namespace: llmops
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ollama
+  minReplicas: 1
+  maxReplicas: 4  # constrained by number of available GPU nodes
+  metrics:
+    - type: External
+      external:
+        metric:
+          name: llm_active_requests_total
+          selector: {}
+        target:
+          type: AverageValue
+          averageValue: "3"
+  behavior:
+    scaleUp:
+      # Wait 60s before allowing another scale-up to avoid thrashing during
+      # the 30-120s model cold-start window of a new replica.
+      stabilizationWindowSeconds: 60
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 120
+    scaleDown:
+      # Scale down only after 5 minutes of sustained low load.
+      stabilizationWindowSeconds: 300
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 300

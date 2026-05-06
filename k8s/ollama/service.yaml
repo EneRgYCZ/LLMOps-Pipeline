@@ -1,0 +1,19 @@
+# ClusterIP service that round-robins across all ready Ollama pods.
+# sessionAffinity: None is the default and distributes each new connection to a
+# different pod, giving request-level load balancing for short-lived HTTP calls.
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+  namespace: llmops
+  labels:
+    app: ollama
+spec:
+  selector:
+    app: ollama
+  ports:
+    - name: api
+      port: 11434
+      targetPort: 11434
+  type: ClusterIP
+  sessionAffinity: None

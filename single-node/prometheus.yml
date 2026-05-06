@@ -1,0 +1,24 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/rules.yml
+
+scrape_configs:
+  # LLM-layer metrics from OpenLIT via the OTel collector:
+  # TTFT, token throughput, operation latency, error rate.
+  - job_name: "otel-llm"
+    static_configs:
+      - targets: ["otel-collector:8889"]
+
+  # Host-level metrics: CPU, memory, disk, network.
+  # node-exporter runs with host networking, so it is reachable on the host IP.
+  - job_name: "node"
+    static_configs:
+      - targets: ["host.docker.internal:9100"]
+
+  # Per-GPU hardware telemetry: utilisation, VRAM used, temperature, SM clock.
+  - job_name: "gpu"
+    static_configs:
+      - targets: ["dcgm-exporter:9400"]

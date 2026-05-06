@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-adapter
+  namespace: llmops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-adapter
+  template:
+    metadata:
+      labels:
+        app: prometheus-adapter
+    spec:
+      serviceAccountName: prometheus-adapter
+      containers:
+        - name: prometheus-adapter
+          image: registry.k8s.io/prometheus-adapter/prometheus-adapter:v0.12.0
+          args:
+            - "--cert-dir=/var/run/serving-cert"
+            - "--config=/etc/adapter/config.yaml"
+            - "--logtostderr=true"
+            - "--metrics-relist-interval=30s"
+            - "--prometheus-url=http://prometheus.llmops.svc.cluster.local:9090/"
+            - "--secure-port=6443"
+          ports:
+            - name: https
+              containerPort: 6443
+          volumeMounts:
+            - name: config
+              mountPath: /etc/adapter
+            - name: tmp-cert
+              mountPath: /var/run/serving-cert
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-adapter-config
+        - name: tmp-cert
+          emptyDir: {}
