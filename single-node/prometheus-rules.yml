@@ -1,0 +1,47 @@
+groups:
+  - name: llm_baseline
+    interval: 15s
+    rules:
+      # Request rate from the wrapper counter (req/s, 1-minute window).
+      - record: llm:request_rate:1m
+        expr: sum(rate(llm_requests_total[1m])) or vector(0)
+
+      # End-to-end request latency percentiles.
+      - record: llm:request_duration_p50
+        expr: >
+          histogram_quantile(0.50,
+            sum(rate(llm_request_duration_seconds_bucket[5m])) by (le))
+
+      - record: llm:request_duration_p95
+        expr: >
+          histogram_quantile(0.95,
+            sum(rate(llm_request_duration_seconds_bucket[5m])) by (le))
+
+      # Error rate (req/s).
+      - record: llm:error_rate:1m
+        expr: sum(rate(llm_request_errors_total[1m])) or vector(0)
+
+      # OTel / OpenLIT latency percentiles (from gen_ai_client_operation_duration_seconds).
+      - record: llm:otel_operation_p50
+        expr: >
+          histogram_quantile(0.50,
+            sum(rate(gen_ai_client_operation_duration_seconds_bucket[5m])) by (le))
+          or vector(0)
+
+      - record: llm:otel_operation_p95
+        expr: >
+          histogram_quantile(0.95,
+            sum(rate(gen_ai_client_operation_duration_seconds_bucket[5m])) by (le))
+          or vector(0)
+
+      # Little's Law queue-depth approximation: L ≈ λ × W.
+      # Provides a baseline queue-depth estimate for single-node capacity analysis
+      # and serves as a directly comparable signal when contrasting with the
+      # multi-replica deployment's active_requests gauge.
+      - record: llm:queue_depth_littles_law
+        expr: >
+          (sum(rate(llm_requests_total[2m])) or vector(0))
+          * (
+            (sum(rate(llm_request_duration_seconds_sum[2m])) or vector(0))
+            / (sum(rate(llm_request_duration_seconds_count[2m])) > 0 or vector(1))
+          )

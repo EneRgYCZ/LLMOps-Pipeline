@@ -1,0 +1,18 @@
+# LoadBalancer service exposes the FastAPI wrapper outside the cluster.
+# The wrapper proxies to the Ollama ClusterIP service, which round-robins
+# across all ready Ollama pods.
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-app
+  namespace: llmops
+  labels:
+    app: chat-app
+spec:
+  selector:
+    app: chat-app
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+  type: LoadBalancer

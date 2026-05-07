@@ -6,10 +6,8 @@ from settings import Settings
 
 
 class OpenTelemetryHelper:
-    _DEFAULTS = {
+    _FIXED_DEFAULTS = {
         "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf",
-        "OTEL_SERVICE_NAME": "llmops-chat",
-        "OTEL_DEPLOYMENT_ENVIRONMENT": "dev",
         "OTEL_METRICS_EXPORTER": "otlp",
         "OTEL_TRACES_EXPORTER": "otlp",
         "OTEL_LOGS_EXPORTER": "none",
@@ -17,14 +15,19 @@ class OpenTelemetryHelper:
 
     @classmethod
     def configure(cls, settings: Settings) -> None:
+        # Set signal endpoints from Settings (already derived/validated from env).
         os.environ.update(
             {
                 "OTEL_EXPORTER_OTLP_ENDPOINT": settings.otlp_base,
                 "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": settings.metrics_endpoint,
                 "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT": settings.traces_endpoint,
+                "OTEL_SERVICE_NAME": settings.otel_service_name,
+                "OTEL_DEPLOYMENT_ENVIRONMENT": settings.otel_deployment_environment,
             }
         )
-        for key, value in cls._DEFAULTS.items():
+        # Apply protocol/exporter defaults only if not already in the environment
+        # so that callers can override them without touching Settings.
+        for key, value in cls._FIXED_DEFAULTS.items():
             os.environ.setdefault(key, value)
 
     @staticmethod

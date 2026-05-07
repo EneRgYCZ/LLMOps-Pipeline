@@ -1,11 +1,8 @@
---extra-index-url https://download.pytorch.org/whl/cu124
-
 fastapi==0.111.0
 uvicorn[standard]==0.30.1
-requests==2.32.3
+httpx==0.27.0
+requests==2.33.0
 prometheus-client==0.20.0
-transformers==4.48.0
 openlit==1.36.2
 ollama==0.4.7
-python-dotenv==1.0.1
-torch==2.5.1+cu124
+python-dotenv==1.2.2

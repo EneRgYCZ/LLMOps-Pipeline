@@ -1,0 +1,121 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  namespace: llmops
+  labels:
+    app: ollama
+    app.kubernetes.io/part-of: llmops-pipeline
+spec:
+  # HPA manages replica count at runtime; this is the initial value.
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+      annotations:
+        # The Ollama REST API does not expose a Prometheus endpoint natively.
+        # Per-replica GPU metrics come from the dcgm-exporter DaemonSet instead.
+        prometheus.io/scrape: "false"
+    spec:
+      # Spread replicas across nodes so each gets a dedicated GPU.
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: ollama
+
+      initContainers:
+        # Pull the model into the shared PVC before the server starts accepting traffic.
+        # On subsequent pod starts the model is already cached; the pull is a no-op.
+        - name: model-pull
+          image: ollama/ollama:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              ollama serve &
+              SERVE_PID=$!
+              until curl -sf http://localhost:11434/api/tags > /dev/null 2>&1; do
+                sleep 2
+              done
+              ollama pull "${OLLAMA_MODEL}"
+              kill $SERVE_PID
+          env:
+            - name: OLLAMA_MODEL
+              valueFrom:
+                configMapKeyRef:
+                  name: ollama-config
+                  key: OLLAMA_MODEL
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "all"
+          resources:
+            limits:
+              nvidia.com/gpu: "1"
+            requests:
+              nvidia.com/gpu: "1"
+          volumeMounts:
+            - name: ollama-models
+              mountPath: /root/.ollama
+
+      containers:
+        - name: ollama
+          image: ollama/ollama:latest
+          ports:
+            - name: api
+              containerPort: 11434
+          env:
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "all"
+            - name: OLLAMA_HOST
+              value: "0.0.0.0"
+          resources:
+            limits:
+              nvidia.com/gpu: "1"
+            requests:
+              nvidia.com/gpu: "1"
+              memory: "2Gi"
+              cpu: "2"
+          volumeMounts:
+            - name: ollama-models
+              mountPath: /root/.ollama
+          readinessProbe:
+            httpGet:
+              path: /api/tags
+              port: 11434
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /api/tags
+              port: 11434
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /api/tags
+              port: 11434
+            # Allow up to 10 minutes for large model cold-start
+            failureThreshold: 60
+            periodSeconds: 10
+
+      volumes:
+        - name: ollama-models
+          persistentVolumeClaim:
+            claimName: ollama-models
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ollama-config
+  namespace: llmops
+data:
+  OLLAMA_MODEL: "ministral-3:8b-instruct-2512-q4_K_M"

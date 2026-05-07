@@ -1,0 +1,191 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: llmops
+data:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus:9090
+        isDefault: true
+        jsonData:
+          timeInterval: "15s"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-provider
+  namespace: llmops
+data:
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+      - name: llmops
+        folder: LLMOps
+        type: file
+        options:
+          path: /var/lib/grafana/dashboards
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-llmops
+  namespace: llmops
+data:
+  llmops.json: |
+    {
+      "title": "LLMOps Multi-Replica Serving",
+      "uid": "llmops-multireplica",
+      "schemaVersion": 38,
+      "time": {"from": "now-1h", "to": "now"},
+      "refresh": "15s",
+      "panels": [
+        {
+          "id": 1, "type": "stat", "title": "Ollama Replicas (Ready)",
+          "gridPos": {"x": 0, "y": 0, "w": 4, "h": 4},
+          "targets": [{"expr": "ollama:replica_count", "legendFormat": "replicas"}],
+          "fieldConfig": {"defaults": {"color": {"mode": "thresholds"},
+            "thresholds": {"steps": [{"color": "red", "value": 0}, {"color": "green", "value": 1}]}}}
+        },
+        {
+          "id": 2, "type": "stat", "title": "Active Requests",
+          "gridPos": {"x": 4, "y": 0, "w": 4, "h": 4},
+          "targets": [{"expr": "llm:active_requests:total", "legendFormat": "active"}],
+          "fieldConfig": {"defaults": {"color": {"mode": "thresholds"},
+            "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 3}, {"color": "red", "value": 9}]}}}
+        },
+        {
+          "id": 3, "type": "stat", "title": "Request Rate (req/s)",
+          "gridPos": {"x": 8, "y": 0, "w": 4, "h": 4},
+          "targets": [{"expr": "llm:request_rate:1m", "legendFormat": "req/s"}]
+        },
+        {
+          "id": 4, "type": "stat", "title": "Error Rate (req/s)",
+          "gridPos": {"x": 12, "y": 0, "w": 4, "h": 4},
+          "targets": [{"expr": "llm:error_rate:1m", "legendFormat": "errors/s"}],
+          "fieldConfig": {"defaults": {"color": {"mode": "thresholds"},
+            "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "red", "value": 0.01}]}}}
+        },
+        {
+          "id": 5, "type": "timeseries", "title": "Request Latency Percentiles",
+          "gridPos": {"x": 0, "y": 4, "w": 12, "h": 8},
+          "targets": [
+            {"expr": "llm:request_duration_p50", "legendFormat": "p50"},
+            {"expr": "llm:request_duration_p95", "legendFormat": "p95"},
+            {"expr": "histogram_quantile(0.99, sum(rate(llm_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p99"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "s"}}
+        },
+        {
+          "id": 6, "type": "timeseries", "title": "Active Requests vs Replica Count",
+          "gridPos": {"x": 12, "y": 4, "w": 12, "h": 8},
+          "targets": [
+            {"expr": "llm:active_requests:total", "legendFormat": "total active requests"},
+            {"expr": "ollama:replica_count * 3", "legendFormat": "capacity (target × replicas)"}
+          ]
+        },
+        {
+          "id": 7, "type": "timeseries", "title": "GPU Utilisation per Node (%)",
+          "gridPos": {"x": 0, "y": 12, "w": 12, "h": 8},
+          "targets": [
+            {"expr": "DCGM_FI_DEV_GPU_UTIL", "legendFormat": "{{Hostname}} GPU{{gpu}}"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}}
+        },
+        {
+          "id": 8, "type": "timeseries", "title": "GPU Memory Used per Node (GB)",
+          "gridPos": {"x": 12, "y": 12, "w": 12, "h": 8},
+          "targets": [
+            {"expr": "DCGM_FI_DEV_FB_USED / 1024", "legendFormat": "{{Hostname}} GPU{{gpu}}"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "decgbytes"}}
+        },
+        {
+          "id": 9, "type": "timeseries", "title": "HPA Scaling Events (Replica Count Over Time)",
+          "gridPos": {"x": 0, "y": 20, "w": 24, "h": 6},
+          "targets": [
+            {"expr": "ollama:replica_count", "legendFormat": "ready replicas"},
+            {"expr": "kube_horizontalpodautoscaler_status_desired_replicas{namespace=\"llmops\", horizontalpodautoscaler=\"ollama-hpa\"}", "legendFormat": "desired replicas"},
+            {"expr": "kube_horizontalpodautoscaler_spec_min_replicas{namespace=\"llmops\"}", "legendFormat": "min replicas"},
+            {"expr": "kube_horizontalpodautoscaler_spec_max_replicas{namespace=\"llmops\"}", "legendFormat": "max replicas"}
+          ]
+        },
+        {
+          "id": 10, "type": "timeseries", "title": "OTel LLM Metrics — Time to First Token (p50/p95)",
+          "gridPos": {"x": 0, "y": 26, "w": 12, "h": 8},
+          "targets": [
+            {"expr": "histogram_quantile(0.50, sum(rate(gen_ai_client_operation_duration_seconds_bucket[5m])) by (le))", "legendFormat": "TTFT p50"},
+            {"expr": "histogram_quantile(0.95, sum(rate(gen_ai_client_operation_duration_seconds_bucket[5m])) by (le))", "legendFormat": "TTFT p95"}
+          ],
+          "fieldConfig": {"defaults": {"unit": "s"}}
+        },
+        {
+          "id": 11, "type": "timeseries", "title": "Little's Law Queue Depth vs Direct Gauge",
+          "description": "Cross-validates the Little's Law approximation (λW) against the direct active_requests gauge.",
+          "gridPos": {"x": 12, "y": 26, "w": 12, "h": 8},
+          "targets": [
+            {"expr": "llm:active_requests:total", "legendFormat": "direct gauge (Σ active_requests)"},
+            {"expr": "llm:queue_depth_littles_law", "legendFormat": "Little's Law approx (λ×W)"}
+          ]
+        }
+      ]
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: llmops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+        - name: grafana
+          image: grafana/grafana:10.4.0
+          ports:
+            - name: web
+              containerPort: 3000
+          env:
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              value: "admin"
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "false"
+          volumeMounts:
+            - name: datasources
+              mountPath: /etc/grafana/provisioning/datasources
+            - name: dashboard-provider
+              mountPath: /etc/grafana/provisioning/dashboards
+            - name: dashboard-json
+              mountPath: /var/lib/grafana/dashboards
+            - name: data
+              mountPath: /var/lib/grafana
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: datasources
+          configMap:
+            name: grafana-datasources
+        - name: dashboard-provider
+          configMap:
+            name: grafana-dashboards-provider
+        - name: dashboard-json
+          configMap:
+            name: grafana-dashboard-llmops
+        - name: data
+          emptyDir: {}
