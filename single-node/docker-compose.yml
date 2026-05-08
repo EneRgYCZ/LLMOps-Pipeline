@@ -18,11 +18,56 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:11434/api/tags"]
+      test: ["CMD", "ollama", "list"]
       interval: 10s
       timeout: 5s
       retries: 6
       start_period: 20s
+
+  chromadb:
+    image: chromadb/chroma:0.6.3
+    container_name: chromadb
+    ports:
+      - "8100:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks:
+      - llmnet
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  chat-app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: chat-app
+    ports:
+      - "8000:8000"
+    networks:
+      - llmnet
+    depends_on:
+      ollama:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - RAG_ENABLED=${RAG_ENABLED:-true}
+    env_file:
+      - ../.env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib:0.100.0
@@ -111,6 +156,7 @@ volumes:
   ollama_data:
   prometheus_data:
   grafana_data:
+  chroma_data:
 
 networks:
   llmnet:
