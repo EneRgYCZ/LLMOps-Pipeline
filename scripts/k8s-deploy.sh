@@ -11,7 +11,7 @@ K8S_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/k8s"
 
 apply() {
   if [[ "$DRY_RUN" == "--dry-run" ]]; then
-    kubectl apply --dry-run=client -f "$1"
+    kubectl apply --dry-run=client --validate=false -f "$1"
   else
     kubectl apply -f "$1"
   fi
@@ -23,8 +23,10 @@ docker build \
   -t "${REGISTRY}:${IMAGE_TAG}" \
   "$(dirname "${BASH_SOURCE[0]}")/.."
 
-echo "==> Verifying cluster connectivity"
-kubectl cluster-info --request-timeout=5s
+if [[ "$DRY_RUN" != "--dry-run" ]]; then
+  echo "==> Verifying cluster connectivity"
+  kubectl cluster-info --request-timeout=5s
+fi
 
 echo "==> Namespace"
 apply "$K8S_DIR/namespace.yaml"
