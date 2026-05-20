@@ -3,7 +3,7 @@
 Computes RAG quality metrics on inference requests using RAGAS (LLM-as-judge).
 Runs in a background asyncio worker; inference is never blocked by evaluation.
 
-Dependencies: ragas==0.2.13, langchain-community>=0.3.18.
+Dependencies: ragas==0.2.13, langchain-ollama==0.2.3.
 RAGAS imports ragas.executor at module-load time which calls nest_asyncio.apply().
 nest_asyncio cannot patch uvloop. uvicorn must run with --loop asyncio (not uvloop).
 
@@ -222,8 +222,8 @@ class EvaluationService:
 
     def _init_ragas(self) -> None:
         try:
-            from langchain_community.llms import Ollama as LangchainOllama
-            from langchain_community.embeddings import OllamaEmbeddings
+            from langchain_ollama import OllamaLLM as LangchainOllama
+            from langchain_ollama import OllamaEmbeddings
             from ragas.llms import LangchainLLMWrapper
             from ragas.embeddings import LangchainEmbeddingsWrapper
 
