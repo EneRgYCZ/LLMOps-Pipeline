@@ -1,6 +1,6 @@
 services:
   ollama:
-    image: ollama/ollama:0.4.7
+    image: ollama/ollama:0.24.0
     container_name: ollama
     ports:
       - "11434:11434"
@@ -34,6 +34,8 @@ services:
     networks:
       - llmnet
     restart: unless-stopped
+    environment:
+      - ANONYMIZED_TELEMETRY=False
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8000/api/v1/heartbeat"]
       interval: 10s
@@ -59,8 +61,15 @@ services:
       - CHROMA_HOST=chromadb
       - CHROMA_PORT=8000
       - RAG_ENABLED=${RAG_ENABLED:-true}
+      - EVAL_ENABLED=${EVAL_ENABLED:-true}
+      - EVAL_DB_PATH=/data/evaluations.db
+      - EVAL_SAMPLE_RATE=${EVAL_SAMPLE_RATE:-1.0}
+      - EVAL_EMBEDDING_MODEL=${EVAL_EMBEDDING_MODEL:-nomic-embed-text}
+      - EVAL_TIMEOUT_SECONDS=${EVAL_TIMEOUT_SECONDS:-300.0}
     env_file:
       - ../.env
+    volumes:
+      - eval_data:/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
@@ -157,6 +166,7 @@ volumes:
   prometheus_data:
   grafana_data:
   chroma_data:
+  eval_data:
 
 networks:
   llmnet:

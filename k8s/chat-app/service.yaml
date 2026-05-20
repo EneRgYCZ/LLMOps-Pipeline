@@ -16,3 +16,20 @@ spec:
       port: 80
       targetPort: 8000
   type: LoadBalancer
+---
+# Headless service required by the StatefulSet for stable pod DNS identities.
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-app-headless
+  namespace: llmops
+  labels:
+    app: chat-app
+spec:
+  clusterIP: None
+  selector:
+    app: chat-app
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000

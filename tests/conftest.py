@@ -129,6 +129,15 @@ def test_settings():
         rag_top_k=5,
         rag_embedding_model="all-MiniLM-L6-v2",
         rag_min_similarity=0.3,
+        eval_enabled=False,
+        eval_judge_host="http://localhost:11434",
+        eval_judge_model="test-model",
+        eval_queue_max_size=100,
+        eval_sample_rate=1.0,
+        eval_db_path="/tmp/test_evaluations.db",
+        eval_timeout_seconds=60.0,
+        eval_faithfulness_hallucination_threshold=0.5,
+        eval_references_path=None,
     )
 
 

@@ -9,6 +9,7 @@ COMPOSE_FILE="$REPO_ROOT/single-node/docker-compose.yml"
 
 # Read model name from .env if present, else use default.
 MODEL="${1:-$(grep -E '^OLLAMA_MODEL=' "$REPO_ROOT/.env" 2>/dev/null | cut -d= -f2 | tr -d '"' || echo 'ministral-3:8b-instruct-2512-q4_K_M')}"
+EMBED_MODEL="${EVAL_EMBEDDING_MODEL:-$(grep -E '^EVAL_EMBEDDING_MODEL=' "$REPO_ROOT/.env" 2>/dev/null | cut -d= -f2 | tr -d '"' || echo 'nomic-embed-text')}"
 
 # --- NVIDIA Container Toolkit check ---
 toolkit_installed() {
@@ -44,6 +45,9 @@ docker compose -f "$COMPOSE_FILE" up -d --wait
 # --- Pull the model into Ollama ---
 echo "Pulling model '$MODEL' into Ollama (skipped if already cached)..."
 docker compose -f "$COMPOSE_FILE" exec ollama ollama pull "$MODEL"
+
+echo "Pulling embedding model '$EMBED_MODEL' into Ollama (skipped if already cached)..."
+docker compose -f "$COMPOSE_FILE" exec ollama ollama pull "$EMBED_MODEL"
 
 echo ""
 echo "Stack is ready."
