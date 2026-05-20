@@ -3,6 +3,7 @@ import os
 import random
 import time
 import uuid
+from contextlib import asynccontextmanager
 
 import httpx
 import openlit
@@ -33,11 +34,8 @@ def _get_ollama_host() -> str:
     return _settings.ollama_host if _settings else os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 
-app = FastAPI(title="LLMOps Wrapper", version="1.0.0")
-
-
-@app.on_event("startup")
-async def startup() -> None:
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
     global _settings, _rag_service, _eval_service, _references
     _settings = SettingsFactory.from_env()
     OpenTelemetryHelper.configure(_settings)
@@ -62,11 +60,13 @@ async def startup() -> None:
         if _settings.eval_references_path:
             _references = load_references(_settings.eval_references_path)
 
+    yield
 
-@app.on_event("shutdown")
-async def shutdown() -> None:
     if _eval_service is not None:
         await _eval_service.stop()
+
+
+app = FastAPI(title="LLMOps Wrapper", version="1.0.0", lifespan=_lifespan)
 
 
 @app.get("/health")

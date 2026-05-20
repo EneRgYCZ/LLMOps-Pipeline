@@ -44,7 +44,6 @@ source "$VENV_DIR/bin/activate"
 
 echo "Installing dependencies ..."
 pip install --quiet --upgrade pip
-pip install --quiet -r "$REPO_ROOT/requirements.txt"
 pip install --quiet -r "$REPO_ROOT/requirements-test.txt"
 
 # ---------------------------------------------------------------------------

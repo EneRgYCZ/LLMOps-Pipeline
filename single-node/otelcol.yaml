@@ -1,4 +1,3 @@
-
 receivers:
   otlp:
     protocols:
@@ -27,14 +26,14 @@ exporters:
 service:
   pipelines:
     metrics:
-      receivers: [ otlp ]
-      processors: [ batch ]
-      exporters: [ prometheus ]
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus]
     traces:
-      receivers: [ otlp ]
-      processors: [ batch ]
-      exporters: [ debug ]
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
     logs:
-      receivers: [ otlp ]
-      processors: [ batch ]
-      exporters: [ debug ]
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
