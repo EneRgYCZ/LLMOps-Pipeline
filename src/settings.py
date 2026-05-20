@@ -22,6 +22,15 @@ class Settings:
     rag_top_k: int
     rag_embedding_model: str
     rag_min_similarity: float
+    eval_enabled: bool
+    eval_judge_host: str
+    eval_judge_model: str
+    eval_queue_max_size: int
+    eval_sample_rate: float
+    eval_db_path: str
+    eval_timeout_seconds: float
+    eval_faithfulness_hallucination_threshold: float
+    eval_references_path: str | None
 
 
 class EnvConfigHelper:
@@ -66,6 +75,14 @@ class SettingsFactory:
             return val if val and val != otlp_base else f"{otlp_base}{suffix}"
 
         raw_rag_enabled = EnvConfigHelper.read("RAG_ENABLED", "false").lower()
+        raw_eval_enabled = EnvConfigHelper.read("EVAL_ENABLED", "false").lower()
+
+        ollama_host = EnvConfigHelper.read("OLLAMA_HOST", "http://localhost:11434")
+        ollama_model = EnvConfigHelper.read(
+            "OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M"
+        )
+
+        eval_refs_raw = os.getenv("EVAL_REFERENCES_PATH", "").strip()
 
         return Settings(
             otlp_base=otlp_base,
@@ -75,10 +92,8 @@ class SettingsFactory:
             traces_endpoint=_signal_endpoint(
                 "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT", "/v1/traces"
             ),
-            ollama_host=EnvConfigHelper.read("OLLAMA_HOST", "http://localhost:11434"),
-            ollama_model=EnvConfigHelper.read(
-                "OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M"
-            ),
+            ollama_host=ollama_host,
+            ollama_model=ollama_model,
             otel_service_name=EnvConfigHelper.read("OTEL_SERVICE_NAME", "llmops-chat"),
             otel_deployment_environment=EnvConfigHelper.read(
                 "OTEL_DEPLOYMENT_ENVIRONMENT", "dev"
@@ -92,4 +107,19 @@ class SettingsFactory:
                 "RAG_EMBEDDING_MODEL", "all-MiniLM-L6-v2"
             ),
             rag_min_similarity=float(EnvConfigHelper.read("RAG_MIN_SIMILARITY", "0.3")),
+            eval_enabled=raw_eval_enabled in ("true", "1", "yes"),
+            eval_judge_host=EnvConfigHelper.read("EVAL_JUDGE_HOST", ollama_host),
+            eval_judge_model=EnvConfigHelper.read("EVAL_JUDGE_MODEL", ollama_model),
+            eval_queue_max_size=int(EnvConfigHelper.read("EVAL_QUEUE_MAX_SIZE", "100")),
+            eval_sample_rate=float(EnvConfigHelper.read("EVAL_SAMPLE_RATE", "1.0")),
+            eval_db_path=EnvConfigHelper.read("EVAL_DB_PATH", "/data/evaluations.db"),
+            eval_timeout_seconds=float(
+                EnvConfigHelper.read("EVAL_TIMEOUT_SECONDS", "60.0")
+            ),
+            eval_faithfulness_hallucination_threshold=float(
+                EnvConfigHelper.read(
+                    "EVAL_FAITHFULNESS_HALLUCINATION_THRESHOLD", "0.5"
+                )
+            ),
+            eval_references_path=eval_refs_raw if eval_refs_raw else None,
         )

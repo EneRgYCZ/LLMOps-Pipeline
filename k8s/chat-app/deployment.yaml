@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: chat-app
   namespace: llmops
@@ -7,6 +7,7 @@ metadata:
     app: chat-app
 spec:
   replicas: 2
+  serviceName: chat-app-headless
   selector:
     matchLabels:
       app: chat-app
@@ -32,6 +33,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: chat-app-config
+          volumeMounts:
+            - name: eval-data
+              mountPath: /data
           readinessProbe:
             httpGet:
               path: /health
@@ -51,3 +55,13 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "1"
+  # Each replica gets its own PVC. Databases are independent per pod;
+  # cross-replica aggregation is performed at analysis time.
+  volumeClaimTemplates:
+    - metadata:
+        name: eval-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi

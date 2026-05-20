@@ -1,5 +1,8 @@
+import json
 import os
+import random
 import time
+import uuid
 
 import httpx
 import openlit
@@ -22,6 +25,8 @@ REQUEST_DURATION = Histogram(
 
 _settings: Settings | None = None
 _rag_service = None
+_eval_service = None
+_references: dict[str, str] = {}
 
 
 def _get_ollama_host() -> str:
@@ -33,7 +38,7 @@ app = FastAPI(title="LLMOps Wrapper", version="1.0.0")
 
 @app.on_event("startup")
 async def startup() -> None:
-    global _settings, _rag_service
+    global _settings, _rag_service, _eval_service, _references
     _settings = SettingsFactory.from_env()
     OpenTelemetryHelper.configure(_settings)
     OpenTelemetryHelper.init_openlit()
@@ -43,6 +48,25 @@ async def startup() -> None:
 
         rag_config = RAGConfig()
         _rag_service = RAGService(rag_config)
+
+    if _settings.eval_enabled:
+        from evaluation import EvaluationConfig, EvaluationService, load_references
+
+        eval_config = EvaluationConfig()
+        _eval_service = EvaluationService(
+            eval_config,
+            deployment_environment=_settings.otel_deployment_environment,
+        )
+        await _eval_service.start()
+
+        if _settings.eval_references_path:
+            _references = load_references(_settings.eval_references_path)
+
+
+@app.on_event("shutdown")
+async def shutdown() -> None:
+    if _eval_service is not None:
+        await _eval_service.stop()
 
 
 @app.get("/health")
@@ -90,20 +114,43 @@ def _extract_last_user_message(messages: list[dict]) -> str:
     return ""
 
 
+def _extract_response_text(body: bytes, path: str) -> str:
+    try:
+        data = json.loads(body)
+        if path == "/api/chat":
+            return data.get("message", {}).get("content", "")
+        if path == "/api/generate":
+            return data.get("response", "")
+    except Exception:
+        pass
+    return ""
+
+
 async def _proxy_request(request: Request, path: str) -> Response | StreamingResponse:
     body = await request.json()
+
+    # Capture original query before RAG augmentation for evaluation
+    original_query = ""
+    rag_chunks: list[dict] = []
 
     if _rag_service is not None:
         if path == "/api/chat":
             user_msg = _extract_last_user_message(body.get("messages", []))
             if user_msg:
-                chunks = _rag_service.retrieve(user_msg)
-                body["messages"] = _rag_service.augment_messages(body["messages"], chunks)
+                original_query = user_msg
+                rag_chunks = _rag_service.retrieve(user_msg)
+                body["messages"] = _rag_service.augment_messages(body["messages"], rag_chunks)
         elif path == "/api/generate":
             prompt = body.get("prompt", "")
             if prompt:
-                chunks = _rag_service.retrieve(prompt)
-                body["prompt"] = _rag_service.augment_prompt(prompt, chunks)
+                original_query = prompt
+                rag_chunks = _rag_service.retrieve(prompt)
+                body["prompt"] = _rag_service.augment_prompt(prompt, rag_chunks)
+    else:
+        if path == "/api/chat":
+            original_query = _extract_last_user_message(body.get("messages", []))
+        elif path == "/api/generate":
+            original_query = body.get("prompt", "")
 
     is_stream = body.get("stream", True)
     endpoint = path.lstrip("/")
@@ -126,12 +173,39 @@ async def _proxy_request(request: Request, path: str) -> Response | StreamingRes
             REQUEST_DURATION.labels(endpoint=endpoint).observe(time.monotonic() - start)
 
     if is_stream:
+        if _eval_service is not None:
+            import logging
+            logging.getLogger(__name__).debug(
+                "Skipping eval for streaming request (known limitation)"
+            )
         return StreamingResponse(_stream_gen(), media_type="application/x-ndjson")
 
-    chunks: list[bytes] = []
+    response_bytes: list[bytes] = []
     try:
         async for chunk in _stream_gen():
-            chunks.append(chunk)
+            response_bytes.append(chunk)
     except Exception:
         raise
-    return Response(content=b"".join(chunks), media_type="application/json")
+
+    response_body = b"".join(response_bytes)
+    latency = time.monotonic() - start
+
+    if _eval_service is not None and original_query and path in ("/api/chat", "/api/generate"):
+        if random.random() <= _settings.eval_sample_rate:
+            from evaluation import EvaluationTask
+
+            response_text = _extract_response_text(response_body, path)
+            reference = _references.get(original_query) if _references else None
+            task = EvaluationTask(
+                request_id=str(uuid.uuid4()),
+                timestamp=time.time(),
+                query=original_query,
+                response=response_text,
+                retrieved_chunks=rag_chunks,
+                reference_answer=reference,
+                latency_seconds=latency,
+                deployment_environment=_settings.otel_deployment_environment,
+            )
+            _eval_service.enqueue(task)
+
+    return Response(content=response_body, media_type="application/json")

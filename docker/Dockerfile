@@ -4,7 +4,8 @@ WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl sqlite3 \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -13,4 +14,4 @@ RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTr
 
 COPY src/ .
 
-CMD ["uvicorn", "llm_wrapper:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "llm_wrapper:app", "--host", "0.0.0.0", "--port", "8000", "--loop", "asyncio"]
