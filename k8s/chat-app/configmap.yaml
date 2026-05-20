@@ -15,3 +15,6 @@ data:
   OTEL_METRICS_EXPORTER: "otlp"
   OTEL_TRACES_EXPORTER: "otlp"
   OTEL_LOGS_EXPORTER: "none"
+  RAG_ENABLED: "true"
+  CHROMA_HOST: "chromadb"
+  CHROMA_PORT: "8000"

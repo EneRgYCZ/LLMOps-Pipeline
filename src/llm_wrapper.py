@@ -21,6 +21,7 @@ REQUEST_DURATION = Histogram(
 )
 
 _settings: Settings | None = None
+_rag_service = None
 
 
 def _get_ollama_host() -> str:
@@ -32,10 +33,16 @@ app = FastAPI(title="LLMOps Wrapper", version="1.0.0")
 
 @app.on_event("startup")
 async def startup() -> None:
-    global _settings
+    global _settings, _rag_service
     _settings = SettingsFactory.from_env()
     OpenTelemetryHelper.configure(_settings)
     OpenTelemetryHelper.init_openlit()
+
+    if _settings.rag_enabled:
+        from rag import RAGConfig, RAGService
+
+        rag_config = RAGConfig()
+        _rag_service = RAGService(rag_config)
 
 
 @app.get("/health")
@@ -58,18 +65,46 @@ async def tags() -> Response:
     return Response(content=r.content, media_type="application/json", status_code=r.status_code)
 
 
-@app.post("/api/chat")
+@app.post("/api/chat", response_model=None)
 async def chat(request: Request) -> Response | StreamingResponse:
     return await _proxy_request(request, "/api/chat")
 
 
-@app.post("/api/generate")
+@app.post("/api/generate", response_model=None)
 async def generate(request: Request) -> Response | StreamingResponse:
     return await _proxy_request(request, "/api/generate")
 
 
+def _extract_last_user_message(messages: list[dict]) -> str:
+    for msg in reversed(messages):
+        if msg.get("role") == "user":
+            content = msg.get("content", "")
+            if isinstance(content, str):
+                return content
+            if isinstance(content, list):
+                return " ".join(
+                    p.get("text", "")
+                    for p in content
+                    if isinstance(p, dict) and "text" in p
+                )
+    return ""
+
+
 async def _proxy_request(request: Request, path: str) -> Response | StreamingResponse:
     body = await request.json()
+
+    if _rag_service is not None:
+        if path == "/api/chat":
+            user_msg = _extract_last_user_message(body.get("messages", []))
+            if user_msg:
+                chunks = _rag_service.retrieve(user_msg)
+                body["messages"] = _rag_service.augment_messages(body["messages"], chunks)
+        elif path == "/api/generate":
+            prompt = body.get("prompt", "")
+            if prompt:
+                chunks = _rag_service.retrieve(prompt)
+                body["prompt"] = _rag_service.augment_prompt(prompt, chunks)
+
     is_stream = body.get("stream", True)
     endpoint = path.lstrip("/")
 

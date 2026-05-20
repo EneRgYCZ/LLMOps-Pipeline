@@ -15,6 +15,13 @@ class Settings:
     ollama_model: str
     otel_service_name: str
     otel_deployment_environment: str
+    rag_enabled: bool
+    chroma_host: str
+    chroma_port: int
+    chroma_collection: str
+    rag_top_k: int
+    rag_embedding_model: str
+    rag_min_similarity: float
 
 
 class EnvConfigHelper:
@@ -58,6 +65,8 @@ class SettingsFactory:
             val = os.getenv(env_var, "").strip().rstrip("/")
             return val if val and val != otlp_base else f"{otlp_base}{suffix}"
 
+        raw_rag_enabled = EnvConfigHelper.read("RAG_ENABLED", "false").lower()
+
         return Settings(
             otlp_base=otlp_base,
             metrics_endpoint=_signal_endpoint(
@@ -74,4 +83,13 @@ class SettingsFactory:
             otel_deployment_environment=EnvConfigHelper.read(
                 "OTEL_DEPLOYMENT_ENVIRONMENT", "dev"
             ),
+            rag_enabled=raw_rag_enabled in ("true", "1", "yes"),
+            chroma_host=EnvConfigHelper.read("CHROMA_HOST", "localhost"),
+            chroma_port=int(EnvConfigHelper.read("CHROMA_PORT", "8000")),
+            chroma_collection=EnvConfigHelper.read("CHROMA_COLLECTION", "documents"),
+            rag_top_k=int(EnvConfigHelper.read("RAG_TOP_K", "5")),
+            rag_embedding_model=EnvConfigHelper.read(
+                "RAG_EMBEDDING_MODEL", "all-MiniLM-L6-v2"
+            ),
+            rag_min_similarity=float(EnvConfigHelper.read("RAG_MIN_SIMILARITY", "0.3")),
         )
