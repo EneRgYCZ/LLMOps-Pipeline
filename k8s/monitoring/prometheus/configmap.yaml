@@ -53,12 +53,7 @@ data:
         static_configs:
           - targets: ["node-exporter:9100"]
 
-      # Per-GPU hardware telemetry via DCGM exporter (utilisation, VRAM, temperature).
-      # Labels include gpu_uuid and gpu_model, enabling per-replica GPU drill-down.
-      - job_name: "gpu"
-        static_configs:
-          - targets: ["dcgm-exporter:9400"]
-
+${GPU_SCRAPE_JOB}
       # Kubernetes control-plane metrics (replica counts, HPA status, pod restarts).
       - job_name: "kube-state-metrics"
         static_configs:
