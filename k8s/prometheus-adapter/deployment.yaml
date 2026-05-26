@@ -20,7 +20,6 @@ spec:
           args:
             - "--cert-dir=/var/run/serving-cert"
             - "--config=/etc/adapter/config.yaml"
-            - "--logtostderr=true"
             - "--metrics-relist-interval=30s"
             - "--prometheus-url=http://prometheus.llmops.svc.cluster.local:9090/"
             - "--secure-port=6443"

@@ -9,8 +9,8 @@ metadata:
   namespace: llmops
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 30Gi
-  storageClassName: nfs  # replace with your cluster's RWX storage class
+  storageClassName: local-path

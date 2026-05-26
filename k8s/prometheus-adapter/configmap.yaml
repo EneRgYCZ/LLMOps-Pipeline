@@ -5,40 +5,28 @@ metadata:
   namespace: llmops
 data:
   config.yaml: |
-    # prometheus-adapter bridges Prometheus recording rules to the Kubernetes
-    # External Metrics API (external.metrics.k8s.io), which the HPA queries.
-    #
-    # Rule evaluation order: external → custom → resource.
-    # Only external rules are needed here because llm:active_requests:total is an
-    # aggregate metric with no pod/namespace labels (it's a scalar recording rule).
-
     rules:
-      # Expose llm:active_requests:total as the external metric
-      # "llm_active_requests_total" that the Ollama HPA consumes.
-      external:
-        - seriesQuery: 'llm:active_requests:total'
-          resources:
-            namespaced: false
-          name:
-            as: "llm_active_requests_total"
-          metricsQuery: 'max(llm:active_requests:total)'
-
-        # Also expose queue depth from Little's Law as an alternative HPA signal.
-        - seriesQuery: 'llm:queue_depth_littles_law'
-          resources:
-            namespaced: false
-          name:
-            as: "llm_queue_depth_littles_law"
-          metricsQuery: 'max(llm:queue_depth_littles_law)'
-
-      # Per-pod active_requests for use in a future Pods-type HPA on the chat-app.
-      custom:
-        - seriesQuery: 'llm_active_requests{namespace!="",pod!=""}'
-          resources:
-            overrides:
-              namespace: {resource: "namespace"}
-              pod: {resource: "pod"}
-          name:
-            matches: "llm_active_requests"
-            as: "llm_active_requests_per_pod"
-          metricsQuery: 'avg_over_time(llm_active_requests{<<.LabelMatchers>>}[1m])'
+    - seriesQuery: 'llm:active_requests:total'
+      seriesFilters: []
+      resources:
+        namespaced: false
+      name:
+        as: "llm_active_requests_total"
+      metricsQuery: 'max(llm:active_requests:total)'
+    - seriesQuery: 'llm:queue_depth_littles_law'
+      seriesFilters: []
+      resources:
+        namespaced: false
+      name:
+        as: "llm_queue_depth_littles_law"
+      metricsQuery: 'max(llm:queue_depth_littles_law)'
+    - seriesQuery: 'llm_active_requests{namespace!="",pod!=""}'
+      seriesFilters: []
+      resources:
+        overrides:
+          namespace: {resource: "namespace"}
+          pod: {resource: "pod"}
+      name:
+        matches: "llm_active_requests"
+        as: "llm_active_requests_per_pod"
+      metricsQuery: 'avg_over_time(llm_active_requests{<<.LabelMatchers>>}[1m])'
