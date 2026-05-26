@@ -82,4 +82,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: horizontal-pod-autoscaler
-    namespace: kube-syste\m
+    namespace: kube-system
