@@ -32,4 +32,4 @@ class OpenTelemetryHelper:
 
     @staticmethod
     def init_openlit() -> None:
-        openlit.init()
+        openlit.init(disabled_instrumentors=["asgi", "fastapi", "starlette"])
