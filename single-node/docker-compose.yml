@@ -43,6 +43,19 @@ services:
       timeout: 5s
       retries: 3
 
+  ollama-init:
+    image: ollama/ollama:0.24.0
+    container_name: ollama-init
+    networks:
+      - llmnet
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    command: ["pull", "${OLLAMA_MODEL:-ministral-3:8b-instruct-2512-q4_K_M}"]
+    restart: "no"
+
   chat-app:
     build:
       context: ..
@@ -53,8 +66,8 @@ services:
     networks:
       - llmnet
     depends_on:
-      ollama:
-        condition: service_healthy
+      ollama-init:
+        condition: service_completed_successfully
       chromadb:
         condition: service_healthy
       otel-collector:
