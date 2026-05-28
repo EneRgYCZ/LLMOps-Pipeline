@@ -60,6 +60,12 @@ async def _lifespan(app: FastAPI):
         if _settings.eval_references_path:
             _references = load_references(_settings.eval_references_path)
 
+    # Pre-initialize labeled series so Prometheus emits them even before first request.
+    for ep in ("api/chat", "api/generate"):
+        REQUEST_TOTAL.labels(endpoint=ep)
+        REQUEST_ERRORS.labels(endpoint=ep)
+        REQUEST_DURATION.labels(endpoint=ep)
+
     yield
 
     if _eval_service is not None:
