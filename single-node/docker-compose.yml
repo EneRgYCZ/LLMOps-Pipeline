@@ -56,10 +56,15 @@ services:
         condition: service_healthy
       chromadb:
         condition: service_healthy
+      otel-collector:
+        condition: service_started
     environment:
       - OLLAMA_HOST=http://ollama:11434
       - CHROMA_HOST=chromadb
       - CHROMA_PORT=8000
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://otel-collector:4318/v1/metrics
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otel-collector:4318/v1/traces
       - RAG_ENABLED=${RAG_ENABLED:-true}
       - EVAL_ENABLED=${EVAL_ENABLED:-true}
       - EVAL_DB_PATH=/data/evaluations.db
