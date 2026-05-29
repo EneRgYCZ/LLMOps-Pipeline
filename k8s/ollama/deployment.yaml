@@ -41,7 +41,7 @@ ${OLLAMA_RUNTIME_CLASS}
             - |
               ollama serve &
               SERVE_PID=$!
-              until wget -qO- http://localhost:11434/api/tags > /dev/null 2>until curl -sf http://localhost:11434/api/tags > /dev/null 2>&1; do1; do
+              until ollama list > /dev/null 2>&1; do
                 sleep 2
               done
               ollama pull "${OLLAMA_MODEL}"
