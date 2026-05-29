@@ -144,6 +144,15 @@ fi
 echo "==> Namespace"
 apply "$K8S_DIR/namespace.yaml"
 
+echo "==> kube-state-metrics (required for replica-count metrics in Grafana and HPA recording rules)"
+KSM_BASE="https://raw.githubusercontent.com/kubernetes/kube-state-metrics/v2.13.0/examples/standard"
+for f in cluster-role.yaml cluster-role-binding.yaml service-account.yaml deployment.yaml service.yaml; do
+  apply "$KSM_BASE/$f"
+done
+if [[ "$DRY_RUN" != "--dry-run" ]]; then
+  kubectl rollout status deployment/kube-state-metrics -n kube-system --timeout=120s
+fi
+
 echo "==> Prometheus RBAC (must exist before Prometheus starts)"
 apply "$K8S_DIR/monitoring/prometheus/rbac.yaml"
 
