@@ -57,6 +57,12 @@ RESEOF
 
   OLLAMA_STARTUP_FAILURE_THRESHOLD="60"
 
+  OLLAMA_VOLUME=$(cat <<'VOLEOF'
+          persistentVolumeClaim:
+            claimName: ollama-models
+VOLEOF
+)
+
   GPU_SCRAPE_JOB=$(cat <<'SCRAPEEOF'
       # Per-GPU hardware telemetry via DCGM exporter (utilisation, VRAM, temperature).
       - job_name: "gpu"
@@ -73,32 +79,33 @@ else
 
   OLLAMA_INIT_RESOURCES=$(cat <<'RESEOF'
             limits:
-              cpu: "4"
-              memory: "8Gi"
+              cpu: "3"
+              memory: "12Gi"
             requests:
-              cpu: "2"
+              cpu: "1"
               memory: "6Gi"
 RESEOF
 )
 
   OLLAMA_MAIN_RESOURCES=$(cat <<'RESEOF'
             limits:
-              cpu: "8"
-              memory: "16Gi"
+              cpu: "3"
+              memory: "12Gi"
             requests:
-              cpu: "4"
-              memory: "8Gi"
+              cpu: "1"
+              memory: "6Gi"
 RESEOF
 )
 
   OLLAMA_STARTUP_FAILURE_THRESHOLD="120"
+  OLLAMA_VOLUME="          emptyDir: {}"
   GPU_SCRAPE_JOB=""
   DEPLOY_DCGM=false
 fi
 
 export OLLAMA_MODEL OLLAMA_RUNTIME_CLASS OLLAMA_NVIDIA_ENV_ENTRY \
        OLLAMA_INIT_RESOURCES OLLAMA_MAIN_RESOURCES \
-       OLLAMA_STARTUP_FAILURE_THRESHOLD GPU_SCRAPE_JOB
+       OLLAMA_STARTUP_FAILURE_THRESHOLD OLLAMA_VOLUME GPU_SCRAPE_JOB
 
 # --- Helpers ------------------------------------------------------------------
 RENDER_TMP="$(mktemp -d)"
@@ -116,7 +123,7 @@ apply() {
 render_apply() {
   local src="$1"
   local dst="$RENDER_TMP/$(basename "$src")"
-  envsubst '$OLLAMA_MODEL $OLLAMA_RUNTIME_CLASS $OLLAMA_NVIDIA_ENV_ENTRY $OLLAMA_INIT_RESOURCES $OLLAMA_MAIN_RESOURCES $OLLAMA_STARTUP_FAILURE_THRESHOLD $GPU_SCRAPE_JOB' \
+  envsubst '$OLLAMA_MODEL $OLLAMA_RUNTIME_CLASS $OLLAMA_NVIDIA_ENV_ENTRY $OLLAMA_INIT_RESOURCES $OLLAMA_MAIN_RESOURCES $OLLAMA_STARTUP_FAILURE_THRESHOLD $OLLAMA_VOLUME $GPU_SCRAPE_JOB' \
     < "$src" > "$dst"
   apply "$dst"
 }
@@ -177,8 +184,13 @@ if [[ "$DRY_RUN" != "--dry-run" ]]; then
   kubectl rollout status deployment/prometheus-adapter -n llmops --timeout=120s
 fi
 
-echo "==> Ollama (PVC, Deployment, Service)"
-apply "$K8S_DIR/ollama/pvc.yaml"
+echo "==> Ollama (Deployment, Service)"
+if [[ "$TARGET" == "GPU" ]]; then
+  echo "==> Ollama PVC (GPU mode — requires ReadWriteMany StorageClass)"
+  apply "$K8S_DIR/ollama/pvc.yaml"
+else
+  echo "==> Ollama PVC skipped (CPU mode — each replica uses emptyDir)"
+fi
 render_apply "$K8S_DIR/ollama/deployment.yaml"
 apply "$K8S_DIR/ollama/service.yaml"
 

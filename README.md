@@ -213,15 +213,17 @@ A second metric, `llm:queue_depth_littles_law` (`λ × W`), is recorded as a cro
 ### Prerequisites
 
 **Both modes:**
-- Kubernetes cluster with:
-  - StorageClass supporting **ReadWriteMany** (NFS, CephFS, AWS EFS, etc.) for the shared model PVC
-  - `kube-state-metrics` running in `kube-system` (standard in most distributions)
+- Kubernetes cluster with `kube-state-metrics` running in `kube-system` (standard in most distributions)
 - `kubectl` configured for the target cluster
 - Docker (to build the chat-app image)
 
 **GPU mode only (`TARGET=GPU`):**
+- StorageClass supporting **ReadWriteMany** (NFS, CephFS, AWS EFS, etc.) — Ollama replicas share a single PVC
 - NVIDIA GPU nodes with NVIDIA device plugin (`nvidia.com/gpu` resource)
 - `nvidia-container-runtime` or GPU Operator installed on each node
+
+**CPU mode (`TARGET=CPU`):**
+- No ReadWriteMany StorageClass required — each Ollama replica uses `emptyDir` and pulls its own model copy on startup
 
 ### Deploy
 
@@ -309,12 +311,14 @@ TARGET=GPU   # NVIDIA GPU machine
 
 | Feature | `GPU` | `CPU` |
 |---------|-------|-------|
-| Ollama resource requests/limits | `nvidia.com/gpu: "1"` | CPU + memory |
+| Ollama resource requests/limits | `nvidia.com/gpu: "1"` | cpu 1–3 / memory 6–12 Gi |
 | `runtimeClassName` (K8s only) | `nvidia` | absent |
 | `NVIDIA_VISIBLE_DEVICES` env var | `all` | absent |
 | DCGM exporter | deployed | skipped |
 | Grafana GPU panels | data from DCGM | "No data" (panel stays) |
 | K8s startup probe window | 10 min (60 × 10 s) | 20 min (120 × 10 s) |
+| K8s Ollama model storage | shared PVC (ReadWriteMany) | `emptyDir` per replica |
+| K8s PVC applied | yes | skipped |
 | Docker Compose GPU device reservation | present | absent |
 
 ### Single-node (Docker Compose)
@@ -329,14 +333,27 @@ In CPU mode only the base `docker-compose.yml` is used.
 `./scripts/k8s-deploy.sh` reads `TARGET` from `.env`, sets template variables,
 renders the manifests listed below via `envsubst`, then runs `kubectl apply`:
 
-- `k8s/ollama/deployment.yaml`
-- `k8s/chat-app/configmap.yaml`
-- `k8s/monitoring/prometheus/configmap.yaml`
+- `k8s/ollama/deployment.yaml` — GPU/CPU resources, runtime class, env, volume, startup probe
+- `k8s/chat-app/configmap.yaml` — model tag (`OLLAMA_MODEL`)
+- `k8s/monitoring/prometheus/configmap.yaml` — GPU scrape job
 
-> **Important:** The committed versions of these three files are `envsubst`
-> templates containing `${PLACEHOLDER}` variables. Running `kubectl apply -f`
-> on them directly (without the deploy script) will produce invalid YAML.
+The script also applies whole resources conditionally:
+
+| Resource | `GPU` | `CPU` |
+|----------|-------|-------|
+| `k8s/ollama/pvc.yaml` | applied | **skipped** |
+| `k8s/monitoring/dcgm-exporter/` | applied | **skipped** |
+
+> **Important:** The committed versions of the template files above contain
+> `${PLACEHOLDER}` variables and cannot be applied directly with `kubectl apply -f`.
+> Running `kubectl apply -f k8s/...` on the raw files will produce invalid YAML.
 > Always deploy via `./scripts/k8s-deploy.sh`.
+
+**Known limitation — CPU mode model cold-start:** In CPU mode each Ollama replica
+uses an `emptyDir` volume (no ReadWriteMany StorageClass required). This means
+every new pod pulls the model from the Ollama registry on startup. Scale-out events
+therefore incur a full model pull per replica in addition to the normal load time;
+the startup probe's 20-minute window accounts for this.
 
 ---
 

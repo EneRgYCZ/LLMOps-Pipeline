@@ -98,8 +98,7 @@ ${OLLAMA_MAIN_RESOURCES}
 
       volumes:
         - name: ollama-models
-          persistentVolumeClaim:
-            claimName: ollama-models
+${OLLAMA_VOLUME}
 
 ---
 apiVersion: v1
