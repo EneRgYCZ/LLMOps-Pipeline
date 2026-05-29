@@ -5,21 +5,19 @@ metadata:
   namespace: llmops
 data:
   config.yaml: |
-    rules:
+    # externalRules serve external.metrics.k8s.io — required for HPA type: External.
+    # These metrics are not tied to a Kubernetes resource (no namespace/pod mapping).
+    externalRules:
     - seriesQuery: 'llm:active_requests:total'
-      seriesFilters: []
-      resources:
-        namespaced: false
       name:
         as: "llm_active_requests_total"
       metricsQuery: 'max(llm:active_requests:total)'
     - seriesQuery: 'llm:queue_depth_littles_law'
-      seriesFilters: []
-      resources:
-        namespaced: false
       name:
         as: "llm_queue_depth_littles_law"
       metricsQuery: 'max(llm:queue_depth_littles_law)'
+    # rules serve custom.metrics.k8s.io — pod/namespace-scoped metrics.
+    rules:
     - seriesQuery: 'llm_active_requests{namespace!="",pod!=""}'
       seriesFilters: []
       resources:
