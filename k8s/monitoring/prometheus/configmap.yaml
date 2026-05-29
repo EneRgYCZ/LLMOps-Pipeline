@@ -106,5 +106,5 @@ ${GPU_SCRAPE_JOB}
           # Track Ollama replica count from kube-state-metrics for scaling event correlation.
           - record: ollama:replica_count
             expr: >
-              kube_deployment_status_replicas_ready{namespace="llmops", deployment="ollama"}
+              sum(kube_deployment_status_replicas_ready{namespace="llmops", deployment="ollama"})
               or vector(0)
