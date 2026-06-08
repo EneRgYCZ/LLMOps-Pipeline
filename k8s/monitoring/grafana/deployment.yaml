@@ -47,25 +47,32 @@ data:
         {
           "id": 1, "type": "stat", "title": "Ollama Replicas (Ready)",
           "gridPos": {"x": 0, "y": 0, "w": 4, "h": 4},
-          "targets": [{"expr": "ollama:replica_count", "legendFormat": "replicas"}],
+          "targets": [{"expr": "ollama:replica_count", "legendFormat": "ready"}],
           "fieldConfig": {"defaults": {"color": {"mode": "thresholds"},
             "thresholds": {"steps": [{"color": "red", "value": 0}, {"color": "green", "value": 1}]}}}
         },
         {
-          "id": 2, "type": "stat", "title": "Active Requests",
+          "id": 12, "type": "stat", "title": "Ollama Replicas (Desired)",
           "gridPos": {"x": 4, "y": 0, "w": 4, "h": 4},
+          "targets": [{"expr": "kube_horizontalpodautoscaler_status_desired_replicas{namespace=\"llmops\",horizontalpodautoscaler=\"ollama-hpa\"}", "legendFormat": "desired"}],
+          "fieldConfig": {"defaults": {"color": {"mode": "thresholds"},
+            "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 2}, {"color": "red", "value": 4}]}}}
+        },
+        {
+          "id": 2, "type": "stat", "title": "Active Requests",
+          "gridPos": {"x": 8, "y": 0, "w": 4, "h": 4},
           "targets": [{"expr": "llm:active_requests:total", "legendFormat": "active"}],
           "fieldConfig": {"defaults": {"color": {"mode": "thresholds"},
             "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "yellow", "value": 3}, {"color": "red", "value": 9}]}}}
         },
         {
           "id": 3, "type": "stat", "title": "Request Rate (req/s)",
-          "gridPos": {"x": 8, "y": 0, "w": 4, "h": 4},
+          "gridPos": {"x": 12, "y": 0, "w": 4, "h": 4},
           "targets": [{"expr": "llm:request_rate:1m", "legendFormat": "req/s"}]
         },
         {
           "id": 4, "type": "stat", "title": "Error Rate (req/s)",
-          "gridPos": {"x": 12, "y": 0, "w": 4, "h": 4},
+          "gridPos": {"x": 16, "y": 0, "w": 4, "h": 4},
           "targets": [{"expr": "llm:error_rate:1m", "legendFormat": "errors/s"}],
           "fieldConfig": {"defaults": {"color": {"mode": "thresholds"},
             "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "red", "value": 0.01}]}}}

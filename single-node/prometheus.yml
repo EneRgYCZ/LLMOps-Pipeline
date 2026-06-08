@@ -18,6 +18,11 @@ scrape_configs:
     static_configs:
       - targets: ["host.docker.internal:9100"]
 
+  # Wrapper app Prometheus metrics: request rate, latency histogram, error rate.
+  - job_name: "chat-app"
+    static_configs:
+      - targets: ["chat-app:8000"]
+
   # Per-GPU hardware telemetry: utilisation, VRAM used, temperature, SM clock.
   - job_name: "gpu"
     static_configs:

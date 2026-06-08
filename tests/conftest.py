@@ -119,6 +119,7 @@ def test_settings():
         metrics_endpoint="http://localhost:4318/v1/metrics",
         traces_endpoint="http://localhost:4318/v1/traces",
         ollama_host="http://localhost:11434",
+        chat_host="http://localhost:8000",
         ollama_model="test-model",
         otel_service_name="test-service",
         otel_deployment_environment="test",

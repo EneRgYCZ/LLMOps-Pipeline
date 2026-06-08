@@ -17,11 +17,11 @@ spec:
       labels:
         app: ollama
       annotations:
-        # The Ollama REST API does not expose a Prometheus endpoint natively.
-        # Per-replica GPU metrics come from the dcgm-exporter DaemonSet instead.
+        # Ollama does not expose a Prometheus endpoint; metrics come from the OTel collector.
         prometheus.io/scrape: "false"
     spec:
-      # Spread replicas across nodes so each gets a dedicated GPU.
+${OLLAMA_RUNTIME_CLASS}
+      # Spread replicas across nodes for fault isolation.
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
@@ -41,7 +41,7 @@ spec:
             - |
               ollama serve &
               SERVE_PID=$!
-              until curl -sf http://localhost:11434/api/tags > /dev/null 2>&1; do
+              until ollama list > /dev/null 2>&1; do
                 sleep 2
               done
               ollama pull "${OLLAMA_MODEL}"
@@ -52,13 +52,9 @@ spec:
                 configMapKeyRef:
                   name: ollama-config
                   key: OLLAMA_MODEL
-            - name: NVIDIA_VISIBLE_DEVICES
-              value: "all"
+${OLLAMA_NVIDIA_ENV_ENTRY}
           resources:
-            limits:
-              nvidia.com/gpu: "1"
-            requests:
-              nvidia.com/gpu: "1"
+${OLLAMA_INIT_RESOURCES}
           volumeMounts:
             - name: ollama-models
               mountPath: /root/.ollama
@@ -70,17 +66,11 @@ spec:
             - name: api
               containerPort: 11434
           env:
-            - name: NVIDIA_VISIBLE_DEVICES
-              value: "all"
+${OLLAMA_NVIDIA_ENV_ENTRY}
             - name: OLLAMA_HOST
               value: "0.0.0.0"
           resources:
-            limits:
-              nvidia.com/gpu: "1"
-            requests:
-              nvidia.com/gpu: "1"
-              memory: "2Gi"
-              cpu: "2"
+${OLLAMA_MAIN_RESOURCES}
           volumeMounts:
             - name: ollama-models
               mountPath: /root/.ollama
@@ -102,14 +92,13 @@ spec:
             httpGet:
               path: /api/tags
               port: 11434
-            # Allow up to 10 minutes for large model cold-start
-            failureThreshold: 60
+            # GPU: 60 × 10s = 10 min; CPU: 120 × 10s = 20 min
+            failureThreshold: ${OLLAMA_STARTUP_FAILURE_THRESHOLD}
             periodSeconds: 10
 
       volumes:
         - name: ollama-models
-          persistentVolumeClaim:
-            claimName: ollama-models
+${OLLAMA_VOLUME}
 
 ---
 apiVersion: v1
@@ -118,4 +107,4 @@ metadata:
   name: ollama-config
   namespace: llmops
 data:
-  OLLAMA_MODEL: "ministral-3:8b-instruct-2512-q4_K_M"
+  OLLAMA_MODEL: "${OLLAMA_MODEL}"

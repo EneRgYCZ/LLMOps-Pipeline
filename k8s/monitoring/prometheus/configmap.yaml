@@ -53,12 +53,7 @@ data:
         static_configs:
           - targets: ["node-exporter:9100"]
 
-      # Per-GPU hardware telemetry via DCGM exporter (utilisation, VRAM, temperature).
-      # Labels include gpu_uuid and gpu_model, enabling per-replica GPU drill-down.
-      - job_name: "gpu"
-        static_configs:
-          - targets: ["dcgm-exporter:9400"]
-
+${GPU_SCRAPE_JOB}
       # Kubernetes control-plane metrics (replica counts, HPA status, pod restarts).
       - job_name: "kube-state-metrics"
         static_configs:
@@ -71,8 +66,14 @@ data:
         rules:
           # Total in-flight LLM requests across all chat-app pods.
           # Used by the HPA as the primary scaling signal for the Ollama Deployment.
+          # label_replace adds namespace="llmops" so prometheus-adapter can inject
+          # the namespace selector when serving this as an external metric.
           - record: llm:active_requests:total
-            expr: sum(llm_active_requests) or vector(0)
+            expr: >
+              label_replace(
+                sum(llm_active_requests{namespace="llmops"}) or vector(0),
+                "namespace", "llmops", "", ""
+              )
 
           # Request rate (req/s) derived from the wrapper counter.
           - record: llm:request_rate:1m
@@ -92,12 +93,16 @@ data:
           # Little's Law approximation of queue depth:
           #   L ≈ λ × W  (arrival_rate × average_service_time)
           # Provides a cross-check on the active_requests gauge.
+          # label_replace adds namespace="llmops" for prometheus-adapter external metrics.
           - record: llm:queue_depth_littles_law
             expr: >
-              (sum(rate(llm_requests_total[2m])) or vector(0))
-              * (
-                (sum(rate(llm_request_duration_seconds_sum[2m])) or vector(0))
-                / (sum(rate(llm_request_duration_seconds_count[2m])) > 0 or vector(1))
+              label_replace(
+                (sum(rate(llm_requests_total[2m])) or vector(0))
+                * (
+                  (sum(rate(llm_request_duration_seconds_sum[2m])) or vector(0))
+                  / (sum(rate(llm_request_duration_seconds_count[2m])) > 0 or vector(1))
+                ),
+                "namespace", "llmops", "", ""
               )
 
           # Error rate for alerting and dashboard visibility.
@@ -111,5 +116,5 @@ data:
           # Track Ollama replica count from kube-state-metrics for scaling event correlation.
           - record: ollama:replica_count
             expr: >
-              kube_deployment_status_replicas_ready{namespace="llmops", deployment="ollama"}
+              sum(kube_deployment_status_replicas_ready{namespace="llmops", deployment="ollama"})
               or vector(0)

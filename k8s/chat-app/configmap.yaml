@@ -5,7 +5,7 @@ metadata:
   namespace: llmops
 data:
   OLLAMA_HOST: "http://ollama:11434"
-  OLLAMA_MODEL: "ministral-3:8b-instruct-2512-q4_K_M"
+  OLLAMA_MODEL: "${OLLAMA_MODEL}"
   OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: "http://otel-collector:4318/v1/metrics"
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://otel-collector:4318/v1/traces"

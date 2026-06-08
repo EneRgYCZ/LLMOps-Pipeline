@@ -6,7 +6,7 @@ from settings import Settings
 class ChatApplication:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
-        self.client = ollama.Client(host=settings.ollama_host)
+        self.client = ollama.Client(host=settings.chat_host)
         self.messages: list[dict[str, str]] = []
 
     def run(self) -> None:

@@ -12,6 +12,7 @@ class Settings:
     metrics_endpoint: str
     traces_endpoint: str
     ollama_host: str
+    chat_host: str
     ollama_model: str
     otel_service_name: str
     otel_deployment_environment: str
@@ -78,6 +79,7 @@ class SettingsFactory:
         raw_eval_enabled = EnvConfigHelper.read("EVAL_ENABLED", "false").lower()
 
         ollama_host = EnvConfigHelper.read("OLLAMA_HOST", "http://localhost:11434")
+        chat_host = EnvConfigHelper.read("CHAT_HOST", "http://localhost:8000")
         ollama_model = EnvConfigHelper.read(
             "OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M"
         )
@@ -93,6 +95,7 @@ class SettingsFactory:
                 "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT", "/v1/traces"
             ),
             ollama_host=ollama_host,
+            chat_host=chat_host,
             ollama_model=ollama_model,
             otel_service_name=EnvConfigHelper.read("OTEL_SERVICE_NAME", "llmops-chat"),
             otel_deployment_environment=EnvConfigHelper.read(

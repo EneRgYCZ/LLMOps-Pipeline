@@ -42,10 +42,13 @@ async def _lifespan(app: FastAPI):
     OpenTelemetryHelper.init_openlit()
 
     if _settings.rag_enabled:
+        import asyncio
         from rag import RAGConfig, RAGService
 
         rag_config = RAGConfig()
-        _rag_service = RAGService(rag_config)
+        # RAGService.__init__ loads a SentenceTransformer model synchronously.
+        # Run in a thread so the event loop stays responsive during startup (health probe).
+        _rag_service = await asyncio.to_thread(RAGService, rag_config)
 
     if _settings.eval_enabled:
         from evaluation import EvaluationConfig, EvaluationService, load_references
@@ -59,6 +62,12 @@ async def _lifespan(app: FastAPI):
 
         if _settings.eval_references_path:
             _references = load_references(_settings.eval_references_path)
+
+    # Pre-initialize labeled series so Prometheus emits them even before first request.
+    for ep in ("api/chat", "api/generate"):
+        REQUEST_TOTAL.labels(endpoint=ep)
+        REQUEST_ERRORS.labels(endpoint=ep)
+        REQUEST_DURATION.labels(endpoint=ep)
 
     yield
 

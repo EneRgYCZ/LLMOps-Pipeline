@@ -1,0 +1,26 @@
+# GPU overlay — merge with docker-compose.yml when TARGET=GPU.
+# start.sh loads this automatically; do not apply directly.
+services:
+  ollama:
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+
+  dcgm-exporter:
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:3.3.5-3.4.0-ubuntu22.04
+    container_name: dcgm-exporter
+    runtime: nvidia
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    ports:
+      - "9400:9400"
+    networks:
+      - llmnet
+    restart: unless-stopped

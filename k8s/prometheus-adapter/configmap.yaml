@@ -5,21 +5,26 @@ metadata:
   namespace: llmops
 data:
   config.yaml: |
-    rules:
-    - seriesQuery: 'llm:active_requests:total'
-      seriesFilters: []
+    # externalRules serve external.metrics.k8s.io — required for HPA type: External.
+    # The recording rules add namespace="llmops" via label_replace so the adapter
+    # can inject the namespace selector from the HPA request into the PromQL query.
+    externalRules:
+    - seriesQuery: 'llm:active_requests:total{namespace="llmops"}'
       resources:
-        namespaced: false
+        overrides:
+          namespace: {resource: "namespace"}
       name:
         as: "llm_active_requests_total"
-      metricsQuery: 'max(llm:active_requests:total)'
-    - seriesQuery: 'llm:queue_depth_littles_law'
-      seriesFilters: []
+      metricsQuery: 'max(llm:active_requests:total{<<.LabelMatchers>>})'
+    - seriesQuery: 'llm:queue_depth_littles_law{namespace="llmops"}'
       resources:
-        namespaced: false
+        overrides:
+          namespace: {resource: "namespace"}
       name:
         as: "llm_queue_depth_littles_law"
-      metricsQuery: 'max(llm:queue_depth_littles_law)'
+      metricsQuery: 'max(llm:queue_depth_littles_law{<<.LabelMatchers>>})'
+    # rules serve custom.metrics.k8s.io — pod/namespace-scoped metrics.
+    rules:
     - seriesQuery: 'llm_active_requests{namespace!="",pod!=""}'
       seriesFilters: []
       resources:

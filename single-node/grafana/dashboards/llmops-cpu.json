@@ -1,0 +1,78 @@
+{
+  "title": "LLMOps Single-Node CPU Baseline",
+  "uid": "llmops-singlenode-cpu",
+  "schemaVersion": 38,
+  "time": {"from": "now-1h", "to": "now"},
+  "refresh": "15s",
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Request Rate (req/s)",
+      "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "llm:request_rate:1m", "legendFormat": "req/s"}]
+    },
+    {
+      "id": 2, "type": "stat", "title": "Error Rate (req/s)",
+      "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "llm:error_rate:1m", "legendFormat": "errors/s"}],
+      "fieldConfig": {"defaults": {"color": {"mode": "thresholds"},
+        "thresholds": {"steps": [{"color": "green", "value": 0}, {"color": "red", "value": 0.01}]}}}
+    },
+    {
+      "id": 3, "type": "stat", "title": "CPU Utilisation (%)",
+      "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[2m])) * 100)", "legendFormat": "CPU used"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}}
+    },
+    {
+      "id": 4, "type": "stat", "title": "RAM Utilisation (%)",
+      "gridPos": {"x": 18, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100", "legendFormat": "RAM used"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}}
+    },
+    {
+      "id": 5, "type": "timeseries", "title": "Request Latency Percentiles (wrapper)",
+      "gridPos": {"x": 0, "y": 4, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "llm:request_duration_p50", "legendFormat": "p50"},
+        {"expr": "llm:request_duration_p95", "legendFormat": "p95"},
+        {"expr": "histogram_quantile(0.99, sum(rate(llm_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p99"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}}
+    },
+    {
+      "id": 6, "type": "timeseries", "title": "OTel Operation Latency — p50 / p95",
+      "description": "gen_ai_client_operation_duration_seconds from OpenLIT instrumentation.",
+      "gridPos": {"x": 12, "y": 4, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "llm:otel_operation_p50", "legendFormat": "p50"},
+        {"expr": "llm:otel_operation_p95", "legendFormat": "p95"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}}
+    },
+    {
+      "id": 7, "type": "timeseries", "title": "Host CPU Utilisation (%)",
+      "gridPos": {"x": 0, "y": 12, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[2m])) * 100)", "legendFormat": "CPU used"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}}
+    },
+    {
+      "id": 8, "type": "timeseries", "title": "Host Memory Utilisation (%)",
+      "gridPos": {"x": 12, "y": 12, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100", "legendFormat": "RAM used"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}}
+    },
+    {
+      "id": 9, "type": "timeseries",
+      "title": "Little's Law Queue Depth (λ × W)",
+      "description": "Approximates average in-flight requests using Little's Law. Useful for single-node capacity analysis and cross-deployment comparison.",
+      "gridPos": {"x": 0, "y": 20, "w": 24, "h": 6},
+      "targets": [
+        {"expr": "llm:queue_depth_littles_law", "legendFormat": "approx queue depth"}
+      ]
+    }
+  ]
+}
