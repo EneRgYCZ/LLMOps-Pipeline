@@ -15,7 +15,6 @@ services:
           devices:
             - driver: nvidia
               capabilities: [gpu]
-
   dcgm-exporter:
     image: nvcr.io/nvidia/k8s/dcgm-exporter:3.3.5-3.4.0-ubuntu22.04
     container_name: dcgm-exporter
