@@ -6,7 +6,12 @@ services:
       - NVIDIA_VISIBLE_DEVICES=all
     deploy:
       resources:
+        limits:
+          cpus: "${SINGLE_NODE_CPU:-14}"
+          memory: ${SINGLE_NODE_MEMORY:-12G}
         reservations:
+          cpus: "${SINGLE_NODE_CPU_RESERVATION:-12}"
+          memory: ${SINGLE_NODE_MEMORY_RESERVATION:-10G}
           devices:
             - driver: nvidia
               capabilities: [gpu]

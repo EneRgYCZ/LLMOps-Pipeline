@@ -12,12 +12,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "14.0"
-          memory: 12G
-
+          cpus: "${SINGLE_NODE_CPU:-14}"
+          memory: ${SINGLE_NODE_MEMORY:-12G}
         reservations:
-          cpus: "12.0"
-          memory: 8G
+          cpus: "${SINGLE_NODE_CPU_RESERVATION:-12}"
+          memory: ${SINGLE_NODE_MEMORY_RESERVATION:-10G}
     healthcheck:
       test: ["CMD", "ollama", "list"]
       interval: 10s
