@@ -2,6 +2,7 @@
 # start.sh loads this automatically; do not apply directly.
 services:
   ollama:
+    runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
     deploy:
