@@ -44,7 +44,7 @@ from pathlib import Path
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M")
 EMBED_MODEL = os.getenv("EMBED_MODEL", "nomic-embed-text")
-N_RUNS = int(os.getenv("N_RUNS", "3"))
+N_RUNS = int(os.getenv("N_RUNS_RQ3_TEST", "20"))
 
 RESULTS_DIR = Path("results")
 RAW_CSV = RESULTS_DIR / "rq3_raw.csv"
