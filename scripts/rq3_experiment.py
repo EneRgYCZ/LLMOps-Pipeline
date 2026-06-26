@@ -4,23 +4,21 @@ RQ3 Experiment: RAGAS Metric Consistency Under a Self-Judging Model Configuratio
 Dataset : explodinggradients/amnesty_qa (english_v3) — the canonical dataset
           used in the original RAGAS paper (Es et al., EACL 2024).
 Judge   : Ministral 8B Instruct Q4_K_M via local Ollama (same model as inference).
-Runs    : N_RUNS passes over all 20 samples (default 3).
+Runs    : N_RUNS passes over all 20 samples (default 20).
 Output  : results/rq3_raw.csv          — one row per (run, sample)
-          results/rq3_run_summary.csv  — per-run averages
+          results/rq3_run_summary.csv  — per-run mean + std per metric
           results/rq3_experiment.log   — full execution log
 
 Usage
 -----
     # Make sure Ollama is running and the model is pulled:
     #   ollama pull ministral-3:8b-instruct-2512-q4_K_M
-    #   ollama pull nomic-embed-text
     python rq3_experiment.py
 
     # Override defaults via env vars:
     OLLAMA_HOST=http://localhost:11434 \
     OLLAMA_MODEL=ministral-3:8b-instruct-2512-q4_K_M \
-    EMBED_MODEL=nomic-embed-text \
-    N_RUNS=3 \
+    N_RUNS_RQ3_TEST=20 \
     python rq3_experiment.py
 
 Dependencies (all already in requirements.txt + datasets):
@@ -32,6 +30,7 @@ Dependencies (all already in requirements.txt + datasets):
 import asyncio
 import csv
 import logging
+import math
 import os
 import sys
 import time
@@ -70,23 +69,51 @@ log = logging.getLogger("rq3")
 
 
 # ---------------------------------------------------------------------------
+# Statistics helpers (stdlib only — no scipy/pandas dependency)
+# ---------------------------------------------------------------------------
+def _mean(vals: list[float]) -> float | None:
+    return sum(vals) / len(vals) if vals else None
+
+
+def _std(vals: list[float]) -> float | None:
+    if len(vals) < 2:
+        return None
+    m = sum(vals) / len(vals)
+    return math.sqrt(sum((v - m) ** 2 for v in vals) / (len(vals) - 1))
+
+
+def _summary_stats(rows: list[dict], metric: str) -> dict:
+    """Return mean, std, min, max for a metric over a list of result rows."""
+    vals = [r[metric] for r in rows if r.get(metric) is not None]
+    if not vals:
+        return {"mean": None, "std": None, "min": None, "max": None, "n": 0}
+    return {
+        "mean": round(_mean(vals), 4),
+        "std": round(_std(vals), 4) if _std(vals) is not None else None,
+        "min": round(min(vals), 4),
+        "max": round(max(vals), 4),
+        "n": len(vals),
+    }
+
+
+# ---------------------------------------------------------------------------
 # RAGAS + Ollama wiring (0.4.x API — no deprecated wrappers)
 # ---------------------------------------------------------------------------
 def build_ragas_components():
     """
-    Return (llm, embeddings) using the 0.4.x llm_factory / embedding_factory API.
-    Ollama exposes an OpenAI-compatible endpoint at /v1, so we use provider='openai'.
+    Return (llm, embeddings) using the 0.4.x llm_factory API.
+    Ollama exposes an OpenAI-compatible endpoint at /v1.
     """
     from openai import AsyncOpenAI
     from ragas.embeddings import HuggingFaceEmbeddings
     from ragas.llms import llm_factory
 
     client = AsyncOpenAI(
-        api_key="ollama",  # Ollama does not require a real key
+        api_key="ollama",
         base_url=f"{OLLAMA_HOST}/v1",
     )
-    # Default max_tokens=1024 truncates this model's verbose structured
-    # output (e.g. faithfulness statement verification); raise the cap.
+    # Raise max_tokens to avoid truncating verbose structured outputs
+    # (faithfulness verification can produce many statement-level lines).
     llm = llm_factory(OLLAMA_MODEL, provider="openai", client=client, max_tokens=4096)
 
     # HuggingFaceEmbeddings runs locally on CPU — no Ollama embedding endpoint needed.
@@ -120,7 +147,6 @@ def load_amnesty_qa():
     """
     Load explodinggradients/amnesty_qa english_v3.
     Column names in v3: user_input, response, retrieved_contexts, reference.
-    Returns a list of dicts with normalised keys used throughout this script.
     """
     from datasets import load_dataset
 
@@ -150,8 +176,6 @@ async def score_sample(sample: dict, metrics: dict) -> dict:
     """
     import inspect
 
-    # ragas 0.4.x collections metrics each take a different subset of these
-    # named arguments via .ascore(**kwargs); filter per metric's signature.
     available_args = {
         "user_input": sample["question"],
         "response": sample["answer"],
@@ -177,10 +201,7 @@ async def score_sample(sample: dict, metrics: dict) -> dict:
 # One full run over all samples
 # ---------------------------------------------------------------------------
 async def run_pass(run_id: int, samples: list, metrics: dict) -> list[dict]:
-    """
-    Score all samples in one pass.
-    Returns list of result dicts ready for CSV writing.
-    """
+    """Score all samples in one pass. Returns rows ready for CSV writing."""
     rows = []
     for idx, sample in enumerate(samples):
         sample_id = idx + 1
@@ -219,6 +240,11 @@ async def run_pass(run_id: int, samples: list, metrics: dict) -> list[dict]:
 # ---------------------------------------------------------------------------
 RAW_FIELDNAMES = ["run_id", "sample_id", "question", "elapsed_seconds"] + METRICS
 
+# Summary includes mean + std + min + max per metric per run
+SUMMARY_FIELDNAMES = ["run_id", "n_samples"] + [
+    f"{stat}_{m}" for m in METRICS for stat in ("mean", "std", "min", "max")
+]
+
 
 def write_raw_header():
     with open(RAW_CSV, "w", newline="", encoding="utf-8") as f:
@@ -232,25 +258,26 @@ def append_raw_rows(rows: list[dict]):
 
 
 def write_summary(all_rows: list[dict]):
-    """Write per-run averages to the summary CSV."""
+    """Write per-run descriptive statistics (mean, std, min, max) to the summary CSV."""
     from collections import defaultdict
 
     run_buckets: dict[int, list[dict]] = defaultdict(list)
     for row in all_rows:
         run_buckets[row["run_id"]].append(row)
 
-    summary_fields = ["run_id", "n_samples"] + [f"mean_{m}" for m in METRICS]
-
     with open(SUMMARY_CSV, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=summary_fields)
+        writer = csv.DictWriter(f, fieldnames=SUMMARY_FIELDNAMES)
         writer.writeheader()
         for run_id in sorted(run_buckets):
             bucket = run_buckets[run_id]
-            summary = {"run_id": run_id, "n_samples": len(bucket)}
+            summary_row = {"run_id": run_id, "n_samples": len(bucket)}
             for m in METRICS:
-                vals = [r[m] for r in bucket if r[m] is not None]
-                summary[f"mean_{m}"] = round(sum(vals) / len(vals), 4) if vals else None
-            writer.writerow(summary)
+                stats = _summary_stats(bucket, m)
+                summary_row[f"mean_{m}"] = stats["mean"]
+                summary_row[f"std_{m}"] = stats["std"]
+                summary_row[f"min_{m}"] = stats["min"]
+                summary_row[f"max_{m}"] = stats["max"]
+            writer.writerow(summary_row)
 
 
 # ---------------------------------------------------------------------------
@@ -269,7 +296,6 @@ async def main():
     )
     log.info("=" * 70)
 
-    # Validate Ollama is reachable before doing anything else
     import httpx
 
     try:
@@ -304,16 +330,20 @@ async def main():
         append_raw_rows(rows)
         all_rows.extend(rows)
 
+        # Log mean ± std for each metric after each run
         for m in METRICS:
-            vals = [r[m] for r in rows if r[m] is not None]
-            avg = sum(vals) / len(vals) if vals else None
-            log.info(
-                "  run=%d  mean_%s=%.4f  (n=%d)",
-                run_id,
-                m,
-                avg if avg else 0.0,
-                len(vals),
-            )
+            stats = _summary_stats(rows, m)
+            if stats["mean"] is not None:
+                log.info(
+                    "  run=%d  %s: mean=%.4f  std=%.4f  min=%.4f  max=%.4f  (n=%d)",
+                    run_id,
+                    m,
+                    stats["mean"],
+                    stats["std"] or 0.0,
+                    stats["min"],
+                    stats["max"],
+                    stats["n"],
+                )
         log.info("  run=%d  total_time=%.1fs", run_id, run_elapsed)
 
     write_summary(all_rows)
