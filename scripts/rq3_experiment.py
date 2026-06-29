@@ -114,7 +114,9 @@ def build_ragas_components():
     )
     # Raise max_tokens to avoid truncating verbose structured outputs
     # (faithfulness verification can produce many statement-level lines).
-    llm = llm_factory(OLLAMA_MODEL, provider="openai", client=client, max_tokens=4096)
+    llm = llm_factory(
+        OLLAMA_MODEL, provider="openai", client=client, max_tokens=4096, temperature=0.1
+    )
 
     # HuggingFaceEmbeddings runs locally on CPU — no Ollama embedding endpoint needed.
     # all-MiniLM-L6-v2 is already used by the pipeline's RAG module.
