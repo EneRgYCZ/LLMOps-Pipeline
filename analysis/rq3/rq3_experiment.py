@@ -1,37 +1,9 @@
-"""
-RQ3 Experiment: RAGAS Metric Consistency Under a Self-Judging Model Configuration
-====================================================================================
-Dataset : explodinggradients/amnesty_qa (english_v3) — the canonical dataset
-          used in the original RAGAS paper (Es et al., EACL 2024).
-Judge   : Ministral 8B Instruct Q4_K_M via local Ollama (same model as inference).
-Runs    : N_RUNS passes over all 20 samples (default 20).
-Output  : results/rq3_raw.csv          — one row per (run, sample)
-          results/rq3_run_summary.csv  — per-run mean + std per metric
-          results/rq3_experiment.log   — full execution log
-
-Usage
------
-    # Make sure Ollama is running and the model is pulled:
-    #   ollama pull ministral-3:8b-instruct-2512-q4_K_M
-    python rq3_experiment.py
-
-    # Override defaults via env vars:
-    OLLAMA_HOST=http://localhost:11434 \
-    OLLAMA_MODEL=ministral-3:8b-instruct-2512-q4_K_M \
-    N_RUNS_RQ3_TEST=20 \
-    python rq3_experiment.py
-
-Dependencies (all already in requirements.txt + datasets):
-    ragas==0.4.3
-    langchain-ollama==0.2.3
-    datasets
-"""
-
 import asyncio
 import csv
 import logging
 import math
 import os
+import subprocess
 import sys
 import time
 from datetime import datetime
@@ -44,6 +16,15 @@ OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M")
 EMBED_MODEL = os.getenv("EMBED_MODEL", "nomic-embed-text")
 N_RUNS = int(os.getenv("N_RUNS_RQ3_TEST", "20"))
+
+# Restart the Ollama model process between runs to clear llama.cpp's prompt
+# cache. Default ON — set to "0" to disable (e.g. for quick debugging runs
+# where cache effects do not matter).
+RESTART_BETWEEN_RUNS = os.getenv("RESTART_BETWEEN_RUNS", "1") == "1"
+
+# Seconds to wait after `ollama stop` before the next run starts, giving the
+# server time to fully unload the model and release VRAM before reload.
+RESTART_SETTLE_SECONDS = float(os.getenv("RESTART_SETTLE_SECONDS", "3"))
 
 RESULTS_DIR = Path("results")
 RAW_CSV = RESULTS_DIR / "rq3_raw.csv"
@@ -97,6 +78,45 @@ def _summary_stats(rows: list[dict], metric: str) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# Ollama model restart (cache invalidation)
+# ---------------------------------------------------------------------------
+def restart_ollama_model():
+    """
+    Stop the Ollama model process to flush llama.cpp's in-memory prompt
+    cache, then briefly wait. The model will be reloaded automatically by
+    Ollama on the next request, at the cost of a cold-start delay on the
+    first sample of the following run.
+    """
+    log.info("Restarting Ollama model %s to clear prompt cache ...", OLLAMA_MODEL)
+    try:
+        result = subprocess.run(
+            ["ollama", "stop", OLLAMA_MODEL],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        if result.returncode != 0:
+            log.warning(
+                "  'ollama stop' exited with code %d: %s",
+                result.returncode,
+                result.stderr.strip(),
+            )
+        else:
+            log.info("  Model stopped successfully.")
+    except FileNotFoundError:
+        log.error(
+            "  'ollama' CLI not found on PATH — cannot restart model. "
+            "Cache invalidation will not occur between runs."
+        )
+    except subprocess.TimeoutExpired:
+        log.warning("  'ollama stop' timed out after 30s, continuing anyway.")
+    except Exception as exc:
+        log.warning("  Unexpected error while stopping model: %s", exc)
+
+    time.sleep(RESTART_SETTLE_SECONDS)
+
+
+# ---------------------------------------------------------------------------
 # RAGAS + Ollama wiring (0.4.x API — no deprecated wrappers)
 # ---------------------------------------------------------------------------
 def build_ragas_components():
@@ -114,8 +134,16 @@ def build_ragas_components():
     )
     # Raise max_tokens to avoid truncating verbose structured outputs
     # (faithfulness verification can produce many statement-level lines).
+    # temperature=0.1 follows the recommendation in the temperature-vs-LLM-judge
+    # literature (peak self-consistency at t=0.1); note that on its own this
+    # does NOT guarantee independent runs if the prompt cache replays a prior
+    # completion verbatim — see restart_ollama_model() above.
     llm = llm_factory(
-        OLLAMA_MODEL, provider="openai", client=client, max_tokens=4096, temperature=0.1
+        OLLAMA_MODEL,
+        provider="openai",
+        client=client,
+        max_tokens=4096,
+        temperature=0.1,
     )
 
     # HuggingFaceEmbeddings runs locally on CPU — no Ollama embedding endpoint needed.
@@ -290,11 +318,13 @@ async def main():
     log.info("RQ3 Experiment — RAGAS metric consistency")
     log.info("Started at %s", datetime.now().isoformat())
     log.info(
-        "OLLAMA_HOST=%s  OLLAMA_MODEL=%s  EMBED_MODEL=%s  N_RUNS=%d",
+        "OLLAMA_HOST=%s  OLLAMA_MODEL=%s  EMBED_MODEL=%s  N_RUNS=%d  "
+        "RESTART_BETWEEN_RUNS=%s",
         OLLAMA_HOST,
         OLLAMA_MODEL,
         EMBED_MODEL,
         N_RUNS,
+        RESTART_BETWEEN_RUNS,
     )
     log.info("=" * 70)
 
@@ -321,6 +351,11 @@ async def main():
     all_rows = []
 
     for run_id in range(1, N_RUNS + 1):
+        # Clear the prompt cache before every run except the very first,
+        # which starts from a cold model anyway.
+        if RESTART_BETWEEN_RUNS and run_id > 1:
+            restart_ollama_model()
+
         log.info("-" * 60)
         log.info("Starting run %d / %d", run_id, N_RUNS)
         log.info("-" * 60)
@@ -332,7 +367,6 @@ async def main():
         append_raw_rows(rows)
         all_rows.extend(rows)
 
-        # Log mean ± std for each metric after each run
         for m in METRICS:
             stats = _summary_stats(rows, m)
             if stats["mean"] is not None:
