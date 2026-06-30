@@ -15,7 +15,7 @@ from pathlib import Path
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M")
 EMBED_MODEL = os.getenv("EMBED_MODEL", "nomic-embed-text")
-N_RUNS = int(os.getenv("N_RUNS_RQ3_TEST", "5"))
+N_RUNS = int(os.getenv("N_RUNS_RQ3_TEST", "20"))
 
 # Restart the Ollama model process between runs to clear llama.cpp's prompt
 # cache. Default ON — set to "0" to disable (e.g. for quick debugging runs
@@ -149,18 +149,24 @@ def build_ragas_components():
         api_key="ollama",
         base_url=f"{OLLAMA_HOST}/v1",
     )
-    # Raise max_tokens to avoid truncating verbose structured outputs
-    # (faithfulness verification can produce many statement-level lines).
     # temperature=0.1 follows the recommendation in the temperature-vs-LLM-judge
-    # literature (peak self-consistency at t=0.1); note that on its own this
-    # does NOT guarantee independent runs if the prompt cache replays a prior
-    # completion verbatim — see restart_ollama_model() above.
+    # literature (peak self-consistency at t=0.1).
+    #
+    # CRITICAL: top_p must be set explicitly. ragas's llm_factory defaults
+    # top_p to match the temperature value (top_p=0.1 here) unless overridden,
+    # which collapses nucleus sampling to near-greedy decoding regardless of
+    # temperature -- temperature only perturbs the candidate pool that top_p
+    # selects, and a pool of size ~1 leaves nothing for temperature to act on.
+    # Confirmed empirically: with top_p left at its temperature-matched
+    # default, repeated raw completions and RAGAS scores were bit-identical
+    # across 20 runs; setting top_p=0.95 restored genuine run-to-run variation.
     llm = llm_factory(
         OLLAMA_MODEL,
         provider="openai",
         client=client,
         max_tokens=4096,
         temperature=0.1,
+        top_p=0.95,
     )
 
     # HuggingFaceEmbeddings runs locally on CPU — no Ollama embedding endpoint needed.
