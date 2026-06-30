@@ -15,7 +15,7 @@ from pathlib import Path
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M")
 EMBED_MODEL = os.getenv("EMBED_MODEL", "nomic-embed-text")
-N_RUNS = int(os.getenv("N_RUNS_RQ3_TEST", "20"))
+N_RUNS = int(os.getenv("N_RUNS_RQ3_TEST", "5"))
 
 # Restart the Ollama model process between runs to clear llama.cpp's prompt
 # cache. Default ON — set to "0" to disable (e.g. for quick debugging runs
@@ -80,24 +80,39 @@ def _summary_stats(rows: list[dict], metric: str) -> dict:
 # ---------------------------------------------------------------------------
 # Ollama model restart (cache invalidation)
 # ---------------------------------------------------------------------------
+# Name of the Docker container running Ollama. If set, the restart command
+# runs as `docker exec <container> ollama stop <model>` instead of a bare
+# host-level `ollama stop`, since Ollama typically runs containerized.
+# Leave empty/unset to fall back to a direct host-level call (e.g. when
+# Ollama runs natively, not in Docker).
+OLLAMA_CONTAINER = os.getenv("OLLAMA_CONTAINER", "ollama")
+
+
 def restart_ollama_model():
     """
     Stop the Ollama model process to flush llama.cpp's in-memory prompt
     cache, then briefly wait. The model will be reloaded automatically by
     Ollama on the next request, at the cost of a cold-start delay on the
     first sample of the following run.
+
+    Runs inside the Docker container (`docker exec <container> ollama stop
+    <model>`) when OLLAMA_CONTAINER is set, since Ollama in this pipeline
+    runs containerized and the host has no `ollama` CLI on PATH. Set
+    OLLAMA_CONTAINER="" to fall back to a direct host-level `ollama stop`.
     """
     log.info("Restarting Ollama model %s to clear prompt cache ...", OLLAMA_MODEL)
+
+    if OLLAMA_CONTAINER:
+        cmd = ["docker", "exec", OLLAMA_CONTAINER, "ollama", "stop", OLLAMA_MODEL]
+    else:
+        cmd = ["ollama", "stop", OLLAMA_MODEL]
+
     try:
-        result = subprocess.run(
-            ["ollama", "stop", OLLAMA_MODEL],
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         if result.returncode != 0:
             log.warning(
-                "  'ollama stop' exited with code %d: %s",
+                "  '%s' exited with code %d: %s",
+                " ".join(cmd),
                 result.returncode,
                 result.stderr.strip(),
             )
@@ -105,11 +120,13 @@ def restart_ollama_model():
             log.info("  Model stopped successfully.")
     except FileNotFoundError:
         log.error(
-            "  'ollama' CLI not found on PATH — cannot restart model. "
-            "Cache invalidation will not occur between runs."
+            "  Command not found (%s) — cannot restart model. "
+            "Cache invalidation will not occur between runs. "
+            "Check OLLAMA_CONTAINER / docker availability.",
+            cmd[0],
         )
     except subprocess.TimeoutExpired:
-        log.warning("  'ollama stop' timed out after 30s, continuing anyway.")
+        log.warning("  '%s' timed out after 30s, continuing anyway.", " ".join(cmd))
     except Exception as exc:
         log.warning("  Unexpected error while stopping model: %s", exc)
 
