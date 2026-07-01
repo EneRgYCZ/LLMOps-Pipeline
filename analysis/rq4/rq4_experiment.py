@@ -196,7 +196,9 @@ class OllamaConfig:
         default_factory=lambda: os.environ.get("OLLAMA_CONTAINER", "ollama")
     )
     model: str = field(
-        default_factory=lambda: os.environ.get("OLLAMA_MODEL", "ministral-8b-instruct")
+        default_factory=lambda: os.environ.get(
+            "OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M"
+        )
     )
 
 
