@@ -74,7 +74,7 @@ IMAGES_DIR = RESULTS_DIR / "images"
 RAW_CSV_PATH = DATA_DIR / "rq4_vram_raw.csv"
 SUMMARY_CSV_PATH = CSV_DIR / "rq4_summary.csv"
 FIT_PLOT_PATH = IMAGES_DIR / "rq4_predicted_vs_measured.png"
-RESIDUAL_PLOT_PATH = IMAGES_DIR / "rq4_residuals.png"
+ERROR_PLOT_PATH = IMAGES_DIR / "rq4_errors.png"
 
 for directory in (DATA_DIR, CSV_DIR, IMAGES_DIR):
     directory.mkdir(parents=True, exist_ok=True)
@@ -453,7 +453,7 @@ def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> N
     print(f"Fit plot written to {FIT_PLOT_PATH}")
 
 
-def plot_residuals(summary: pd.DataFrame, model_name: str) -> None:
+def plot_error(summary: pd.DataFrame, model_name: str) -> None:
     with plt.rc_context(ACADEMIC_STYLE):
         fig, ax = plt.subplots(figsize=(8, 4))
 
@@ -483,9 +483,9 @@ def plot_residuals(summary: pd.DataFrame, model_name: str) -> None:
         ax.grid(True, axis="y", alpha=0.6)
 
         fig.tight_layout()
-        fig.savefig(RESIDUAL_PLOT_PATH, dpi=200)
+        fig.savefig(ERROR_PLOT_PATH, dpi=200)
         plt.close(fig)
-    print(f"Residual plot written to {RESIDUAL_PLOT_PATH}")
+    print(f"Residual plot written to {ERROR_PLOT_PATH}")
 
 
 def run_analysis(model_spec: ModelSpec, model_name: str) -> None:
@@ -494,7 +494,7 @@ def run_analysis(model_spec: ModelSpec, model_name: str) -> None:
     metrics = compute_overall_metrics(summary)
     save_summary(summary, metrics)
     plot_fit(summary, model_spec, model_name)
-    plot_residuals(summary, model_name)
+    plot_error(summary, model_name)
 
 
 # ---------------------------------------------------------------------------
