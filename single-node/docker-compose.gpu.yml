@@ -29,3 +29,7 @@ services:
     networks:
       - llmnet
     restart: unless-stopped
+
+networks:
+  llmnet:
+    external: true
