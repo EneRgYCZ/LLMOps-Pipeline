@@ -446,12 +446,17 @@ def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> N
         ax.set_xscale("log")
         ax.set_xticks(context_lengths)
         ax.set_xticklabels(
-            [str(int(n)) for n in context_lengths], rotation=30, ha="right"
+            [
+                f"{int(n) // 1024}k" if n >= 1024 else str(int(n))
+                for n in context_lengths
+            ],
+            rotation=0,
+            ha="center",
         )
         ax.set_xlabel("Context length N (tokens, log scale)")
         ax.set_ylabel("VRAM usage (GB)")
         ax.set_title("Expected vs. measured VRAM usage across context length")
-        ax.legend(loc="upper left")
+        ax.legend(loc="upper left", frameon=False)
         ax.grid(True, axis="y", alpha=0.6)
         ax.grid(False, axis="x")
 
@@ -468,12 +473,11 @@ def plot_error(summary: pd.DataFrame, model_name: str) -> None:
         colors = [
             COLOR_ERROR_POS if v >= 0 else COLOR_ERROR_NEG for v in summary["pct_error"]
         ]
-        ax.bar(
-            summary["context_length"].astype(str),
-            summary["pct_error"],
-            color=colors,
-            alpha=0.85,
-        )
+        labels = [
+            f"{int(n) // 1024}k" if int(n) >= 1024 else str(int(n))
+            for n in summary["context_length"]
+        ]
+        ax.bar(labels, summary["pct_error"], color=colors, alpha=0.85)
         for i, pct in enumerate(summary["pct_error"]):
             ax.annotate(
                 f"{pct:+.1f}%",
@@ -488,7 +492,6 @@ def plot_error(summary: pd.DataFrame, model_name: str) -> None:
         ax.set_xlabel("Context length N (tokens)")
         ax.set_ylabel("Error (%)")
         ax.set_title(f"{model_name}: prediction error by context length")
-        ax.tick_params(axis="x", rotation=30)
         ax.grid(True, axis="y", alpha=0.6)
 
         fig.tight_layout()
@@ -510,22 +513,13 @@ def run_analysis(model_spec: ModelSpec, model_name: str) -> None:
 # CLI
 # ---------------------------------------------------------------------------
 
-# Doubling sequence from 512 to 65536, then two values pushing toward the
-# hardware ceiling of the NVIDIA L4 (23 GiB VRAM). 114688 = 112*1024 and
-# 122880 = 120*1024. At N=122880 the formula predicts ~22.8 GB, leaving
-# roughly 200 MiB of headroom. Delete rq4_vram_raw.csv before a clean rerun.
-DEFAULT_CONTEXT_LENGTHS = [
-    512,
-    1024,
-    2048,
-    4096,
-    8192,
-    16384,
-    32768,
-    65536,
-    114688,
-    122880,
-]
+# Doubling sequence from 512 to 65536, then 114688 (112*1024) pushing toward
+# the hardware ceiling of the NVIDIA L4 (23 GiB VRAM). At N=114688 the
+# formula predicts ~21.6 GB. N=122880 was tested and excluded: Ollama silently
+# fell back to a smaller internal context at that size, making the GPU reading
+# invalid as a formula validation point. 114688 is therefore the empirical
+# hardware ceiling for this model and GPU combination.
+DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 114688]
 
 DEFAULT_PROMPT = (
     "Summarise, in a few sentences, the main considerations involved in "
