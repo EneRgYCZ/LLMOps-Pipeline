@@ -42,6 +42,9 @@ Usage
     python rq4_experiment.py                      # sweep + measure + analyse, one shot
     python rq4_experiment.py --repeats 3           # fewer repeats per N
     python rq4_experiment.py --model <ollama_tag>  # overrides OLLAMA_MODEL env var
+
+NOTE: delete results/rq4/data/rq4_vram_raw.csv before rerunning a full sweep,
+since the script appends rather than overwrites.
 """
 
 from __future__ import annotations
@@ -269,6 +272,12 @@ def run_experiment(
     model_spec: ModelSpec,
     prompt: str,
 ) -> None:
+    if RAW_CSV_PATH.exists():
+        print(
+            f"WARNING: {RAW_CSV_PATH} already exists and will be appended to.\n"
+            "Delete it first if you want a clean run."
+        )
+
     print(f"Baseline read on GPU {gpu_index} before any load")
     baseline_mib = reader.read_used_mib(gpu_index)
     print(f"Baseline VRAM used: {baseline_mib:.1f} MiB")
@@ -281,7 +290,9 @@ def run_experiment(
         for repeat_index in range(repeats):
             run_count += 1
             print(
-                f"[{run_count}/{total_runs}] N={context_length} repeat={repeat_index + 1}/{repeats}"
+                f"[{run_count}/{total_runs}] N={context_length} "
+                f"repeat={repeat_index + 1}/{repeats} "
+                f"(predicted {predicted_gb:.2f} GB)"
             )
 
             stop_model(ollama_config)
@@ -291,6 +302,8 @@ def run_experiment(
             measured_mib = reader.read_used_mib(gpu_index)
             measured_gb = measured_mib / 1024.0
             delta_gb = (measured_mib - baseline_mib) / 1024.0
+
+            print(f"  measured {measured_gb:.2f} GB")
 
             append_row(
                 {
@@ -401,13 +414,6 @@ COLOR_ERROR_NEG = "#2e7d5b"
 
 
 def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> None:
-    """Expected value curve vs. measured points, both connected by lines.
-
-    The expected curve is drawn with markers at the exact sampled context
-    lengths (not just a smooth line) so it lines up visually against the
-    measured series at each N, which is what makes the comparison readable
-    at a glance rather than requiring the reader to cross reference values.
-    """
     with plt.rc_context(ACADEMIC_STYLE):
         fig, ax = plt.subplots(figsize=(8, 5))
 
@@ -421,7 +427,7 @@ def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> N
             markersize=6,
             linewidth=2,
             color=COLOR_EXPECTED,
-            label="Expected value",
+            label="Expected value (Eq. eq:estimation)",
         )
         ax.errorbar(
             context_lengths,
@@ -439,7 +445,9 @@ def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> N
 
         ax.set_xscale("log")
         ax.set_xticks(context_lengths)
-        ax.set_xticklabels(context_lengths.astype(int).astype(str))
+        ax.set_xticklabels(
+            [str(int(n)) for n in context_lengths], rotation=30, ha="right"
+        )
         ax.set_xlabel("Context length N (tokens, log scale)")
         ax.set_ylabel("VRAM usage (GB)")
         ax.set_title("Expected vs. measured VRAM usage across context length")
@@ -455,7 +463,7 @@ def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> N
 
 def plot_error(summary: pd.DataFrame, model_name: str) -> None:
     with plt.rc_context(ACADEMIC_STYLE):
-        fig, ax = plt.subplots(figsize=(8, 4))
+        fig, ax = plt.subplots(figsize=(9, 4))
 
         colors = [
             COLOR_ERROR_POS if v >= 0 else COLOR_ERROR_NEG for v in summary["pct_error"]
@@ -480,12 +488,13 @@ def plot_error(summary: pd.DataFrame, model_name: str) -> None:
         ax.set_xlabel("Context length N (tokens)")
         ax.set_ylabel("Error (%)")
         ax.set_title(f"{model_name}: prediction error by context length")
+        ax.tick_params(axis="x", rotation=30)
         ax.grid(True, axis="y", alpha=0.6)
 
         fig.tight_layout()
         fig.savefig(ERROR_PLOT_PATH, dpi=200)
         plt.close(fig)
-    print(f"Residual plot written to {ERROR_PLOT_PATH}")
+    print(f"Error plot written to {ERROR_PLOT_PATH}")
 
 
 def run_analysis(model_spec: ModelSpec, model_name: str) -> None:
@@ -500,7 +509,24 @@ def run_analysis(model_spec: ModelSpec, model_name: str) -> None:
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
-DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 114688]
+
+# Doubling sequence from 512 to 65536, then two values pushing toward the
+# hardware ceiling of the NVIDIA L4 (23 GiB VRAM). 114688 = 112*1024 and
+# 122880 = 120*1024. At N=122880 the formula predicts ~22.8 GB, leaving
+# roughly 200 MiB of headroom. Delete rq4_vram_raw.csv before a clean rerun.
+DEFAULT_CONTEXT_LENGTHS = [
+    512,
+    1024,
+    2048,
+    4096,
+    8192,
+    16384,
+    32768,
+    65536,
+    114688,
+    122880,
+]
+
 DEFAULT_PROMPT = (
     "Summarise, in a few sentences, the main considerations involved in "
     "deploying a large language model in production."
