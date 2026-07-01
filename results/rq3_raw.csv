@@ -1,0 +1,101 @@
+run_id,sample_id,question,elapsed_seconds,faithfulness,answer_relevance,context_precision,context_recall
+1,1,What are the global implications of the USA Supreme Court ruling on abortion?,76.42,0.5454545454545454,0.9204131478572001,0.99999999995,1.0
+1,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,82.26,0.07692307692307693,0.8456102681204191,0.5833333333041666,1.0
+1,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,57.93,0.3333333333333333,0.9686021917887907,0.3333333333,1.0
+1,4,What action did Amnesty International urge its supporters to take in response to the killing of the Ogoni 9?,35.06,0.6,0.8538223112197234,0.49999999995,1.0
+1,5,What are the recommendations made by Amnesty International to the Special Rapporteur on Human Rights Defenders?,75.61,0.24,0.9449484502313298,0.49999999995,1.0
+1,6,Who are the target audience of the two books created by Amnesty International on child rights?,27.54,0.6666666666666666,0.9972285599560106,0.5833333333041666,1.0
+1,7,"Which right guarantees access to comprehensive information about past human rights violations, including the identities of the perpetrators and the fate of the victims, as well as the circumstances surrounding the violations?",34.73,1.0,0.9626642204822362,0.9999999999666667,1.0
+1,8,"Who has the right to be fully informed about human rights violations, including the identities of the perpetrators and the fate of the victims?",59.61,0.5882352941176471,0.7500969936960242,0.9999999999666667,1.0
+1,9,When can individuals be found guilty under Article 207.3 of the Russian Criminal Code?,32.22,0.3333333333333333,0.587129333276938,0.49999999995,1.0
+1,10,When does the prosecution consider statements contrary to the official position as 'false' under Article 207.3?,36.9,0.4,0.7057774998000751,0.9999999999,1.0
+1,11,What factors have contributed to the decline of independent civil society organizations in Nicaragua?,77.66,0.8571428571428571,0.9697812113882418,0.5833333333041666,1.0
+1,12,What conditions designate wetlands as Ramsar sites?,42.37,0.7272727272727273,0.8864300349246736,0.9999999999666667,1.0
+1,13,Where was COP15 held in 2022?,27.06,1.0,0.9058930999165046,0.49999999995,0.0
+1,14,What is the purpose of the agreement known as 30x30?,40.71,0.8888888888888888,0.7727310496615333,0.9999999999666667,1.0
+1,15,Who failed to explicitly recognize Indigenous Peoples' lands and territories as a distinct category of protected area at COP15?,37.78,0.3333333333333333,0.84077903676158,0.8333333332916666,1.0
+1,16,What are the consequences of criminalizing abortion for marginalized individuals?,74.83,1.0,0.9163077501405938,0.9999999999666667,1.0
+1,17,What responsibilities should social media companies have in relation to ensuring access to accurate sexual and reproductive health information?,72.28,0.17391304347826086,0.9672582478704438,0.49999999995,1.0
+1,18,"What role do social media companies play in protecting users' rights online, regardless of their language and political views?",67.6,0.4444444444444444,0.8158361189777757,0.9999999999,1.0
+1,19,What labor abuses were documented by Amnesty International in Qatar and how do they relate to the kafala system?,80.1,0.48148148148148145,0.9505650795767888,0.9999999999666667,1.0
+1,20,When did the government of Qatar start repealing restrictions on migrant workers?,25.57,0.0,0.9888126239954537,0.49999999995,1.0
+2,1,What are the global implications of the USA Supreme Court ruling on abortion?,79.44,0.75,0.9481662494360138,0.9999999999666667,1.0
+2,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,83.56,0.15384615384615385,0.8334938012137031,0.3333333333,1.0
+2,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,50.32,0.3333333333333333,0.9625694018392146,0.3333333333,1.0
+2,4,What action did Amnesty International urge its supporters to take in response to the killing of the Ogoni 9?,34.67,0.4,0.8376768564122513,0.49999999995,1.0
+2,5,What are the recommendations made by Amnesty International to the Special Rapporteur on Human Rights Defenders?,65.9,0.047619047619047616,0.9605779840057102,0.49999999995,1.0
+2,6,Who are the target audience of the two books created by Amnesty International on child rights?,29.05,0.6666666666666666,0.9984297929662308,0.5833333333041666,1.0
+2,7,"Which right guarantees access to comprehensive information about past human rights violations, including the identities of the perpetrators and the fate of the victims, as well as the circumstances surrounding the violations?",37.62,1.0,0.9692428542868011,0.9999999999666667,1.0
+2,8,"Who has the right to be fully informed about human rights violations, including the identities of the perpetrators and the fate of the victims?",55.35,0.6923076923076923,0.747077453020339,0.9999999999666667,1.0
+2,9,When can individuals be found guilty under Article 207.3 of the Russian Criminal Code?,34.65,0.0,0.5897604369707433,0.49999999995,1.0
+2,10,When does the prosecution consider statements contrary to the official position as 'false' under Article 207.3?,38.52,0.5,0.7066415854241241,0.9999999999,1.0
+2,11,What factors have contributed to the decline of independent civil society organizations in Nicaragua?,86.9,0.72,0.9362013520863354,0.5833333333041666,1.0
+2,12,What conditions designate wetlands as Ramsar sites?,43.88,0.5454545454545454,0.8904881373051055,0.8333333332916666,1.0
+2,13,Where was COP15 held in 2022?,28.04,1.0,0.9058930999165046,0.49999999995,0.0
+2,14,What is the purpose of the agreement known as 30x30?,41.32,0.9,0.8428527204394708,0.8333333332916666,1.0
+2,15,Who failed to explicitly recognize Indigenous Peoples' lands and territories as a distinct category of protected area at COP15?,43.92,0.2,0.84778974754523,0.8333333332916666,1.0
+2,16,What are the consequences of criminalizing abortion for marginalized individuals?,88.3,0.7857142857142857,0.8981797163508696,0.9999999999666667,1.0
+2,17,What responsibilities should social media companies have in relation to ensuring access to accurate sexual and reproductive health information?,67.31,0.631578947368421,0.9646934551872328,0.49999999995,1.0
+2,18,"What role do social media companies play in protecting users' rights online, regardless of their language and political views?",99.65,0.9302325581395349,0.8131618031120503,0.9999999999,1.0
+2,19,What labor abuses were documented by Amnesty International in Qatar and how do they relate to the kafala system?,72.89,0.5,0.9787086230204506,0.8333333332916666,1.0
+2,20,When did the government of Qatar start repealing restrictions on migrant workers?,20.79,0.0,0.9855194928470411,0.49999999995,1.0
+3,1,What are the global implications of the USA Supreme Court ruling on abortion?,81.27,0.6,0.9309168536854684,0.99999999995,1.0
+3,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,103.24,0.041666666666666664,0.8209290037039062,0.5833333333041666,1.0
+3,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,52.12,0.3333333333333333,0.9480705328151083,0.3333333333,1.0
+3,4,What action did Amnesty International urge its supporters to take in response to the killing of the Ogoni 9?,34.44,0.4,0.8423549088007412,0.49999999995,1.0
+3,5,What are the recommendations made by Amnesty International to the Special Rapporteur on Human Rights Defenders?,74.19,0.18518518518518517,0.960700583476633,0.49999999995,1.0
+3,6,Who are the target audience of the two books created by Amnesty International on child rights?,29.24,0.6666666666666666,0.9989380467614102,0.5833333333041666,1.0
+3,7,"Which right guarantees access to comprehensive information about past human rights violations, including the identities of the perpetrators and the fate of the victims, as well as the circumstances surrounding the violations?",35.1,1.0,0.971654022763941,0.9999999999666667,1.0
+3,8,"Who has the right to be fully informed about human rights violations, including the identities of the perpetrators and the fate of the victims?",64.3,0.5,0.7481575966380928,0.9999999999666667,1.0
+3,9,When can individuals be found guilty under Article 207.3 of the Russian Criminal Code?,33.48,0.0,0.6271287871896774,0.49999999995,1.0
+3,10,When does the prosecution consider statements contrary to the official position as 'false' under Article 207.3?,40.24,0.3333333333333333,0.7499140177829541,0.9999999999,1.0
+3,11,What factors have contributed to the decline of independent civil society organizations in Nicaragua?,88.94,0.5925925925925926,0.9548420006057033,0.5833333333041666,1.0
+3,12,What conditions designate wetlands as Ramsar sites?,44.4,0.6,0.8875995463716196,0.9999999999666667,1.0
+3,13,Where was COP15 held in 2022?,26.78,1.0,0.9058930999165046,0.49999999995,0.0
+3,14,What is the purpose of the agreement known as 30x30?,38.97,1.0,0.8293557337720706,0.9999999999666667,1.0
+3,15,Who failed to explicitly recognize Indigenous Peoples' lands and territories as a distinct category of protected area at COP15?,39.14,0.16666666666666666,0.8738457961233466,0.8333333332916666,1.0
+3,16,What are the consequences of criminalizing abortion for marginalized individuals?,93.29,0.90625,0.9256601339404448,0.9999999999666667,1.0
+3,17,What responsibilities should social media companies have in relation to ensuring access to accurate sexual and reproductive health information?,66.34,0.42105263157894735,0.9781965925815713,0.9999999999666667,1.0
+3,18,"What role do social media companies play in protecting users' rights online, regardless of their language and political views?",70.86,0.6,0.8440418156027992,0.9999999999,1.0
+3,19,What labor abuses were documented by Amnesty International in Qatar and how do they relate to the kafala system?,77.33,0.5,0.9626069180452109,0.8333333332916666,1.0
+3,20,When did the government of Qatar start repealing restrictions on migrant workers?,25.76,0.0,0.9868921486107803,0.49999999995,1.0
+4,1,What are the global implications of the USA Supreme Court ruling on abortion?,80.32,0.6,0.9439985903697377,0.9999999999666667,1.0
+4,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,94.13,0.08333333333333333,0.8543772964818435,0.3333333333,1.0
+4,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,52.32,0.3333333333333333,0.9598155690702601,0.3333333333,1.0
+4,4,What action did Amnesty International urge its supporters to take in response to the killing of the Ogoni 9?,35.83,0.6,0.8518005838891497,0.99999999995,1.0
+4,5,What are the recommendations made by Amnesty International to the Special Rapporteur on Human Rights Defenders?,66.54,0.047619047619047616,0.9634417912432864,0.49999999995,1.0
+4,6,Who are the target audience of the two books created by Amnesty International on child rights?,27.7,0.6666666666666666,0.9974826868536003,0.5833333333041666,1.0
+4,7,"Which right guarantees access to comprehensive information about past human rights violations, including the identities of the perpetrators and the fate of the victims, as well as the circumstances surrounding the violations?",34.13,1.0,0.9387229294134546,0.9999999999666667,1.0
+4,8,"Who has the right to be fully informed about human rights violations, including the identities of the perpetrators and the fate of the victims?",69.17,0.5416666666666666,0.8046007504543603,0.9999999999666667,1.0
+4,9,When can individuals be found guilty under Article 207.3 of the Russian Criminal Code?,28.84,0.0,0.6833378605151452,0.49999999995,1.0
+4,10,When does the prosecution consider statements contrary to the official position as 'false' under Article 207.3?,39.03,0.5,0.6975935749880803,0.9999999999,1.0
+4,11,What factors have contributed to the decline of independent civil society organizations in Nicaragua?,78.79,0.7368421052631579,0.9632791533176098,0.5833333333041666,1.0
+4,12,What conditions designate wetlands as Ramsar sites?,45.6,0.6363636363636364,0.8763320925386514,0.9999999999666667,1.0
+4,13,Where was COP15 held in 2022?,26.95,1.0,0.9058930999165046,0.49999999995,1.0
+4,14,What is the purpose of the agreement known as 30x30?,40.74,0.8888888888888888,0.7676693161064497,0.9999999999666667,1.0
+4,15,Who failed to explicitly recognize Indigenous Peoples' lands and territories as a distinct category of protected area at COP15?,37.72,0.375,0.8457343036282382,0.3333333333,1.0
+4,16,What are the consequences of criminalizing abortion for marginalized individuals?,76.85,0.875,0.922421025999105,0.9999999999666667,1.0
+4,17,What responsibilities should social media companies have in relation to ensuring access to accurate sexual and reproductive health information?,68.36,1.0,0.9772939906604977,0.99999999995,1.0
+4,18,"What role do social media companies play in protecting users' rights online, regardless of their language and political views?",81.01,0.8275862068965517,0.8221050617027533,0.9999999999,1.0
+4,19,What labor abuses were documented by Amnesty International in Qatar and how do they relate to the kafala system?,80.02,0.5,0.970934416984023,0.9999999999666667,1.0
+4,20,When did the government of Qatar start repealing restrictions on migrant workers?,24.67,0.0,0.9888126239954534,0.49999999995,1.0
+5,1,What are the global implications of the USA Supreme Court ruling on abortion?,82.16,0.6363636363636364,0.9363651126849688,0.99999999995,1.0
+5,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,95.46,0.30434782608695654,0.8248273200126031,0.5833333333041666,1.0
+5,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,52.5,0.3333333333333333,0.9809941794003464,0.3333333333,1.0
+5,4,What action did Amnesty International urge its supporters to take in response to the killing of the Ogoni 9?,35.72,0.4,0.7995855049664479,0.49999999995,1.0
+5,5,What are the recommendations made by Amnesty International to the Special Rapporteur on Human Rights Defenders?,70.42,0.047619047619047616,0.9687286386543073,0.49999999995,1.0
+5,6,Who are the target audience of the two books created by Amnesty International on child rights?,28.1,0.6666666666666666,0.9986839198638205,0.5833333333041666,1.0
+5,7,"Which right guarantees access to comprehensive information about past human rights violations, including the identities of the perpetrators and the fate of the victims, as well as the circumstances surrounding the violations?",32.83,1.0,0.9447104236733456,0.9999999999666667,1.0
+5,8,"Who has the right to be fully informed about human rights violations, including the identities of the perpetrators and the fate of the victims?",81.55,0.6296296296296297,0.7584269586515594,0.9999999999666667,1.0
+5,9,When can individuals be found guilty under Article 207.3 of the Russian Criminal Code?,31.37,0.3333333333333333,0.6267387343486776,0.49999999995,1.0
+5,10,When does the prosecution consider statements contrary to the official position as 'false' under Article 207.3?,42.15,0.5714285714285714,0.7218056000206047,0.9999999999,1.0
+5,11,What factors have contributed to the decline of independent civil society organizations in Nicaragua?,82.31,0.7083333333333334,0.9586559810095743,0.5833333333041666,1.0
+5,12,What conditions designate wetlands as Ramsar sites?,46.8,0.5,0.9098670644956973,0.8333333332916666,1.0
+5,13,Where was COP15 held in 2022?,27.81,1.0,0.9058930999165046,0.49999999995,1.0
+5,14,What is the purpose of the agreement known as 30x30?,44.07,0.9166666666666666,0.8894834497150913,0.9999999999666667,1.0
+5,15,Who failed to explicitly recognize Indigenous Peoples' lands and territories as a distinct category of protected area at COP15?,36.77,0.16666666666666666,0.8681842389922472,0.3333333333,1.0
+5,16,What are the consequences of criminalizing abortion for marginalized individuals?,75.04,0.7647058823529411,0.9231050211697586,0.9999999999666667,1.0
+5,17,What responsibilities should social media companies have in relation to ensuring access to accurate sexual and reproductive health information?,66.73,1.0,0.9650114411505947,0.49999999995,1.0
+5,18,"What role do social media companies play in protecting users' rights online, regardless of their language and political views?",79.35,0.43333333333333335,0.8293408205958439,0.9999999999,1.0
+5,19,What labor abuses were documented by Amnesty International in Qatar and how do they relate to the kafala system?,76.63,0.48,0.9784304765918437,0.8333333332916666,1.0
+5,20,When did the government of Qatar start repealing restrictions on migrant workers?,24.86,0.0,0.9888126239954537,0.49999999995,1.0
