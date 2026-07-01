@@ -500,8 +500,7 @@ def run_analysis(model_spec: ModelSpec, model_name: str) -> None:
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
-
-DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768]
+DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 114688]
 DEFAULT_PROMPT = (
     "Summarise, in a few sentences, the main considerations involved in "
     "deploying a large language model in production."
