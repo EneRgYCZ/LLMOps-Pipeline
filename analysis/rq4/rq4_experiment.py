@@ -421,7 +421,7 @@ def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> N
             markersize=6,
             linewidth=2,
             color=COLOR_EXPECTED,
-            label="Expected value (Eq. eq:estimation)",
+            label="Expected value",
         )
         ax.errorbar(
             context_lengths,
