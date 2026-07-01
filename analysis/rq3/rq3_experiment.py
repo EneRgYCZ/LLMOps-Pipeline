@@ -15,7 +15,7 @@ from pathlib import Path
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M")
 EMBED_MODEL = os.getenv("EMBED_MODEL", "nomic-embed-text")
-N_RUNS = int(os.getenv("N_RUNS_RQ3_TEST", "20"))
+N_RUNS = int(os.getenv("N_RUNS_RQ3_TEST", "5"))
 
 # Restart the Ollama model process between runs to clear llama.cpp's prompt
 # cache. Default ON — set to "0" to disable (e.g. for quick debugging runs
@@ -165,7 +165,7 @@ def build_ragas_components():
         provider="openai",
         client=client,
         max_tokens=4096,
-        temperature=0.1,
+        temperature=0.5,
         top_p=0.95,
     )
 
