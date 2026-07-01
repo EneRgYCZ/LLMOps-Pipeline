@@ -1,3 +1,49 @@
+"""
+RQ4 VRAM validation: experiment and analysis in a single script.
+
+Purpose
+-------
+Empirically validates the VRAM estimation formula (Equation eq:estimation in
+sections/methodology.tex) by sweeping Ollama's context length (num_ctx),
+measuring actual GPU memory usage, and comparing it against the formula's
+prediction.
+
+    M_total(N) = (P * b_w) + (0.55 + 0.08 * P) + (N * 2 * L * (d / g) * b_kv) * 1e-9
+
+Design
+------
+Weights (P, b_w), layer count (L), hidden dimension (d) and the GQA grouping
+factor (g) are fixed for a given model and quantisation, so the only free
+term is the KV cache, which scales with context length N. Sweeping N traces
+out the predicted line and lets measured VRAM be checked against both the
+intercept (weights + framework overhead) and the slope (KV cache growth).
+
+Layout
+------
+This script lives at analysis/rq4/rq4_experiment.py and writes to
+results/rq4/{data,csvs,images}, resolved relative to this file so the
+project can be checked out anywhere and still reproduce.
+
+    results/rq4/data    raw per run measurements (rq4_vram_raw.csv)
+    results/rq4/csvs    aggregated summary table (rq4_summary.csv)
+    results/rq4/images  fit plot and residual plot
+
+Measurement backend
+--------------------
+VRAMReader is an abstract interface with two implementations: NvidiaSmiReader
+(default, used in this experiment) and a PrometheusReader stub. Nvidia smi is
+used by default because it needs no extra infrastructure and gives an on
+demand reading rather than one delayed by a scrape interval. The Prometheus
+path is left in place so switching backends later is a one line change
+(--backend prometheus) plus filling in the query in PrometheusReader.
+
+Usage
+-----
+    python rq4_experiment.py                      # sweep + measure + analyse, one shot
+    python rq4_experiment.py --repeats 3           # fewer repeats per N
+    python rq4_experiment.py --model <ollama_tag>  # overrides OLLAMA_MODEL env var
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -11,7 +57,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import requests
 
@@ -269,10 +314,7 @@ def run_experiment(
 
 def load_raw_data() -> pd.DataFrame:
     if not RAW_CSV_PATH.exists():
-        raise FileNotFoundError(
-            f"No raw data at {RAW_CSV_PATH}. Run the experiment first with "
-            "'python rq4_experiment.py run'."
-        )
+        raise FileNotFoundError(f"No raw data at {RAW_CSV_PATH}.")
     return pd.read_csv(RAW_CSV_PATH)
 
 
@@ -329,66 +371,128 @@ def save_summary(summary: pd.DataFrame, metrics: dict) -> None:
     )
 
 
-def plot_predicted_vs_measured(
-    df: pd.DataFrame, summary: pd.DataFrame, model_spec: ModelSpec
-) -> None:
-    fig, ax = plt.subplots(figsize=(8, 5))
+ACADEMIC_STYLE = {
+    "font.family": "serif",
+    "font.size": 11,
+    "axes.titlesize": 13,
+    "axes.titleweight": "bold",
+    "axes.labelsize": 11,
+    "axes.edgecolor": "#333333",
+    "axes.linewidth": 0.8,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "legend.fontsize": 10,
+    "legend.frameon": False,
+    "grid.color": "#cccccc",
+    "grid.linewidth": 0.6,
+    "figure.facecolor": "white",
+    "axes.facecolor": "white",
+    "savefig.facecolor": "white",
+}
 
-    # smooth predicted curve across the observed range, not just the sampled points
-    n_min, n_max = df["context_length"].min(), df["context_length"].max()
-    n_smooth = np.linspace(n_min, n_max, 200)
-    predicted_smooth = [model_spec.predicted_vram_gb(int(n)) for n in n_smooth]
-    ax.plot(
-        n_smooth,
-        predicted_smooth,
-        label="Predicted (Eq. eq:estimation)",
-        color="#1f77b4",
-        linewidth=2,
-    )
+COLOR_EXPECTED = "#1f4e79"
+COLOR_MEASURED = "#c0392b"
+COLOR_ERROR_POS = "#c0392b"
+COLOR_ERROR_NEG = "#2e7d5b"
 
-    ax.errorbar(
-        summary["context_length"],
-        summary["measured_mean_gb"],
-        yerr=summary["measured_std_gb"],
-        fmt="o",
-        color="#d62728",
-        capsize=4,
-        label="Measured (mean ± std across repeats)",
-    )
 
-    ax.set_xlabel("Context length N (tokens)")
-    ax.set_ylabel("VRAM usage (GB)")
-    ax.set_title("Predicted vs. measured VRAM usage across context length")
-    ax.legend()
-    ax.grid(True, alpha=0.3)
-    fig.tight_layout()
-    fig.savefig(FIT_PLOT_PATH, dpi=150)
-    plt.close(fig)
+def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> None:
+    """Expected value curve vs. measured points, both connected by lines.
+
+    The expected curve is drawn with markers at the exact sampled context
+    lengths (not just a smooth line) so it lines up visually against the
+    measured series at each N, which is what makes the comparison readable
+    at a glance rather than requiring the reader to cross reference values.
+    """
+    with plt.rc_context(ACADEMIC_STYLE):
+        fig, ax = plt.subplots(figsize=(8, 5))
+
+        context_lengths = summary["context_length"]
+        expected = [model_spec.predicted_vram_gb(int(n)) for n in context_lengths]
+
+        ax.plot(
+            context_lengths,
+            expected,
+            marker="s",
+            markersize=6,
+            linewidth=2,
+            color=COLOR_EXPECTED,
+            label="Expected value (Eq. eq:estimation)",
+        )
+        ax.errorbar(
+            context_lengths,
+            summary["measured_mean_gb"],
+            yerr=summary["measured_std_gb"],
+            marker="o",
+            markersize=6,
+            linewidth=2,
+            color=COLOR_MEASURED,
+            ecolor=COLOR_MEASURED,
+            capsize=3,
+            elinewidth=1,
+            label=model_name,
+        )
+
+        ax.set_xscale("log")
+        ax.set_xticks(context_lengths)
+        ax.set_xticklabels(context_lengths.astype(int).astype(str))
+        ax.set_xlabel("Context length N (tokens, log scale)")
+        ax.set_ylabel("VRAM usage (GB)")
+        ax.set_title("Expected vs. measured VRAM usage across context length")
+        ax.legend(loc="upper left")
+        ax.grid(True, axis="y", alpha=0.6)
+        ax.grid(False, axis="x")
+
+        fig.tight_layout()
+        fig.savefig(FIT_PLOT_PATH, dpi=200)
+        plt.close(fig)
     print(f"Fit plot written to {FIT_PLOT_PATH}")
 
 
-def plot_residuals(summary: pd.DataFrame) -> None:
-    fig, ax = plt.subplots(figsize=(8, 4))
-    colors = ["#2ca02c" if v >= 0 else "#d62728" for v in summary["error_gb"]]
-    ax.bar(summary["context_length"].astype(str), summary["error_gb"], color=colors)
-    ax.axhline(0, color="black", linewidth=1)
-    ax.set_xlabel("Context length N (tokens)")
-    ax.set_ylabel("Measured minus predicted (GB)")
-    ax.set_title("Prediction residuals by context length")
-    ax.grid(True, axis="y", alpha=0.3)
-    fig.tight_layout()
-    fig.savefig(RESIDUAL_PLOT_PATH, dpi=150)
-    plt.close(fig)
+def plot_residuals(summary: pd.DataFrame, model_name: str) -> None:
+    with plt.rc_context(ACADEMIC_STYLE):
+        fig, ax = plt.subplots(figsize=(8, 4))
+
+        colors = [
+            COLOR_ERROR_POS if v >= 0 else COLOR_ERROR_NEG for v in summary["pct_error"]
+        ]
+        ax.bar(
+            summary["context_length"].astype(str),
+            summary["pct_error"],
+            color=colors,
+            alpha=0.85,
+        )
+        for i, pct in enumerate(summary["pct_error"]):
+            ax.annotate(
+                f"{pct:+.1f}%",
+                xy=(i, pct),
+                xytext=(0, 4 if pct >= 0 else -12),
+                textcoords="offset points",
+                ha="center",
+                fontsize=8,
+                color="#333333",
+            )
+        ax.axhline(0, color="#333333", linewidth=0.8)
+        ax.set_xlabel("Context length N (tokens)")
+        ax.set_ylabel("Error (%)")
+        ax.set_title(f"{model_name}: prediction error by context length")
+        ax.grid(True, axis="y", alpha=0.6)
+
+        fig.tight_layout()
+        fig.savefig(RESIDUAL_PLOT_PATH, dpi=200)
+        plt.close(fig)
     print(f"Residual plot written to {RESIDUAL_PLOT_PATH}")
 
 
-def run_analysis(model_spec: ModelSpec) -> None:
+def run_analysis(model_spec: ModelSpec, model_name: str) -> None:
     df = load_raw_data()
     summary = build_summary(df)
     metrics = compute_overall_metrics(summary)
     save_summary(summary, metrics)
-    plot_predicted_vs_measured(df, summary, model_spec)
-    plot_residuals(summary)
+    plot_fit(summary, model_spec, model_name)
+    plot_residuals(summary, model_name)
 
 
 # ---------------------------------------------------------------------------
@@ -404,41 +508,26 @@ DEFAULT_PROMPT = (
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="RQ4 VRAM validation: experiment and analysis"
+        description="RQ4 VRAM validation: sweep, measure, analyse, one shot"
     )
-    subparsers = parser.add_subparsers(dest="command", required=True)
-
-    run_parser = subparsers.add_parser(
-        "run", help="Run the experiment, then analyse the results"
-    )
-    run_parser.add_argument(
+    parser.add_argument(
         "--context-lengths", type=int, nargs="+", default=DEFAULT_CONTEXT_LENGTHS
     )
-    run_parser.add_argument("--repeats", type=int, default=5)
-    run_parser.add_argument(
+    parser.add_argument("--repeats", type=int, default=5)
+    parser.add_argument(
         "--gpu-index", type=int, default=int(os.environ.get("GPU_INDEX", 0))
     )
-    run_parser.add_argument(
+    parser.add_argument(
         "--backend",
         choices=["nvidia_smi", "prometheus"],
         default=os.environ.get("VRAM_BACKEND", "nvidia_smi"),
     )
-    run_parser.add_argument(
+    parser.add_argument(
         "--prometheus-url",
         default=os.environ.get("PROMETHEUS_URL", "http://localhost:9090"),
     )
-    run_parser.add_argument(
-        "--model", default=None, help="Overrides OLLAMA_MODEL env var"
-    )
-    run_parser.add_argument("--prompt", default=DEFAULT_PROMPT)
-    run_parser.add_argument(
-        "--skip-analysis", action="store_true", help="Collect data only"
-    )
-
-    subparsers.add_parser(
-        "analyze", help="Analyse an existing raw CSV without running the experiment"
-    )
-
+    parser.add_argument("--model", default=None, help="Overrides OLLAMA_MODEL env var")
+    parser.add_argument("--prompt", default=DEFAULT_PROMPT)
     return parser.parse_args()
 
 
@@ -446,28 +535,22 @@ def main() -> None:
     args = parse_args()
     model_spec = ModelSpec()
 
-    if args.command == "run":
-        ollama_config = OllamaConfig()
-        if args.model:
-            ollama_config.model = args.model
+    ollama_config = OllamaConfig()
+    if args.model:
+        ollama_config.model = args.model
 
-        reader = get_reader(args.backend, prometheus_url=args.prometheus_url)
+    reader = get_reader(args.backend, prometheus_url=args.prometheus_url)
 
-        run_experiment(
-            context_lengths=args.context_lengths,
-            repeats=args.repeats,
-            gpu_index=args.gpu_index,
-            ollama_config=ollama_config,
-            reader=reader,
-            model_spec=model_spec,
-            prompt=args.prompt,
-        )
-
-        if not args.skip_analysis:
-            run_analysis(model_spec)
-
-    elif args.command == "analyze":
-        run_analysis(model_spec)
+    run_experiment(
+        context_lengths=args.context_lengths,
+        repeats=args.repeats,
+        gpu_index=args.gpu_index,
+        ollama_config=ollama_config,
+        reader=reader,
+        model_spec=model_spec,
+        prompt=args.prompt,
+    )
+    run_analysis(model_spec, ollama_config.model)
 
 
 if __name__ == "__main__":
