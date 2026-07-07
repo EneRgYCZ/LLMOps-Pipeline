@@ -60,6 +60,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import requests
 
@@ -76,6 +77,7 @@ IMAGES_DIR = RESULTS_DIR / "images"
 
 RAW_CSV_PATH = DATA_DIR / "rq4_vram_raw.csv"
 SUMMARY_CSV_PATH = CSV_DIR / "rq4_summary.csv"
+SUMMARY_TEX_PATH = CSV_DIR / "rq4_summary_table.tex"
 FIT_PLOT_PATH = IMAGES_DIR / "rq4_predicted_vs_measured.png"
 ERROR_PLOT_PATH = IMAGES_DIR / "rq4_errors.png"
 
@@ -386,6 +388,171 @@ def save_summary(summary: pd.DataFrame, metrics: dict) -> None:
     )
 
 
+# ---------------------------------------------------------------------------
+# Regime split analysis
+# ---------------------------------------------------------------------------
+
+# The thesis text describes the large-N regime as accurate at "under 2%"
+# (observed 1.74% at N=114688), so 2% is the threshold used to separate the
+# overestimation regime from the accurate regime, rather than an arbitrary
+# round number.
+REGIME_THRESHOLD_PCT = 2.0
+
+
+def _regime_metrics(subset: pd.DataFrame) -> dict:
+    if subset.empty:
+        return {"mae_gb": float("nan"), "mape_pct": float("nan"), "n_points": 0}
+    return {
+        "mae_gb": subset["abs_error_gb"].mean(),
+        "mape_pct": subset["pct_error"].abs().mean(),
+        "n_points": len(subset),
+    }
+
+
+def _fit_log_trend(subset: pd.DataFrame) -> tuple[float, float]:
+    """Least-squares slope/intercept of pct_error against log2(N).
+
+    A plain linear fit, not a changepoint model: one is fit on the
+    overestimation regime alone (where error is shrinking as N grows) and
+    one on the full range, so the thesis can quote how much steeper the
+    error trend is close to the breakpoint than over the whole sweep.
+    """
+    if len(subset) < 2:
+        return float("nan"), float("nan")
+    log_n = np.log2(subset["context_length"].astype(float))
+    slope, intercept = np.polyfit(log_n, subset["pct_error"], 1)
+    return float(slope), float(intercept)
+
+
+def compute_regime_split(
+    summary: pd.DataFrame, threshold_pct: float = REGIME_THRESHOLD_PCT
+) -> dict:
+    """Splits the sweep into an overestimation regime and an accurate regime.
+
+    The thesis claim is that |pct_error| shrinks monotonically as N grows,
+    crossing from "clearly overestimating" to "accurate" (below
+    threshold_pct) somewhere in the sweep. Rather than a general changepoint
+    search (out of scope here), this finds the last N still above
+    threshold_pct and the first N at or below it, then linearly interpolates
+    the crossing point in log2(N) space to get a single breakpoint value. If
+    every point already lies on one side of the threshold (e.g. a
+    perfect-fit sanity check), the breakpoint falls back to the nearest edge
+    of the sweep so the two regimes are still well defined.
+    """
+    s = summary.sort_values("context_length").reset_index(drop=True)
+    abs_err = s["pct_error"].abs()
+    above = abs_err > threshold_pct
+
+    above_idx = s.index[above]
+    if len(above_idx) == 0:
+        breakpoint_n = float(s["context_length"].min())
+    else:
+        last_above = above_idx.max()
+        below_after = s.index[(s.index > last_above) & (~above)]
+        if len(below_after) == 0:
+            breakpoint_n = float(s["context_length"].max())
+        else:
+            first_below = below_after.min()
+            n_above = float(s.loc[last_above, "context_length"])
+            n_below = float(s.loc[first_below, "context_length"])
+            err_above = float(abs_err.loc[last_above])
+            err_below = float(abs_err.loc[first_below])
+            log_above, log_below = np.log2(n_above), np.log2(n_below)
+            if err_above == err_below:
+                frac = 0.5
+            else:
+                frac = (err_above - threshold_pct) / (err_above - err_below)
+            frac = min(max(frac, 0.0), 1.0)
+            breakpoint_n = float(2 ** (log_above + frac * (log_below - log_above)))
+
+    regime_overestimate = s[s["context_length"] <= breakpoint_n]
+    regime_accurate = s[s["context_length"] > breakpoint_n]
+
+    return {
+        "threshold_pct": threshold_pct,
+        "breakpoint_n": breakpoint_n,
+        "overestimate": _regime_metrics(regime_overestimate),
+        "accurate": _regime_metrics(regime_accurate),
+        "trend_overestimate": _fit_log_trend(regime_overestimate),
+        "trend_full": _fit_log_trend(s),
+    }
+
+
+def print_regime_split(regime: dict) -> None:
+    o, a = regime["overestimate"], regime["accurate"]
+    slope_o, _ = regime["trend_overestimate"]
+    slope_f, _ = regime["trend_full"]
+    print(
+        f"Regime breakpoint: N ~= {regime['breakpoint_n']:,.0f} tokens "
+        f"(|pct_error| crosses {regime['threshold_pct']:.1f}%)"
+    )
+    print(
+        f"  Overestimation regime (N <= breakpoint, n={o['n_points']}): "
+        f"MAE={o['mae_gb']:.3f} GB, MAPE={o['mape_pct']:.2f}%"
+    )
+    print(
+        f"  Accurate regime (N > breakpoint, n={a['n_points']}): "
+        f"MAE={a['mae_gb']:.3f} GB, MAPE={a['mape_pct']:.2f}%"
+    )
+    print(
+        f"  log2(N) trend in pct_error: overestimation-regime slope="
+        f"{slope_o:.3f} pp/doubling, full-range slope={slope_f:.3f} pp/doubling"
+    )
+
+
+# ---------------------------------------------------------------------------
+# LaTeX table export
+# ---------------------------------------------------------------------------
+
+_LATEX_ESCAPES = {
+    "\\": r"\textbackslash{}",
+    "_": r"\_",
+    "%": r"\%",
+    "&": r"\&",
+    "#": r"\#",
+    "$": r"\$",
+    "{": r"\{",
+    "}": r"\}",
+}
+
+
+def _escape_latex(text: str) -> str:
+    return "".join(_LATEX_ESCAPES.get(ch, ch) for ch in text)
+
+
+def write_latex_table(
+    summary: pd.DataFrame, model_name: str, path: Path = SUMMARY_TEX_PATH
+) -> None:
+    """Writes the summary as a booktabs-style .tex fragment for \\input{}."""
+    s = summary.sort_values("context_length")
+    lines = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        r"\begin{tabular}{rrrr}",
+        r"\toprule",
+        r"$N$ (tokens) & Predicted (GB) & Measured (GB) & Error (\%) \\",
+        r"\midrule",
+    ]
+    for _, row in s.iterrows():
+        n = f"{int(row['context_length']):,}"
+        predicted = f"{row['predicted_gb']:.2f}"
+        measured = f"{row['measured_mean_gb']:.2f} $\\pm$ {row['measured_std_gb']:.2f}"
+        error = f"{row['pct_error']:+.2f}"
+        lines.append(f"{n} & {predicted} & {measured} & {error} \\\\")
+    lines.append(r"\bottomrule")
+    lines.append(r"\end{tabular}")
+    caption = _escape_latex(
+        f"Predicted vs. measured VRAM usage across context length for {model_name}."
+    )
+    lines.append(rf"\caption{{{caption}}}")
+    lines.append(r"\label{tab:rq4-vram-summary}")
+    lines.append(r"\end{table}")
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines) + "\n")
+    print(f"LaTeX summary table written to {path}")
+
+
 ACADEMIC_STYLE = {
     "font.family": "serif",
     "font.size": 11,
@@ -505,6 +672,9 @@ def run_analysis(model_spec: ModelSpec, model_name: str) -> None:
     summary = build_summary(df)
     metrics = compute_overall_metrics(summary)
     save_summary(summary, metrics)
+    regime = compute_regime_split(summary)
+    print_regime_split(regime)
+    write_latex_table(summary, model_name)
     plot_fit(summary, model_spec, model_name)
     plot_error(summary, model_name)
 
