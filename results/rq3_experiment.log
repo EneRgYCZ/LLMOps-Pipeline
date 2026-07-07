@@ -1,0 +1,1214 @@
+2026-07-01 19:25:33,204  INFO      ======================================================================
+2026-07-01 19:25:33,204  INFO      RQ3 Experiment — RAGAS metric consistency
+2026-07-01 19:25:33,204  INFO      Started at 2026-07-01T19:25:33.204609
+2026-07-01 19:25:33,204  INFO      OLLAMA_HOST=http://localhost:11434  OLLAMA_MODEL=ministral-3:8b-instruct-2512-q4_K_M  EMBED_MODEL=nomic-embed-text  N_RUNS=5  RESTART_BETWEEN_RUNS=True
+2026-07-01 19:25:33,204  INFO      ======================================================================
+2026-07-01 19:25:33,296  INFO      HTTP Request: GET http://localhost:11434/api/tags "HTTP/1.1 200 OK"
+2026-07-01 19:25:33,296  INFO      Ollama reachable at http://localhost:11434
+2026-07-01 19:25:33,733  INFO      Loading amnesty_qa (english_v3) from HuggingFace ...
+2026-07-01 19:25:36,009  INFO      Loaded 20 samples.
+2026-07-01 19:25:36,009  INFO      Building RAGAS judge (model=ministral-3:8b-instruct-2512-q4_K_M, embeddings=all-MiniLM-L6-v2 local) ...
+2026-07-01 19:25:41,042  INFO      Use pytorch device_name: cpu
+2026-07-01 19:25:41,042  INFO      Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-07-01 19:25:42,548  INFO      ------------------------------------------------------------
+2026-07-01 19:25:42,548  INFO      Starting run 1 / 5
+2026-07-01 19:25:42,548  INFO      ------------------------------------------------------------
+2026-07-01 19:25:42,548  INFO        run=1  sample=1/20  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-01 19:26:16,053  INFO      ======================================================================
+2026-07-01 19:26:16,053  INFO      RQ3 Experiment — RAGAS metric consistency
+2026-07-01 19:26:16,053  INFO      Started at 2026-07-01T19:26:16.053491
+2026-07-01 19:26:16,053  INFO      OLLAMA_HOST=http://localhost:11434  OLLAMA_MODEL=ministral-3:8b-instruct-2512-q4_K_M  EMBED_MODEL=nomic-embed-text  N_RUNS=5  RESTART_BETWEEN_RUNS=True
+2026-07-01 19:26:16,053  INFO      ======================================================================
+2026-07-01 19:26:16,138  INFO      HTTP Request: GET http://localhost:11434/api/tags "HTTP/1.1 200 OK"
+2026-07-01 19:26:16,138  INFO      Ollama reachable at http://localhost:11434
+2026-07-01 19:26:16,558  INFO      Loading amnesty_qa (english_v3) from HuggingFace ...
+2026-07-01 19:26:18,624  INFO      Loaded 20 samples.
+2026-07-01 19:26:18,625  INFO      Building RAGAS judge (model=ministral-3:8b-instruct-2512-q4_K_M, embeddings=all-MiniLM-L6-v2 local) ...
+2026-07-01 19:26:23,292  INFO      Use pytorch device_name: cpu
+2026-07-01 19:26:23,292  INFO      Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-07-01 19:26:24,738  INFO      ------------------------------------------------------------
+2026-07-01 19:26:24,739  INFO      Starting run 1 / 5
+2026-07-01 19:26:24,739  INFO      ------------------------------------------------------------
+2026-07-01 19:26:24,739  INFO        run=1  sample=1/20  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-01 19:26:45,796  INFO      ======================================================================
+2026-07-01 19:26:45,796  INFO      RQ3 Experiment — RAGAS metric consistency
+2026-07-01 19:26:45,796  INFO      Started at 2026-07-01T19:26:45.796850
+2026-07-01 19:26:45,796  INFO      OLLAMA_HOST=http://localhost:11434  OLLAMA_MODEL=ministral-3:8b-instruct-2512-q4_K_M  EMBED_MODEL=nomic-embed-text  N_RUNS=5  RESTART_BETWEEN_RUNS=True
+2026-07-01 19:26:45,796  INFO      ======================================================================
+2026-07-01 19:26:45,883  INFO      HTTP Request: GET http://localhost:11434/api/tags "HTTP/1.1 200 OK"
+2026-07-01 19:26:45,883  INFO      Ollama reachable at http://localhost:11434
+2026-07-01 19:26:46,298  INFO      Loading amnesty_qa (english_v3) from HuggingFace ...
+2026-07-01 19:26:48,496  INFO      Loaded 20 samples.
+2026-07-01 19:26:48,497  INFO      Building RAGAS judge (model=ministral-3:8b-instruct-2512-q4_K_M, embeddings=all-MiniLM-L6-v2 local) ...
+2026-07-01 19:26:53,232  INFO      Use pytorch device_name: cpu
+2026-07-01 19:26:53,232  INFO      Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-07-01 19:26:54,659  INFO      ------------------------------------------------------------
+2026-07-01 19:26:54,659  INFO      Starting run 1 / 5
+2026-07-01 19:26:54,660  INFO      ------------------------------------------------------------
+2026-07-01 19:26:54,660  INFO        run=1  sample=1/20  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-01 19:30:36,741  INFO      ======================================================================
+2026-07-01 19:30:36,741  INFO      RQ3 Experiment — RAGAS metric consistency
+2026-07-01 19:30:36,741  INFO      Started at 2026-07-01T19:30:36.741253
+2026-07-01 19:30:36,741  INFO      OLLAMA_HOST=http://localhost:11434  OLLAMA_MODEL=ministral-3:8b-instruct-2512-q4_K_M  EMBED_MODEL=nomic-embed-text  N_RUNS=5  RESTART_BETWEEN_RUNS=True
+2026-07-01 19:30:36,741  INFO      ======================================================================
+2026-07-01 19:30:36,826  INFO      HTTP Request: GET http://localhost:11434/api/tags "HTTP/1.1 200 OK"
+2026-07-01 19:30:36,827  INFO      Ollama reachable at http://localhost:11434
+2026-07-01 19:30:37,250  INFO      Loading amnesty_qa (english_v3) from HuggingFace ...
+2026-07-01 19:30:39,338  INFO      Loaded 20 samples.
+2026-07-01 19:30:39,338  INFO      Building RAGAS judge (model=ministral-3:8b-instruct-2512-q4_K_M, embeddings=all-MiniLM-L6-v2 local) ...
+2026-07-01 19:30:43,710  INFO      Use pytorch device_name: cuda
+2026-07-01 19:30:43,710  INFO      Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-07-01 19:30:45,274  INFO      ------------------------------------------------------------
+2026-07-01 19:30:45,274  INFO      Starting run 1 / 5
+2026-07-01 19:30:45,274  INFO      ------------------------------------------------------------
+2026-07-01 19:30:45,274  INFO        run=1  sample=1/20  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-01 19:30:53,652  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:31:28,020  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:31:30,670  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:31:32,057  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:31:33,822  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:31:38,553  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:31:41,983  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:31:45,833  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:32:00,815  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:32:01,693  INFO          faithfulness=0.545  answer_relevance=0.920  context_precision=1.000  context_recall=1.000  (76.4s)
+2026-07-01 19:32:01,693  INFO        run=1  sample=2/20  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-01 19:32:14,329  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:32:42,181  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:32:45,294  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:32:46,554  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:32:48,419  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:32:53,455  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:32:58,398  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:33:02,892  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:33:23,157  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:33:23,948  INFO          faithfulness=0.077  answer_relevance=0.846  context_precision=0.583  context_recall=1.000  (82.3s)
+2026-07-01 19:33:23,949  INFO        run=1  sample=3/20  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-01 19:33:34,025  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:00,876  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:03,352  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:04,817  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:06,193  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:09,790  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:13,307  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:16,334  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:20,973  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:21,878  INFO          faithfulness=0.333  answer_relevance=0.969  context_precision=0.333  context_recall=1.000  (57.9s)
+2026-07-01 19:34:21,879  INFO        run=1  sample=4/20  question=What action did Amnesty International urge its supporters to ...
+2026-07-01 19:34:24,657  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:34,672  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:37,151  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:39,441  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:40,870  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:44,501  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:47,233  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:50,659  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:56,066  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:34:56,943  INFO          faithfulness=0.600  answer_relevance=0.854  context_precision=0.500  context_recall=1.000  (35.1s)
+2026-07-01 19:34:56,944  INFO        run=1  sample=5/20  question=What are the recommendations made by Amnesty International t ...
+2026-07-01 19:35:08,579  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:35:46,224  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:35:48,805  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:35:49,981  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:35:51,183  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:35:54,706  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:35:58,206  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:01,828  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:11,682  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:12,558  INFO          faithfulness=0.240  answer_relevance=0.945  context_precision=0.500  context_recall=1.000  (75.6s)
+2026-07-01 19:36:12,558  INFO        run=1  sample=6/20  question=Who are the target audience of the two books created by Amne ...
+2026-07-01 19:36:14,129  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:20,719  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:22,977  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:25,068  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:26,246  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:29,041  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:31,732  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:34,704  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:39,156  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:40,095  INFO          faithfulness=0.667  answer_relevance=0.997  context_precision=0.583  context_recall=1.000  (27.5s)
+2026-07-01 19:36:40,096  INFO        run=1  sample=7/20  question=Which right guarantees access to comprehensive information a ...
+2026-07-01 19:36:42,322  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:50,526  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:53,007  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:55,360  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:57,166  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:36:59,980  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:37:03,386  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:37:06,379  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:37:13,925  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:37:14,830  INFO          faithfulness=1.000  answer_relevance=0.963  context_precision=1.000  context_recall=1.000  (34.7s)
+2026-07-01 19:37:14,830  INFO        run=1  sample=8/20  question=Who has the right to be fully informed about human rights vi ...
+2026-07-01 19:37:23,203  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:37:51,046  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:37:53,662  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:37:55,128  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:37:56,688  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:37:59,931  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:02,891  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:06,641  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:13,568  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:14,445  INFO          faithfulness=0.588  answer_relevance=0.750  context_precision=1.000  context_recall=1.000  (59.6s)
+2026-07-01 19:38:14,445  INFO        run=1  sample=9/20  question=When can individuals be found guilty under Article 207.3 of  ...
+2026-07-01 19:38:16,726  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:24,879  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:27,222  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:29,590  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:31,052  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:34,156  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:37,322  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:40,849  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:45,758  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:38:46,662  INFO          faithfulness=0.333  answer_relevance=0.587  context_precision=0.500  context_recall=1.000  (32.2s)
+2026-07-01 19:38:46,662  INFO        run=1  sample=10/20  question=When does the prosecution consider statements contrary to th ...
+2026-07-01 19:38:49,995  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:39:00,666  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:39:03,332  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:39:05,684  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:39:07,161  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:39:09,828  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:39:13,716  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:39:17,740  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:39:22,676  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:39:23,560  INFO          faithfulness=0.400  answer_relevance=0.706  context_precision=1.000  context_recall=1.000  (36.9s)
+2026-07-01 19:39:23,560  INFO        run=1  sample=11/20  question=What factors have contributed to the decline of independent  ...
+2026-07-01 19:39:34,903  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:40:11,155  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:40:13,587  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:40:14,936  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:40:16,284  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:40:19,168  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:40:22,072  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:40:25,449  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:40:40,312  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:40:41,218  INFO          faithfulness=0.857  answer_relevance=0.970  context_precision=0.583  context_recall=1.000  (77.7s)
+2026-07-01 19:40:41,218  INFO        run=1  sample=12/20  question=What conditions designate wetlands as Ramsar sites? ...
+2026-07-01 19:40:46,491  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:04,256  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:06,691  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:07,990  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:09,389  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:12,471  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:15,222  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:18,119  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:22,714  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:23,586  INFO          faithfulness=0.727  answer_relevance=0.886  context_precision=1.000  context_recall=1.000  (42.4s)
+2026-07-01 19:41:23,587  INFO        run=1  sample=13/20  question=Where was COP15 held in 2022? ...
+2026-07-01 19:41:25,221  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:30,505  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:32,469  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:34,496  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:35,492  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:37,609  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:40,292  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:43,114  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:49,794  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:41:50,644  INFO          faithfulness=1.000  answer_relevance=0.906  context_precision=0.500  context_recall=0.000  (27.1s)
+2026-07-01 19:41:50,645  INFO        run=1  sample=14/20  question=What is the purpose of the agreement known as 30x30? ...
+2026-07-01 19:41:54,732  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:10,556  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:13,056  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:14,453  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:15,852  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:19,168  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:22,145  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:25,160  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:30,516  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:31,356  INFO          faithfulness=0.889  answer_relevance=0.773  context_precision=1.000  context_recall=1.000  (40.7s)
+2026-07-01 19:42:31,357  INFO        run=1  sample=15/20  question=Who failed to explicitly recognize Indigenous Peoples' lands ...
+2026-07-01 19:42:35,159  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:47,484  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:50,027  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:51,589  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:53,177  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:42:57,835  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:43:01,230  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:43:03,922  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:43:08,290  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:43:09,136  INFO          faithfulness=0.333  answer_relevance=0.841  context_precision=0.833  context_recall=1.000  (37.8s)
+2026-07-01 19:43:09,136  INFO        run=1  sample=16/20  question=What are the consequences of criminalizing abortion for marg ...
+2026-07-01 19:43:19,505  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:43:49,897  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:43:52,838  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:43:54,164  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:43:55,504  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:43:58,585  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:44:01,916  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:44:06,522  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:44:23,082  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:44:23,961  INFO          faithfulness=1.000  answer_relevance=0.916  context_precision=1.000  context_recall=1.000  (74.8s)
+2026-07-01 19:44:23,962  INFO        run=1  sample=17/20  question=What responsibilities should social media companies have in  ...
+2026-07-01 19:44:35,779  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:45:12,646  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:45:15,258  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:45:16,623  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:45:17,973  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:45:21,624  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:45:24,862  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:45:29,091  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:45:35,334  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:45:36,240  INFO          faithfulness=0.174  answer_relevance=0.967  context_precision=0.500  context_recall=1.000  (72.3s)
+2026-07-01 19:45:36,240  INFO        run=1  sample=18/20  question=What role do social media companies play in protecting users ...
+2026-07-01 19:45:46,546  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:46:17,396  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:46:20,534  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:46:21,947  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:46:23,652  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:46:27,050  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:46:31,224  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:46:34,649  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:46:43,027  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:46:43,841  INFO          faithfulness=0.444  answer_relevance=0.816  context_precision=1.000  context_recall=1.000  (67.6s)
+2026-07-01 19:46:43,841  INFO        run=1  sample=19/20  question=What labor abuses were documented by Amnesty International i ...
+2026-07-01 19:46:54,469  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:47:34,440  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:47:37,155  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:47:38,489  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:47:39,944  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:47:44,064  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:47:48,487  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:47:52,587  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:48:03,189  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:48:03,943  INFO          faithfulness=0.481  answer_relevance=0.951  context_precision=1.000  context_recall=1.000  (80.1s)
+2026-07-01 19:48:03,943  INFO        run=1  sample=20/20  question=When did the government of Qatar start repealing restriction ...
+2026-07-01 19:48:05,250  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:48:09,377  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:48:11,579  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:48:13,608  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:48:14,747  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:48:17,770  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:48:20,975  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:48:24,314  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:48:28,707  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:48:29,519  INFO          faithfulness=0.000  answer_relevance=0.989  context_precision=0.500  context_recall=1.000  (25.6s)
+2026-07-01 19:48:29,520  INFO        run=1  faithfulness: mean=0.5345  std=0.3081  min=0.0000  max=1.0000  (n=20)
+2026-07-01 19:48:29,520  INFO        run=1  answer_relevance: mean=0.8775  std=0.1078  min=0.5871  max=0.9972  (n=20)
+2026-07-01 19:48:29,520  INFO        run=1  context_precision: mean=0.7458  std=0.2514  min=0.3333  max=1.0000  (n=20)
+2026-07-01 19:48:29,520  INFO        run=1  context_recall: mean=0.9500  std=0.2236  min=0.0000  max=1.0000  (n=20)
+2026-07-01 19:48:29,520  INFO        run=1  total_time=1064.2s
+2026-07-01 19:48:29,520  INFO      Restarting Ollama model ministral-3:8b-instruct-2512-q4_K_M to clear prompt cache ...
+2026-07-01 19:48:29,677  INFO        Model stopped successfully.
+2026-07-01 19:48:32,677  INFO      ------------------------------------------------------------
+2026-07-01 19:48:32,677  INFO      Starting run 2 / 5
+2026-07-01 19:48:32,678  INFO      ------------------------------------------------------------
+2026-07-01 19:48:32,678  INFO        run=2  sample=1/20  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-01 19:48:44,704  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:49:18,652  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:49:21,206  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:49:22,525  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:49:23,986  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:49:27,526  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:49:32,178  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:49:36,033  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:49:51,206  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:49:52,114  INFO          faithfulness=0.750  answer_relevance=0.948  context_precision=1.000  context_recall=1.000  (79.4s)
+2026-07-01 19:49:52,114  INFO        run=2  sample=2/20  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-01 19:50:04,614  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:50:34,853  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:50:38,148  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:50:39,708  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:50:41,486  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:50:46,026  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:50:51,142  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:50:55,653  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:51:14,740  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:51:15,672  INFO          faithfulness=0.154  answer_relevance=0.833  context_precision=0.333  context_recall=1.000  (83.6s)
+2026-07-01 19:51:15,673  INFO        run=2  sample=3/20  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-01 19:51:25,641  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:51:48,896  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:51:51,539  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:51:52,826  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:51:54,168  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:51:57,178  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:51:59,207  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:01,466  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:05,980  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:05,995  INFO          faithfulness=0.333  answer_relevance=0.963  context_precision=0.333  context_recall=1.000  (50.3s)
+2026-07-01 19:52:05,995  INFO        run=2  sample=4/20  question=What action did Amnesty International urge its supporters to ...
+2026-07-01 19:52:08,743  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:19,062  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:21,603  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:23,964  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:25,310  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:28,463  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:31,201  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:34,624  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:39,843  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:52:40,661  INFO          faithfulness=0.400  answer_relevance=0.838  context_precision=0.500  context_recall=1.000  (34.7s)
+2026-07-01 19:52:40,661  INFO        run=2  sample=5/20  question=What are the recommendations made by Amnesty International t ...
+2026-07-01 19:52:51,578  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:22,260  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:24,943  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:26,168  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:27,354  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:30,500  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:33,216  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:36,866  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:45,737  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:46,558  INFO          faithfulness=0.048  answer_relevance=0.961  context_precision=0.500  context_recall=1.000  (65.9s)
+2026-07-01 19:53:46,558  INFO        run=2  sample=6/20  question=Who are the target audience of the two books created by Amne ...
+2026-07-01 19:53:48,184  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:54,398  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:56,479  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:58,552  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:53:59,737  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:02,949  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:05,776  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:08,841  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:14,704  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:15,609  INFO          faithfulness=0.667  answer_relevance=0.998  context_precision=0.583  context_recall=1.000  (29.1s)
+2026-07-01 19:54:15,609  INFO        run=2  sample=7/20  question=Which right guarantees access to comprehensive information a ...
+2026-07-01 19:54:17,636  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:25,156  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:27,719  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:29,994  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:31,715  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:34,422  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:37,467  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:45,596  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:52,268  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:54:53,230  INFO          faithfulness=1.000  answer_relevance=0.969  context_precision=1.000  context_recall=1.000  (37.6s)
+2026-07-01 19:54:53,230  INFO        run=2  sample=8/20  question=Who has the right to be fully informed about human rights vi ...
+2026-07-01 19:55:01,833  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:55:27,431  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:55:30,182  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:55:31,898  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:55:33,492  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:55:36,016  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:55:38,287  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:55:42,153  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:55:47,706  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:55:48,582  INFO          faithfulness=0.692  answer_relevance=0.747  context_precision=1.000  context_recall=1.000  (55.4s)
+2026-07-01 19:55:48,582  INFO        run=2  sample=9/20  question=When can individuals be found guilty under Article 207.3 of  ...
+2026-07-01 19:55:51,413  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:02,109  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:04,646  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:06,990  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:08,886  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:11,570  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:14,307  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:17,608  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:22,315  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:23,228  INFO          faithfulness=0.000  answer_relevance=0.590  context_precision=0.500  context_recall=1.000  (34.6s)
+2026-07-01 19:56:23,228  INFO        run=2  sample=10/20  question=When does the prosecution consider statements contrary to th ...
+2026-07-01 19:56:26,734  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:39,860  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:42,584  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:44,034  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:45,670  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:49,140  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:52,409  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:56:56,026  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:57:00,876  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:57:01,752  INFO          faithfulness=0.500  answer_relevance=0.707  context_precision=1.000  context_recall=1.000  (38.5s)
+2026-07-01 19:57:01,752  INFO        run=2  sample=11/20  question=What factors have contributed to the decline of independent  ...
+2026-07-01 19:57:14,301  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:57:57,925  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:00,688  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:02,198  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:03,569  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:06,880  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:09,276  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:12,822  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:27,742  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:28,650  INFO          faithfulness=0.720  answer_relevance=0.936  context_precision=0.583  context_recall=1.000  (86.9s)
+2026-07-01 19:58:28,651  INFO        run=2  sample=12/20  question=What conditions designate wetlands as Ramsar sites? ...
+2026-07-01 19:58:33,993  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:51,157  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:53,656  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:54,989  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:56,160  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:58:59,632  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:03,390  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:06,116  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:11,712  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:12,528  INFO          faithfulness=0.545  answer_relevance=0.890  context_precision=0.833  context_recall=1.000  (43.9s)
+2026-07-01 19:59:12,528  INFO        run=2  sample=13/20  question=Where was COP15 held in 2022? ...
+2026-07-01 19:59:14,372  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:20,704  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:22,907  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:24,756  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:25,775  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:28,375  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:31,160  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:34,176  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:39,784  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 19:59:40,569  INFO          faithfulness=1.000  answer_relevance=0.906  context_precision=0.500  context_recall=0.000  (28.0s)
+2026-07-01 19:59:40,570  INFO        run=2  sample=14/20  question=What is the purpose of the agreement known as 30x30? ...
+2026-07-01 19:59:44,773  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:00,300  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:02,864  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:04,211  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:05,690  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:08,717  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:13,094  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:16,086  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:21,117  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:21,909  INFO          faithfulness=0.900  answer_relevance=0.843  context_precision=0.833  context_recall=1.000  (41.3s)
+2026-07-01 20:00:21,909  INFO        run=2  sample=15/20  question=Who failed to explicitly recognize Indigenous Peoples' lands ...
+2026-07-01 20:00:27,634  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:44,703  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:47,239  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:48,757  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:50,204  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:54,444  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:00:57,747  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:01:00,597  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:01:04,921  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:01:05,830  INFO          faithfulness=0.200  answer_relevance=0.848  context_precision=0.833  context_recall=1.000  (43.9s)
+2026-07-01 20:01:05,830  INFO        run=2  sample=16/20  question=What are the consequences of criminalizing abortion for marg ...
+2026-07-01 20:01:17,859  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:01:58,967  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:02:01,859  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:02:03,252  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:02:04,514  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:02:08,629  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:02:12,412  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:02:16,499  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:02:33,253  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:02:34,199  INFO          faithfulness=0.786  answer_relevance=0.898  context_precision=1.000  context_recall=1.000  (88.3s)
+2026-07-01 20:02:34,199  INFO        run=2  sample=17/20  question=What responsibilities should social media companies have in  ...
+2026-07-01 20:02:45,500  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:03:17,512  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:03:20,115  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:03:21,358  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:03:22,695  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:03:26,846  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:03:30,233  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:03:33,941  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:03:40,600  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:03:41,504  INFO          faithfulness=0.632  answer_relevance=0.965  context_precision=0.500  context_recall=1.000  (67.3s)
+2026-07-01 20:03:41,505  INFO        run=2  sample=18/20  question=What role do social media companies play in protecting users ...
+2026-07-01 20:03:55,669  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:04:53,503  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:04:56,481  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:04:58,244  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:05:00,341  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:05:03,870  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:05:07,580  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:05:11,361  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:05:20,279  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:05:21,159  INFO          faithfulness=0.930  answer_relevance=0.813  context_precision=1.000  context_recall=1.000  (99.7s)
+2026-07-01 20:05:21,159  INFO        run=2  sample=19/20  question=What labor abuses were documented by Amnesty International i ...
+2026-07-01 20:05:30,683  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:03,371  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:05,968  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:07,235  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:08,775  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:12,755  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:17,399  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:21,012  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:33,172  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:34,052  INFO          faithfulness=0.500  answer_relevance=0.979  context_precision=0.833  context_recall=1.000  (72.9s)
+2026-07-01 20:06:34,053  INFO        run=2  sample=20/20  question=When did the government of Qatar start repealing restriction ...
+2026-07-01 20:06:35,379  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:38,685  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:40,031  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:41,140  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:42,226  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:44,918  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:47,939  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:51,028  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:54,841  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:06:54,845  INFO          faithfulness=0.000  answer_relevance=0.986  context_precision=0.500  context_recall=1.000  (20.8s)
+2026-07-01 20:06:54,846  INFO        run=2  faithfulness: mean=0.5378  std=0.3281  min=0.0000  max=1.0000  (n=20)
+2026-07-01 20:06:54,846  INFO        run=2  answer_relevance: mean=0.8809  std=0.1064  min=0.5898  max=0.9984  (n=20)
+2026-07-01 20:06:54,846  INFO        run=2  context_precision: mean=0.7083  std=0.2456  min=0.3333  max=1.0000  (n=20)
+2026-07-01 20:06:54,846  INFO        run=2  context_recall: mean=0.9500  std=0.2236  min=0.0000  max=1.0000  (n=20)
+2026-07-01 20:06:54,847  INFO        run=2  total_time=1102.2s
+2026-07-01 20:06:54,847  INFO      Restarting Ollama model ministral-3:8b-instruct-2512-q4_K_M to clear prompt cache ...
+2026-07-01 20:06:55,013  INFO        Model stopped successfully.
+2026-07-01 20:06:58,014  INFO      ------------------------------------------------------------
+2026-07-01 20:06:58,014  INFO      Starting run 3 / 5
+2026-07-01 20:06:58,014  INFO      ------------------------------------------------------------
+2026-07-01 20:06:58,014  INFO        run=3  sample=1/20  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-01 20:07:09,329  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:07:42,928  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:07:45,542  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:07:47,009  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:07:48,479  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:07:53,428  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:07:58,106  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:08:02,234  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:08:18,405  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:08:19,286  INFO          faithfulness=0.600  answer_relevance=0.931  context_precision=1.000  context_recall=1.000  (81.3s)
+2026-07-01 20:08:19,286  INFO        run=3  sample=2/20  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-01 20:08:35,187  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:09:19,589  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:09:22,662  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:09:24,442  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:09:26,548  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:09:31,052  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:09:36,259  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:09:40,952  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:10:01,683  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:10:02,527  INFO          faithfulness=0.042  answer_relevance=0.821  context_precision=0.583  context_recall=1.000  (103.2s)
+2026-07-01 20:10:02,527  INFO        run=3  sample=3/20  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-01 20:10:10,796  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:10:33,150  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:10:35,854  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:10:37,083  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:10:38,547  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:10:42,315  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:10:46,117  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:10:49,016  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:10:53,891  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:10:54,648  INFO          faithfulness=0.333  answer_relevance=0.948  context_precision=0.333  context_recall=1.000  (52.1s)
+2026-07-01 20:10:54,649  INFO        run=3  sample=4/20  question=What action did Amnesty International urge its supporters to ...
+2026-07-01 20:10:57,353  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:11:07,485  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:11:09,940  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:11:12,207  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:11:14,110  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:11:17,536  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:11:20,023  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:11:23,037  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:11:28,377  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:11:29,086  INFO          faithfulness=0.400  answer_relevance=0.842  context_precision=0.500  context_recall=1.000  (34.4s)
+2026-07-01 20:11:29,086  INFO        run=3  sample=5/20  question=What are the recommendations made by Amnesty International t ...
+2026-07-01 20:11:40,269  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:19,146  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:21,684  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:23,227  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:24,378  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:27,548  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:29,606  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:32,440  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:42,309  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:43,276  INFO          faithfulness=0.185  answer_relevance=0.961  context_precision=0.500  context_recall=1.000  (74.2s)
+2026-07-01 20:12:43,276  INFO        run=3  sample=6/20  question=Who are the target audience of the two books created by Amne ...
+2026-07-01 20:12:44,869  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:51,777  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:54,013  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:56,023  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:12:57,220  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:00,117  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:03,205  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:06,213  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:11,666  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:12,514  INFO          faithfulness=0.667  answer_relevance=0.999  context_precision=0.583  context_recall=1.000  (29.2s)
+2026-07-01 20:13:12,514  INFO        run=3  sample=7/20  question=Which right guarantees access to comprehensive information a ...
+2026-07-01 20:13:14,829  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:23,282  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:25,866  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:28,337  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:30,231  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:33,282  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:36,268  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:39,056  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:46,731  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:13:47,610  INFO          faithfulness=1.000  answer_relevance=0.972  context_precision=1.000  context_recall=1.000  (35.1s)
+2026-07-01 20:13:47,610  INFO        run=3  sample=8/20  question=Who has the right to be fully informed about human rights vi ...
+2026-07-01 20:13:56,728  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:14:29,987  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:14:32,536  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:14:34,044  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:14:35,516  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:14:39,141  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:14:41,999  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:14:45,505  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:14:51,064  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:14:51,909  INFO          faithfulness=0.500  answer_relevance=0.748  context_precision=1.000  context_recall=1.000  (64.3s)
+2026-07-01 20:14:51,910  INFO        run=3  sample=9/20  question=When can individuals be found guilty under Article 207.3 of  ...
+2026-07-01 20:14:54,588  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:03,041  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:05,565  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:07,629  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:08,987  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:11,812  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:15,039  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:19,651  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:24,507  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:25,391  INFO          faithfulness=0.000  answer_relevance=0.627  context_precision=0.500  context_recall=1.000  (33.5s)
+2026-07-01 20:15:25,391  INFO        run=3  sample=10/20  question=When does the prosecution consider statements contrary to th ...
+2026-07-01 20:15:28,796  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:44,408  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:47,240  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:48,955  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:50,385  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:53,201  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:15:56,229  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:16:00,438  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:16:04,835  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:16:05,631  INFO          faithfulness=0.333  answer_relevance=0.750  context_precision=1.000  context_recall=1.000  (40.2s)
+2026-07-01 20:16:05,631  INFO        run=3  sample=11/20  question=What factors have contributed to the decline of independent  ...
+2026-07-01 20:16:17,722  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:17:01,145  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:17:03,834  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:17:05,175  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:17:06,656  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:17:10,692  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:17:13,722  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:17:17,022  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:17:33,693  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:17:34,576  INFO          faithfulness=0.593  answer_relevance=0.955  context_precision=0.583  context_recall=1.000  (88.9s)
+2026-07-01 20:17:34,576  INFO        run=3  sample=12/20  question=What conditions designate wetlands as Ramsar sites? ...
+2026-07-01 20:17:40,768  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:17:59,228  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:01,678  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:02,902  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:04,171  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:07,429  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:10,465  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:13,300  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:18,034  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:18,972  INFO          faithfulness=0.600  answer_relevance=0.888  context_precision=1.000  context_recall=1.000  (44.4s)
+2026-07-01 20:18:18,972  INFO        run=3  sample=13/20  question=Where was COP15 held in 2022? ...
+2026-07-01 20:18:20,700  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:26,075  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:28,074  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:29,787  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:30,796  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:33,484  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:36,018  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:38,981  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:44,893  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:18:45,753  INFO          faithfulness=1.000  answer_relevance=0.906  context_precision=0.500  context_recall=0.000  (26.8s)
+2026-07-01 20:18:45,753  INFO        run=3  sample=14/20  question=What is the purpose of the agreement known as 30x30? ...
+2026-07-01 20:18:49,628  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:04,076  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:06,651  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:08,046  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:09,439  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:12,451  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:15,715  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:18,692  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:23,811  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:24,724  INFO          faithfulness=1.000  answer_relevance=0.829  context_precision=1.000  context_recall=1.000  (39.0s)
+2026-07-01 20:19:24,724  INFO        run=3  sample=15/20  question=Who failed to explicitly recognize Indigenous Peoples' lands ...
+2026-07-01 20:19:29,026  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:42,142  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:44,942  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:46,454  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:47,858  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:51,593  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:55,712  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:19:58,657  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:20:02,958  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:20:03,867  INFO          faithfulness=0.167  answer_relevance=0.874  context_precision=0.833  context_recall=1.000  (39.1s)
+2026-07-01 20:20:03,868  INFO        run=3  sample=16/20  question=What are the consequences of criminalizing abortion for marg ...
+2026-07-01 20:20:16,656  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:21:00,680  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:21:03,287  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:21:04,557  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:21:05,864  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:21:08,865  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:21:13,590  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:21:19,463  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:21:36,244  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:21:37,161  INFO          faithfulness=0.906  answer_relevance=0.926  context_precision=1.000  context_recall=1.000  (93.3s)
+2026-07-01 20:21:37,161  INFO        run=3  sample=17/20  question=What responsibilities should social media companies have in  ...
+2026-07-01 20:21:48,285  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:22:20,277  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:22:22,835  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:22:24,108  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:22:25,414  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:22:29,528  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:22:32,639  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:22:36,322  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:22:42,592  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:22:43,498  INFO          faithfulness=0.421  answer_relevance=0.978  context_precision=1.000  context_recall=1.000  (66.3s)
+2026-07-01 20:22:43,499  INFO        run=3  sample=18/20  question=What role do social media companies play in protecting users ...
+2026-07-01 20:22:53,083  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:23:27,767  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:23:30,409  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:23:31,916  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:23:33,445  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:23:37,230  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:23:41,819  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:23:45,623  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:23:53,459  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:23:54,364  INFO          faithfulness=0.600  answer_relevance=0.844  context_precision=1.000  context_recall=1.000  (70.9s)
+2026-07-01 20:23:54,364  INFO        run=3  sample=19/20  question=What labor abuses were documented by Amnesty International i ...
+2026-07-01 20:24:04,536  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:24:42,189  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:24:44,774  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:24:46,076  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:24:47,517  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:24:51,328  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:24:56,240  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:00,364  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:10,880  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:11,698  INFO          faithfulness=0.500  answer_relevance=0.963  context_precision=0.833  context_recall=1.000  (77.3s)
+2026-07-01 20:25:11,699  INFO        run=3  sample=20/20  question=When did the government of Qatar start repealing restriction ...
+2026-07-01 20:25:13,031  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:17,034  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:19,339  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:21,306  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:22,374  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:25,196  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:28,212  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:32,086  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:36,546  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:25:37,455  INFO          faithfulness=0.000  answer_relevance=0.987  context_precision=0.500  context_recall=1.000  (25.8s)
+2026-07-01 20:25:37,456  INFO        run=3  faithfulness: mean=0.4923  std=0.3222  min=0.0000  max=1.0000  (n=20)
+2026-07-01 20:25:37,456  INFO        run=3  answer_relevance: mean=0.8874  std=0.0969  min=0.6271  max=0.9989  (n=20)
+2026-07-01 20:25:37,456  INFO        run=3  context_precision: mean=0.7625  std=0.2452  min=0.3333  max=1.0000  (n=20)
+2026-07-01 20:25:37,456  INFO        run=3  context_recall: mean=0.9500  std=0.2236  min=0.0000  max=1.0000  (n=20)
+2026-07-01 20:25:37,456  INFO        run=3  total_time=1119.4s
+2026-07-01 20:25:37,457  INFO      Restarting Ollama model ministral-3:8b-instruct-2512-q4_K_M to clear prompt cache ...
+2026-07-01 20:25:37,617  INFO        Model stopped successfully.
+2026-07-01 20:25:40,617  INFO      ------------------------------------------------------------
+2026-07-01 20:25:40,617  INFO      Starting run 4 / 5
+2026-07-01 20:25:40,617  INFO      ------------------------------------------------------------
+2026-07-01 20:25:40,617  INFO        run=4  sample=1/20  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-01 20:25:52,441  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:26:26,042  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:26:28,740  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:26:30,133  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:26:31,704  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:26:35,901  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:26:40,464  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:26:45,258  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:27:00,119  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:27:00,941  INFO          faithfulness=0.600  answer_relevance=0.944  context_precision=1.000  context_recall=1.000  (80.3s)
+2026-07-01 20:27:00,942  INFO        run=4  sample=2/20  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-01 20:27:15,042  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:27:54,017  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:27:57,135  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:27:58,909  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:28:00,154  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:28:04,461  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:28:09,854  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:28:14,305  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:28:34,102  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:28:35,069  INFO          faithfulness=0.083  answer_relevance=0.854  context_precision=0.333  context_recall=1.000  (94.1s)
+2026-07-01 20:28:35,069  INFO        run=4  sample=3/20  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-01 20:28:43,954  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:05,662  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:08,299  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:09,767  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:11,224  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:15,289  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:19,084  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:21,943  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:26,450  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:27,387  INFO          faithfulness=0.333  answer_relevance=0.960  context_precision=0.333  context_recall=1.000  (52.3s)
+2026-07-01 20:29:27,387  INFO        run=4  sample=4/20  question=What action did Amnesty International urge its supporters to ...
+2026-07-01 20:29:30,299  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:40,930  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:43,470  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:45,667  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:47,062  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:51,147  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:54,192  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:29:57,104  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:30:02,287  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:30:03,218  INFO          faithfulness=0.600  answer_relevance=0.852  context_precision=1.000  context_recall=1.000  (35.8s)
+2026-07-01 20:30:03,218  INFO        run=4  sample=5/20  question=What are the recommendations made by Amnesty International t ...
+2026-07-01 20:30:13,440  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:30:46,092  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:30:48,803  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:30:49,984  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:30:51,370  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:30:54,481  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:30:56,822  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:30:59,031  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:08,824  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:09,758  INFO          faithfulness=0.048  answer_relevance=0.963  context_precision=0.500  context_recall=1.000  (66.5s)
+2026-07-01 20:31:09,759  INFO        run=4  sample=6/20  question=Who are the target audience of the two books created by Amne ...
+2026-07-01 20:31:11,367  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:18,165  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:20,405  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:22,485  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:23,656  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:26,848  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:29,640  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:32,085  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:36,638  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:37,456  INFO          faithfulness=0.667  answer_relevance=0.997  context_precision=0.583  context_recall=1.000  (27.7s)
+2026-07-01 20:31:37,456  INFO        run=4  sample=7/20  question=Which right guarantees access to comprehensive information a ...
+2026-07-01 20:31:39,553  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:47,609  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:50,047  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:52,244  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:53,573  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:56,102  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:31:59,128  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:32:02,549  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:32:10,650  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:32:11,582  INFO          faithfulness=1.000  answer_relevance=0.939  context_precision=1.000  context_recall=1.000  (34.1s)
+2026-07-01 20:32:11,582  INFO        run=4  sample=8/20  question=Who has the right to be fully informed about human rights vi ...
+2026-07-01 20:32:21,863  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:32:58,361  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:01,243  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:02,729  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:04,265  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:07,743  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:10,674  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:14,555  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:19,876  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:20,752  INFO          faithfulness=0.542  answer_relevance=0.805  context_precision=1.000  context_recall=1.000  (69.2s)
+2026-07-01 20:33:20,752  INFO        run=4  sample=9/20  question=When can individuals be found guilty under Article 207.3 of  ...
+2026-07-01 20:33:22,691  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:28,803  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:31,272  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:33,567  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:34,958  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:37,871  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:40,804  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:43,905  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:48,693  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:33:49,594  INFO          faithfulness=0.000  answer_relevance=0.683  context_precision=0.500  context_recall=1.000  (28.8s)
+2026-07-01 20:33:49,594  INFO        run=4  sample=10/20  question=When does the prosecution consider statements contrary to th ...
+2026-07-01 20:33:52,971  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:34:05,210  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:34:07,774  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:34:09,384  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:34:10,986  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:34:14,077  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:34:17,972  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:34:22,356  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:34:27,655  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:34:28,622  INFO          faithfulness=0.500  answer_relevance=0.698  context_precision=1.000  context_recall=1.000  (39.0s)
+2026-07-01 20:34:28,622  INFO        run=4  sample=11/20  question=What factors have contributed to the decline of independent  ...
+2026-07-01 20:34:39,982  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:35:15,238  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:35:17,940  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:35:19,213  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:35:20,314  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:35:23,634  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:35:27,542  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:35:31,329  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:35:46,544  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:35:47,417  INFO          faithfulness=0.737  answer_relevance=0.963  context_precision=0.583  context_recall=1.000  (78.8s)
+2026-07-01 20:35:47,417  INFO        run=4  sample=12/20  question=What conditions designate wetlands as Ramsar sites? ...
+2026-07-01 20:35:53,166  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:11,315  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:13,712  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:14,968  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:16,317  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:20,204  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:23,538  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:26,575  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:32,187  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:33,018  INFO          faithfulness=0.636  answer_relevance=0.876  context_precision=1.000  context_recall=1.000  (45.6s)
+2026-07-01 20:36:33,018  INFO        run=4  sample=13/20  question=Where was COP15 held in 2022? ...
+2026-07-01 20:36:34,699  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:39,699  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:41,680  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:43,477  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:44,512  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:47,117  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:49,900  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:52,562  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:59,139  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:36:59,964  INFO          faithfulness=1.000  answer_relevance=0.906  context_precision=0.500  context_recall=1.000  (26.9s)
+2026-07-01 20:36:59,965  INFO        run=4  sample=14/20  question=What is the purpose of the agreement known as 30x30? ...
+2026-07-01 20:37:04,689  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:37:19,720  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:37:22,310  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:37:23,593  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:37:24,888  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:37:27,282  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:37:31,591  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:37:34,663  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:37:39,878  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:37:40,702  INFO          faithfulness=0.889  answer_relevance=0.768  context_precision=1.000  context_recall=1.000  (40.7s)
+2026-07-01 20:37:40,702  INFO        run=4  sample=15/20  question=Who failed to explicitly recognize Indigenous Peoples' lands ...
+2026-07-01 20:37:44,936  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:37:58,098  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:38:00,757  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:38:02,110  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:38:03,497  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:38:07,133  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:38:10,658  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:38:13,106  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:38:17,608  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:38:18,426  INFO          faithfulness=0.375  answer_relevance=0.846  context_precision=0.333  context_recall=1.000  (37.7s)
+2026-07-01 20:38:18,426  INFO        run=4  sample=16/20  question=What are the consequences of criminalizing abortion for marg ...
+2026-07-01 20:38:29,062  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:38:58,384  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:39:00,993  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:39:02,562  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:39:03,870  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:39:07,605  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:39:11,881  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:39:16,875  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:39:34,444  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:39:35,273  INFO          faithfulness=0.875  answer_relevance=0.922  context_precision=1.000  context_recall=1.000  (76.8s)
+2026-07-01 20:39:35,274  INFO        run=4  sample=17/20  question=What responsibilities should social media companies have in  ...
+2026-07-01 20:39:46,888  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:40:21,419  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:40:23,977  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:40:25,433  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:40:26,889  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:40:30,726  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:40:33,233  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:40:37,156  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:40:42,803  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:40:43,634  INFO          faithfulness=1.000  answer_relevance=0.977  context_precision=1.000  context_recall=1.000  (68.4s)
+2026-07-01 20:40:43,635  INFO        run=4  sample=18/20  question=What role do social media companies play in protecting users ...
+2026-07-01 20:40:55,527  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:41:37,726  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:41:40,537  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:41:42,269  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:41:43,832  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:41:47,536  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:41:51,844  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:41:55,292  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:42:03,772  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:42:04,648  INFO          faithfulness=0.828  answer_relevance=0.822  context_precision=1.000  context_recall=1.000  (81.0s)
+2026-07-01 20:42:04,648  INFO        run=4  sample=19/20  question=What labor abuses were documented by Amnesty International i ...
+2026-07-01 20:42:15,812  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:42:52,653  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:42:55,509  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:42:56,819  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:42:58,333  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:03,175  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:08,059  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:11,883  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:23,881  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:24,669  INFO          faithfulness=0.500  answer_relevance=0.971  context_precision=1.000  context_recall=1.000  (80.0s)
+2026-07-01 20:43:24,669  INFO        run=4  sample=20/20  question=When did the government of Qatar start repealing restriction ...
+2026-07-01 20:43:25,990  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:29,295  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:31,534  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:33,576  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:34,725  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:37,607  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:40,800  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:44,222  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:48,490  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:43:49,335  INFO          faithfulness=0.000  answer_relevance=0.989  context_precision=0.500  context_recall=1.000  (24.7s)
+2026-07-01 20:43:49,336  INFO        run=4  faithfulness: mean=0.5606  std=0.3342  min=0.0000  max=1.0000  (n=20)
+2026-07-01 20:43:49,336  INFO        run=4  answer_relevance: mean=0.8868  std=0.0943  min=0.6833  max=0.9975  (n=20)
+2026-07-01 20:43:49,336  INFO        run=4  context_precision: mean=0.7583  std=0.2821  min=0.3333  max=1.0000  (n=20)
+2026-07-01 20:43:49,336  INFO        run=4  context_recall: mean=1.0000  std=0.0000  min=1.0000  max=1.0000  (n=20)
+2026-07-01 20:43:49,336  INFO        run=4  total_time=1088.7s
+2026-07-01 20:43:49,337  INFO      Restarting Ollama model ministral-3:8b-instruct-2512-q4_K_M to clear prompt cache ...
+2026-07-01 20:43:49,505  INFO        Model stopped successfully.
+2026-07-01 20:43:52,505  INFO      ------------------------------------------------------------
+2026-07-01 20:43:52,506  INFO      Starting run 5 / 5
+2026-07-01 20:43:52,506  INFO      ------------------------------------------------------------
+2026-07-01 20:43:52,559  INFO        run=5  sample=1/20  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-01 20:44:04,851  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:44:40,931  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:44:43,662  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:44:45,121  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:44:46,507  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:44:50,435  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:44:54,101  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:44:58,293  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:45:13,745  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:45:14,716  INFO          faithfulness=0.636  answer_relevance=0.936  context_precision=1.000  context_recall=1.000  (82.2s)
+2026-07-01 20:45:14,717  INFO        run=5  sample=2/20  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-01 20:45:29,795  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:46:07,447  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:46:10,551  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:46:12,404  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:46:14,634  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:46:20,027  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:46:25,025  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:46:29,131  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:46:49,312  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:46:50,176  INFO          faithfulness=0.304  answer_relevance=0.825  context_precision=0.583  context_recall=1.000  (95.5s)
+2026-07-01 20:46:50,176  INFO        run=5  sample=3/20  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-01 20:46:59,083  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:47:21,095  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:47:23,627  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:47:24,934  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:47:26,239  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:47:30,115  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:47:33,766  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:47:36,798  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:47:41,733  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:47:42,672  INFO          faithfulness=0.333  answer_relevance=0.981  context_precision=0.333  context_recall=1.000  (52.5s)
+2026-07-01 20:47:42,672  INFO        run=5  sample=4/20  question=What action did Amnesty International urge its supporters to ...
+2026-07-01 20:47:45,405  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:47:55,387  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:47:58,063  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:48:00,182  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:48:02,310  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:48:05,953  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:48:08,673  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:48:11,985  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:48:17,520  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:48:18,396  INFO          faithfulness=0.400  answer_relevance=0.800  context_precision=0.500  context_recall=1.000  (35.7s)
+2026-07-01 20:48:18,396  INFO        run=5  sample=5/20  question=What are the recommendations made by Amnesty International t ...
+2026-07-01 20:48:29,022  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:03,094  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:05,917  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:07,276  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:08,535  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:12,675  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:15,436  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:18,356  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:27,880  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:28,817  INFO          faithfulness=0.048  answer_relevance=0.969  context_precision=0.500  context_recall=1.000  (70.4s)
+2026-07-01 20:49:28,817  INFO        run=5  sample=6/20  question=Who are the target audience of the two books created by Amne ...
+2026-07-01 20:49:30,422  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:36,913  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:39,227  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:41,252  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:42,421  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:45,143  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:48,050  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:51,075  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:56,089  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:49:56,917  INFO          faithfulness=0.667  answer_relevance=0.999  context_precision=0.583  context_recall=1.000  (28.1s)
+2026-07-01 20:49:56,917  INFO        run=5  sample=7/20  question=Which right guarantees access to comprehensive information a ...
+2026-07-01 20:49:59,057  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:50:07,155  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:50:09,637  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:50:12,126  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:50:14,295  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:50:17,641  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:50:20,062  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:50:23,203  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:50:28,907  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:50:29,751  INFO          faithfulness=1.000  answer_relevance=0.945  context_precision=1.000  context_recall=1.000  (32.8s)
+2026-07-01 20:50:29,751  INFO        run=5  sample=8/20  question=Who has the right to be fully informed about human rights vi ...
+2026-07-01 20:50:41,248  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:51:26,925  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:51:29,793  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:51:31,136  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:51:32,455  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:51:36,582  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:51:39,503  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:51:44,065  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:51:50,397  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:51:51,305  INFO          faithfulness=0.630  answer_relevance=0.758  context_precision=1.000  context_recall=1.000  (81.6s)
+2026-07-01 20:51:51,306  INFO        run=5  sample=9/20  question=When can individuals be found guilty under Article 207.3 of  ...
+2026-07-01 20:51:53,503  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:01,729  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:04,004  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:06,062  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:07,367  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:10,571  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:13,314  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:16,668  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:21,771  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:22,678  INFO          faithfulness=0.333  answer_relevance=0.627  context_precision=0.500  context_recall=1.000  (31.4s)
+2026-07-01 20:52:22,679  INFO        run=5  sample=10/20  question=When does the prosecution consider statements contrary to th ...
+2026-07-01 20:52:26,014  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:41,678  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:44,447  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:45,972  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:47,503  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:50,805  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:54,834  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:52:58,759  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:53:03,946  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:53:04,832  INFO          faithfulness=0.571  answer_relevance=0.722  context_precision=1.000  context_recall=1.000  (42.2s)
+2026-07-01 20:53:04,832  INFO        run=5  sample=11/20  question=What factors have contributed to the decline of independent  ...
+2026-07-01 20:53:16,310  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:53:54,376  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:53:57,021  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:53:58,311  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:53:59,801  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:54:03,696  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:54:06,990  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:54:10,452  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:54:26,287  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:54:27,139  INFO          faithfulness=0.708  answer_relevance=0.959  context_precision=0.583  context_recall=1.000  (82.3s)
+2026-07-01 20:54:27,139  INFO        run=5  sample=12/20  question=What conditions designate wetlands as Ramsar sites? ...
+2026-07-01 20:54:33,848  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:54:53,548  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:54:55,909  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:54:57,083  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:54:58,275  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:01,583  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:05,030  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:08,193  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:13,138  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:13,942  INFO          faithfulness=0.500  answer_relevance=0.910  context_precision=0.833  context_recall=1.000  (46.8s)
+2026-07-01 20:55:13,942  INFO        run=5  sample=13/20  question=Where was COP15 held in 2022? ...
+2026-07-01 20:55:15,787  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:21,191  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:23,119  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:24,925  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:25,913  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:28,448  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:31,183  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:34,556  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:40,816  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:55:41,756  INFO          faithfulness=1.000  answer_relevance=0.906  context_precision=0.500  context_recall=1.000  (27.8s)
+2026-07-01 20:55:41,756  INFO        run=5  sample=14/20  question=What is the purpose of the agreement known as 30x30? ...
+2026-07-01 20:55:46,680  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:04,617  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:07,099  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:08,358  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:09,684  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:13,093  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:16,519  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:19,688  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:24,857  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:25,829  INFO          faithfulness=0.917  answer_relevance=0.889  context_precision=1.000  context_recall=1.000  (44.1s)
+2026-07-01 20:56:25,829  INFO        run=5  sample=15/20  question=Who failed to explicitly recognize Indigenous Peoples' lands ...
+2026-07-01 20:56:29,695  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:41,380  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:43,916  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:45,370  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:46,914  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:50,947  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:54,841  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:56:57,412  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:57:01,799  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:57:02,604  INFO          faithfulness=0.167  answer_relevance=0.868  context_precision=0.333  context_recall=1.000  (36.8s)
+2026-07-01 20:57:02,604  INFO        run=5  sample=16/20  question=What are the consequences of criminalizing abortion for marg ...
+2026-07-01 20:57:12,223  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:57:41,777  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:57:44,295  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:57:45,604  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:57:46,879  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:57:50,847  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:57:55,674  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:57:59,583  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:58:16,798  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:58:17,649  INFO          faithfulness=0.765  answer_relevance=0.923  context_precision=1.000  context_recall=1.000  (75.0s)
+2026-07-01 20:58:17,649  INFO        run=5  sample=17/20  question=What responsibilities should social media companies have in  ...
+2026-07-01 20:58:29,369  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:59:03,600  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:59:06,310  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:59:07,580  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:59:08,828  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:59:11,765  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:59:14,268  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:59:17,020  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:59:23,503  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 20:59:24,380  INFO          faithfulness=1.000  answer_relevance=0.965  context_precision=0.500  context_recall=1.000  (66.7s)
+2026-07-01 20:59:24,380  INFO        run=5  sample=18/20  question=What role do social media companies play in protecting users ...
+2026-07-01 20:59:36,248  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:00:17,655  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:00:20,583  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:00:22,256  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:00:23,614  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:00:26,947  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:00:30,699  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:00:34,897  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:00:42,937  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:00:43,730  INFO          faithfulness=0.433  answer_relevance=0.829  context_precision=1.000  context_recall=1.000  (79.4s)
+2026-07-01 21:00:43,731  INFO        run=5  sample=19/20  question=What labor abuses were documented by Amnesty International i ...
+2026-07-01 21:00:53,807  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:01:32,552  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:01:35,217  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:01:36,523  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:01:37,853  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:01:41,459  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:01:44,560  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:01:48,442  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:01:59,506  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:02:00,365  INFO          faithfulness=0.480  answer_relevance=0.978  context_precision=0.833  context_recall=1.000  (76.6s)
+2026-07-01 21:02:00,366  INFO        run=5  sample=20/20  question=When did the government of Qatar start repealing restriction ...
+2026-07-01 21:02:01,730  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:02:04,929  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:02:07,165  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:02:09,142  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:02:10,301  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:02:12,877  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:02:15,932  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:02:19,931  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:02:24,381  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-01 21:02:25,230  INFO          faithfulness=0.000  answer_relevance=0.989  context_precision=0.500  context_recall=1.000  (24.9s)
+2026-07-01 21:02:25,230  INFO        run=5  faithfulness: mean=0.5446  std=0.3026  min=0.0000  max=1.0000  (n=20)
+2026-07-01 21:02:25,231  INFO        run=5  answer_relevance: mean=0.8889  std=0.1007  min=0.6267  max=0.9987  (n=20)
+2026-07-01 21:02:25,231  INFO        run=5  context_precision: mean=0.7042  std=0.2529  min=0.3333  max=1.0000  (n=20)
+2026-07-01 21:02:25,231  INFO        run=5  context_recall: mean=1.0000  std=0.0000  min=1.0000  max=1.0000  (n=20)
+2026-07-01 21:02:25,231  INFO        run=5  total_time=1112.7s
+2026-07-01 21:02:25,232  INFO      ======================================================================
+2026-07-01 21:02:25,232  INFO      Experiment complete.
+2026-07-01 21:02:25,232  INFO      Raw results   : /home/catalin/LLMOps-Pipeline/results/rq3_raw.csv
+2026-07-01 21:02:25,233  INFO      Run summary   : /home/catalin/LLMOps-Pipeline/results/rq3_run_summary.csv
+2026-07-01 21:02:25,233  INFO      Log file      : /home/catalin/LLMOps-Pipeline/results/rq3_experiment.log
+2026-07-01 21:02:25,233  INFO      ======================================================================
