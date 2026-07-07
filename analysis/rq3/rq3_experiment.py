@@ -172,7 +172,7 @@ def build_ragas_components():
         provider="openai",
         client=client,
         max_tokens=4096,
-        temperature=0.5,
+        temperature=0.1,
         top_p=0.95,
     )
 
