@@ -1,0 +1,381 @@
+2026-07-07 18:01:31,500  INFO      Use pytorch device_name: cuda
+2026-07-07 18:01:31,500  INFO      Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-07-07 18:01:33,120  INFO      Loading amnesty_qa (english_v3) from HuggingFace ...
+2026-07-07 18:01:35,092  INFO      Loaded 20 samples.
+2026-07-07 18:02:45,448  INFO      Use pytorch device_name: cuda
+2026-07-07 18:02:45,449  INFO      Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-07-07 18:02:47,051  INFO      Loading amnesty_qa (english_v3) from HuggingFace ...
+2026-07-07 18:02:49,011  INFO      Loaded 20 samples.
+2026-07-07 18:03:01,158  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:03:35,486  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:03:45,488  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:04:17,318  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:04:26,964  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:04:57,641  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:05:07,183  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:05:38,745  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:05:49,403  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:06:24,981  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:13:35,419  INFO      Use pytorch device_name: cuda
+2026-07-07 18:13:35,419  INFO      Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-07-07 18:13:37,030  INFO      Loading amnesty_qa (english_v3) from HuggingFace ...
+2026-07-07 18:13:38,998  INFO      Loaded 20 samples.
+2026-07-07 18:13:49,798  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:14:16,247  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:14:30,796  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:15:04,823  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:15:19,277  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:15:50,673  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:16:05,730  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:16:41,878  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:16:56,689  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:17:28,769  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:38:03,209  INFO      ======================================================================
+2026-07-07 18:38:03,210  INFO      RQ3 Experiment — RAGAS metric consistency
+2026-07-07 18:38:03,210  INFO      Started at 2026-07-07T18:38:03.210083
+2026-07-07 18:38:03,210  INFO      OLLAMA_HOST=http://localhost:11434  OLLAMA_MODEL=ministral-3:8b-instruct-2512-q4_K_M  EMBED_MODEL=nomic-embed-text  N_RUNS=3  RESTART_BETWEEN_RUNS=True
+2026-07-07 18:38:03,210  INFO      ======================================================================
+2026-07-07 18:38:03,296  INFO      HTTP Request: GET http://localhost:11434/api/tags "HTTP/1.1 200 OK"
+2026-07-07 18:38:03,297  INFO      Ollama reachable at http://localhost:11434
+2026-07-07 18:38:03,718  INFO      Loading amnesty_qa (english_v3) from HuggingFace ...
+2026-07-07 18:38:05,749  INFO      Loaded 20 samples.
+2026-07-07 18:38:05,749  INFO      Building RAGAS judge (model=ministral-3:8b-instruct-2512-q4_K_M, embeddings=all-MiniLM-L6-v2 local) ...
+2026-07-07 18:38:10,283  INFO      Use pytorch device_name: cuda
+2026-07-07 18:38:10,283  INFO      Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-07-07 18:38:11,884  INFO      ------------------------------------------------------------
+2026-07-07 18:38:11,884  INFO      Starting run 1 / 3
+2026-07-07 18:38:11,884  INFO      ------------------------------------------------------------
+2026-07-07 18:38:11,884  INFO        run=1  sample=1/3  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-07 18:38:23,344  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:38:57,011  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:38:59,642  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:39:01,025  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:39:02,353  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:39:06,014  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:39:09,159  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:39:12,923  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:39:27,732  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:39:28,578  INFO          faithfulness=0.524  answer_relevance=0.943  context_precision=1.000  context_recall=1.000  (76.7s)
+2026-07-07 18:39:28,578  INFO        run=1  sample=2/3  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-07 18:39:44,637  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:40:25,570  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:40:28,564  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:40:30,422  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:40:32,127  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:40:37,065  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:40:42,469  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:40:47,596  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:41:06,633  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:41:07,502  INFO          faithfulness=0.080  answer_relevance=0.854  context_precision=0.583  context_recall=1.000  (98.9s)
+2026-07-07 18:41:07,502  INFO        run=1  sample=3/3  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-07 18:41:15,305  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:41:35,476  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:41:37,967  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:41:39,331  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:41:40,677  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:41:44,399  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:41:47,549  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:41:50,151  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:41:54,989  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:41:55,890  INFO          faithfulness=0.417  answer_relevance=0.974  context_precision=0.333  context_recall=1.000  (48.4s)
+2026-07-07 18:41:55,891  INFO        run=1  faithfulness: mean=0.3402  std=0.2316  min=0.0800  max=0.5238  (n=3)
+2026-07-07 18:41:55,891  INFO        run=1  answer_relevance: mean=0.9236  std=0.0621  min=0.8541  max=0.9739  (n=3)
+2026-07-07 18:41:55,891  INFO        run=1  context_precision: mean=0.6389  std=0.3368  min=0.3333  max=1.0000  (n=3)
+2026-07-07 18:41:55,891  INFO        run=1  context_recall: mean=1.0000  std=0.0000  min=1.0000  max=1.0000  (n=3)
+2026-07-07 18:41:55,891  INFO        run=1  total_time=224.0s
+2026-07-07 18:41:55,891  INFO      Restarting Ollama model ministral-3:8b-instruct-2512-q4_K_M to clear prompt cache ...
+2026-07-07 18:41:56,061  INFO        Model stopped successfully.
+2026-07-07 18:41:59,062  INFO      ------------------------------------------------------------
+2026-07-07 18:41:59,062  INFO      Starting run 2 / 3
+2026-07-07 18:41:59,062  INFO      ------------------------------------------------------------
+2026-07-07 18:41:59,063  INFO        run=2  sample=1/3  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-07 18:42:10,416  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:42:41,358  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:42:44,159  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:42:45,626  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:42:47,144  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:42:50,797  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:42:54,432  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:42:58,221  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:43:13,370  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:43:14,136  INFO          faithfulness=0.632  answer_relevance=0.925  context_precision=1.000  context_recall=1.000  (75.1s)
+2026-07-07 18:43:14,136  INFO        run=2  sample=2/3  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-07 18:43:26,867  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:43:56,188  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:43:59,261  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:44:01,019  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:44:03,068  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:44:08,342  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:44:12,525  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:44:17,039  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:44:37,098  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:44:37,970  INFO          faithfulness=0.231  answer_relevance=0.833  context_precision=0.583  context_recall=1.000  (83.8s)
+2026-07-07 18:44:37,970  INFO        run=2  sample=3/3  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-07 18:44:48,716  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:45:18,275  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:45:20,824  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:45:22,107  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:45:23,427  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:45:26,877  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:45:30,253  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:45:32,802  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:45:37,636  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:45:38,594  INFO          faithfulness=0.286  answer_relevance=0.982  context_precision=0.333  context_recall=1.000  (60.6s)
+2026-07-07 18:45:38,594  INFO        run=2  faithfulness: mean=0.3827  std=0.2173  min=0.2308  max=0.6316  (n=3)
+2026-07-07 18:45:38,595  INFO        run=2  answer_relevance: mean=0.9132  std=0.0753  min=0.8325  max=0.9816  (n=3)
+2026-07-07 18:45:38,595  INFO        run=2  context_precision: mean=0.6389  std=0.3368  min=0.3333  max=1.0000  (n=3)
+2026-07-07 18:45:38,595  INFO        run=2  context_recall: mean=1.0000  std=0.0000  min=1.0000  max=1.0000  (n=3)
+2026-07-07 18:45:38,595  INFO        run=2  total_time=219.5s
+2026-07-07 18:45:38,595  INFO      Restarting Ollama model ministral-3:8b-instruct-2512-q4_K_M to clear prompt cache ...
+2026-07-07 18:45:38,780  INFO        Model stopped successfully.
+2026-07-07 18:45:41,781  INFO      ------------------------------------------------------------
+2026-07-07 18:45:41,781  INFO      Starting run 3 / 3
+2026-07-07 18:45:41,781  INFO      ------------------------------------------------------------
+2026-07-07 18:45:41,781  INFO        run=3  sample=1/3  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-07 18:45:54,155  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:46:31,375  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:46:34,166  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:46:35,526  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:46:36,945  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:46:41,264  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:46:46,027  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:46:49,838  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:47:04,706  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:47:05,637  INFO          faithfulness=0.792  answer_relevance=0.935  context_precision=1.000  context_recall=1.000  (83.9s)
+2026-07-07 18:47:05,637  INFO        run=3  sample=2/3  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-07 18:47:19,632  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:47:58,601  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:48:01,883  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:48:03,818  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:48:05,634  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:48:10,304  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:48:15,331  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:48:20,466  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:48:42,622  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:48:43,495  INFO          faithfulness=0.208  answer_relevance=0.816  context_precision=0.583  context_recall=1.000  (97.9s)
+2026-07-07 18:48:43,496  INFO        run=3  sample=3/3  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-07 18:48:52,652  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:49:14,120  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:49:16,672  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:49:17,974  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:49:19,359  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:49:23,313  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:49:26,821  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:49:29,746  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:49:34,337  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:49:35,299  INFO          faithfulness=0.417  answer_relevance=0.957  context_precision=0.333  context_recall=1.000  (51.8s)
+2026-07-07 18:49:35,300  INFO        run=3  faithfulness: mean=0.4722  std=0.2956  min=0.2083  max=0.7917  (n=3)
+2026-07-07 18:49:35,302  INFO        run=3  answer_relevance: mean=0.9026  std=0.0761  min=0.8157  max=0.9570  (n=3)
+2026-07-07 18:49:35,302  INFO        run=3  context_precision: mean=0.6389  std=0.3368  min=0.3333  max=1.0000  (n=3)
+2026-07-07 18:49:35,302  INFO        run=3  context_recall: mean=1.0000  std=0.0000  min=1.0000  max=1.0000  (n=3)
+2026-07-07 18:49:35,302  INFO        run=3  total_time=233.5s
+2026-07-07 18:49:35,303  INFO      ======================================================================
+2026-07-07 18:49:35,303  INFO      Experiment complete.
+2026-07-07 18:49:35,303  INFO      Raw results   : /home/catalin/LLMOps-Pipeline/results/rq3/data/rq3_raw.csv
+2026-07-07 18:49:35,304  INFO      Run summary   : /home/catalin/LLMOps-Pipeline/results/rq3/data/rq3_run_summary.csv
+2026-07-07 18:49:35,304  INFO      Log file      : /home/catalin/LLMOps-Pipeline/results/rq3/data/rq3_experiment.log
+2026-07-07 18:49:35,305  INFO      ======================================================================
+2026-07-07 18:53:15,192  INFO      ======================================================================
+2026-07-07 18:53:15,193  INFO      RQ3 Experiment — RAGAS metric consistency
+2026-07-07 18:53:15,193  INFO      Started at 2026-07-07T18:53:15.193110
+2026-07-07 18:53:15,193  INFO      OLLAMA_HOST=http://localhost:11434  OLLAMA_MODEL=ministral-3:8b-instruct-2512-q4_K_M  EMBED_MODEL=nomic-embed-text  N_RUNS=3  RESTART_BETWEEN_RUNS=True
+2026-07-07 18:53:15,193  INFO      ======================================================================
+2026-07-07 18:53:15,280  INFO      HTTP Request: GET http://localhost:11434/api/tags "HTTP/1.1 200 OK"
+2026-07-07 18:53:15,280  INFO      Ollama reachable at http://localhost:11434
+2026-07-07 18:53:15,690  INFO      Loading amnesty_qa (english_v3) from HuggingFace ...
+2026-07-07 18:53:17,756  INFO      Loaded 20 samples.
+2026-07-07 18:53:17,756  INFO      Building RAGAS judge (model=ministral-3:8b-instruct-2512-q4_K_M, embeddings=all-MiniLM-L6-v2 local) ...
+2026-07-07 18:53:22,123  INFO      Use pytorch device_name: cuda
+2026-07-07 18:53:22,123  INFO      Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-07-07 18:53:23,731  INFO      ------------------------------------------------------------
+2026-07-07 18:53:23,731  INFO      Starting run 1 / 3
+2026-07-07 18:53:23,731  INFO      ------------------------------------------------------------
+2026-07-07 18:53:23,731  INFO        run=1  sample=1/3  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-07 18:53:33,529  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:54:07,899  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:54:10,688  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:54:12,245  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:54:13,668  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:54:18,134  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:54:22,038  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:54:25,729  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:54:40,787  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:54:41,656  INFO          faithfulness=0.800  answer_relevance=0.940  context_precision=1.000  context_recall=1.000  (77.9s)
+2026-07-07 18:54:41,656  INFO        run=1  sample=2/3  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-07 18:54:55,714  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:55:33,849  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:55:36,913  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:55:38,705  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:55:40,396  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:55:44,901  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:55:50,605  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:55:55,661  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:56:16,342  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:56:17,301  INFO          faithfulness=0.042  answer_relevance=0.823  context_precision=0.583  context_recall=1.000  (95.6s)
+2026-07-07 18:56:17,301  INFO        run=1  sample=3/3  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-07 18:56:25,982  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:56:46,469  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:56:49,082  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:56:50,479  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:56:51,887  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:56:55,236  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:56:58,490  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:57:01,375  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:57:05,942  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:57:06,904  INFO          faithfulness=0.333  answer_relevance=0.953  context_precision=0.333  context_recall=1.000  (49.6s)
+2026-07-07 18:57:06,905  INFO        run=1  faithfulness: mean=0.3917  std=0.3825  min=0.0417  max=0.8000  (n=3)
+2026-07-07 18:57:06,905  INFO        run=1  answer_relevance: mean=0.9058  std=0.0716  min=0.8234  max=0.9534  (n=3)
+2026-07-07 18:57:06,905  INFO        run=1  context_precision: mean=0.6389  std=0.3368  min=0.3333  max=1.0000  (n=3)
+2026-07-07 18:57:06,905  INFO        run=1  context_recall: mean=1.0000  std=0.0000  min=1.0000  max=1.0000  (n=3)
+2026-07-07 18:57:06,905  INFO        run=1  total_time=223.2s
+2026-07-07 18:57:06,906  INFO      Restarting Ollama model ministral-3:8b-instruct-2512-q4_K_M to clear prompt cache ...
+2026-07-07 18:57:07,086  INFO        Model stopped successfully.
+2026-07-07 18:57:10,087  INFO      ------------------------------------------------------------
+2026-07-07 18:57:10,087  INFO      Starting run 2 / 3
+2026-07-07 18:57:10,087  INFO      ------------------------------------------------------------
+2026-07-07 18:57:10,087  INFO        run=2  sample=1/3  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-07 18:58:10,813  INFO      ======================================================================
+2026-07-07 18:58:10,813  INFO      RQ3 Experiment — RAGAS metric consistency
+2026-07-07 18:58:10,813  INFO      Started at 2026-07-07T18:58:10.813206
+2026-07-07 18:58:10,813  INFO      OLLAMA_HOST=http://localhost:11434  OLLAMA_MODEL=ministral-3:8b-instruct-2512-q4_K_M  EMBED_MODEL=nomic-embed-text  N_RUNS=3  RESTART_BETWEEN_RUNS=True
+2026-07-07 18:58:10,813  INFO      ======================================================================
+2026-07-07 18:58:10,901  INFO      HTTP Request: GET http://localhost:11434/api/tags "HTTP/1.1 200 OK"
+2026-07-07 18:58:10,901  INFO      Ollama reachable at http://localhost:11434
+2026-07-07 18:58:11,315  INFO      Loading amnesty_qa (english_v3) from HuggingFace ...
+2026-07-07 18:58:13,416  INFO      Loaded 20 samples.
+2026-07-07 18:58:13,416  INFO      Building RAGAS judge (model=ministral-3:8b-instruct-2512-q4_K_M, embeddings=all-MiniLM-L6-v2 local) ...
+2026-07-07 18:58:17,949  INFO      Use pytorch device_name: cuda
+2026-07-07 18:58:17,949  INFO      Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-07-07 18:58:19,566  INFO      ------------------------------------------------------------
+2026-07-07 18:58:19,566  INFO      Starting run 1 / 3
+2026-07-07 18:58:19,566  INFO      ------------------------------------------------------------
+2026-07-07 18:58:19,566  INFO        run=1  sample=1/3  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-07 18:58:28,506  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:59:01,417  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:59:04,117  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:59:05,643  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:59:07,079  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:59:11,090  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:59:14,739  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:59:19,876  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:59:35,751  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 18:59:36,615  INFO          faithfulness=0.600  answer_relevance=0.936  context_precision=1.000  context_recall=1.000  (77.0s)
+2026-07-07 18:59:36,615  INFO        run=1  sample=2/3  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-07 18:59:49,182  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:00:16,581  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:00:19,708  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:00:21,482  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:00:23,274  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:00:27,275  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:00:31,192  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:00:35,489  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:00:54,111  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:00:55,069  INFO          faithfulness=0.231  answer_relevance=0.816  context_precision=0.333  context_recall=1.000  (78.5s)
+2026-07-07 19:00:55,069  INFO        run=1  sample=3/3  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-07 19:01:04,014  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:01:26,167  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:01:28,742  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:01:30,078  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:01:31,481  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:01:34,988  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:01:38,133  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:01:41,069  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:01:45,807  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:01:46,708  INFO          faithfulness=0.333  answer_relevance=0.979  context_precision=0.333  context_recall=1.000  (51.6s)
+2026-07-07 19:01:46,709  INFO        run=1  faithfulness: mean=0.3880  std=0.1906  min=0.2308  max=0.6000  (n=3)
+2026-07-07 19:01:46,709  INFO        run=1  answer_relevance: mean=0.9103  std=0.0842  min=0.8163  max=0.9789  (n=3)
+2026-07-07 19:01:46,709  INFO        run=1  context_precision: mean=0.5556  std=0.3849  min=0.3333  max=1.0000  (n=3)
+2026-07-07 19:01:46,709  INFO        run=1  context_recall: mean=1.0000  std=0.0000  min=1.0000  max=1.0000  (n=3)
+2026-07-07 19:01:46,709  INFO        run=1  total_time=207.1s
+2026-07-07 19:01:46,709  INFO      Restarting Ollama model ministral-3:8b-instruct-2512-q4_K_M to clear prompt cache ...
+2026-07-07 19:01:46,866  INFO        Model stopped successfully.
+2026-07-07 19:01:49,866  INFO      ------------------------------------------------------------
+2026-07-07 19:01:49,866  INFO      Starting run 2 / 3
+2026-07-07 19:01:49,866  INFO      ------------------------------------------------------------
+2026-07-07 19:01:49,866  INFO        run=2  sample=1/3  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-07 19:02:02,123  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:02:40,049  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:02:42,834  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:02:44,291  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:02:45,838  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:02:49,229  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:02:51,980  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:02:55,893  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:03:10,795  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:03:11,691  INFO          faithfulness=0.727  answer_relevance=0.937  context_precision=1.000  context_recall=1.000  (81.8s)
+2026-07-07 19:03:11,691  INFO        run=2  sample=2/3  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-07 19:03:25,707  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:04:03,545  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:04:06,757  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:04:08,591  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:04:10,412  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:04:15,410  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:04:20,130  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:04:24,408  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:04:43,658  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:04:44,504  INFO          faithfulness=0.167  answer_relevance=0.816  context_precision=0.583  context_recall=1.000  (92.8s)
+2026-07-07 19:04:44,504  INFO        run=2  sample=3/3  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-07 19:04:53,442  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:05:15,373  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:05:17,837  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:05:19,169  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:05:20,533  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:05:23,778  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:05:26,364  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:05:29,192  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:05:33,108  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:05:33,938  INFO          faithfulness=0.333  answer_relevance=0.974  context_precision=0.333  context_recall=1.000  (49.4s)
+2026-07-07 19:05:33,939  INFO        run=2  faithfulness: mean=0.4091  std=0.2879  min=0.1667  max=0.7273  (n=3)
+2026-07-07 19:05:33,939  INFO        run=2  answer_relevance: mean=0.9093  std=0.0826  min=0.8163  max=0.9741  (n=3)
+2026-07-07 19:05:33,939  INFO        run=2  context_precision: mean=0.6389  std=0.3368  min=0.3333  max=1.0000  (n=3)
+2026-07-07 19:05:33,939  INFO        run=2  context_recall: mean=1.0000  std=0.0000  min=1.0000  max=1.0000  (n=3)
+2026-07-07 19:05:33,939  INFO        run=2  total_time=224.1s
+2026-07-07 19:05:33,939  INFO      Restarting Ollama model ministral-3:8b-instruct-2512-q4_K_M to clear prompt cache ...
+2026-07-07 19:05:34,100  INFO        Model stopped successfully.
+2026-07-07 19:05:37,100  INFO      ------------------------------------------------------------
+2026-07-07 19:05:37,100  INFO      Starting run 3 / 3
+2026-07-07 19:05:37,100  INFO      ------------------------------------------------------------
+2026-07-07 19:05:37,101  INFO        run=3  sample=1/3  question=What are the global implications of the USA Supreme Court ru ...
+2026-07-07 19:05:49,308  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:06:28,277  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:06:31,064  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:06:32,628  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:06:34,009  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:06:38,596  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:06:42,234  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:06:46,563  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:07:02,133  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:07:02,978  INFO          faithfulness=0.727  answer_relevance=0.937  context_precision=1.000  context_recall=1.000  (85.9s)
+2026-07-07 19:07:02,979  INFO        run=3  sample=2/3  question=Which companies are the main contributors to GHG emissions a ...
+2026-07-07 19:07:17,046  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:07:58,056  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:08:01,161  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:08:02,980  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:08:04,738  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:08:09,595  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:08:14,627  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:08:19,262  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:08:38,983  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:08:39,956  INFO          faithfulness=0.042  answer_relevance=0.816  context_precision=0.583  context_recall=1.000  (97.0s)
+2026-07-07 19:08:39,956  INFO        run=3  sample=3/3  question=Which private companies in the Americas are the largest GHG  ...
+2026-07-07 19:08:48,858  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:09:11,189  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:09:13,589  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:09:14,964  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:09:16,341  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:09:20,306  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:09:23,809  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:09:26,968  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:09:31,757  INFO      HTTP Request: POST http://localhost:11434/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-07 19:09:32,691  INFO          faithfulness=0.333  answer_relevance=0.984  context_precision=0.333  context_recall=1.000  (52.7s)
+2026-07-07 19:09:32,691  INFO        run=3  faithfulness: mean=0.3674  std=0.3441  min=0.0417  max=0.7273  (n=3)
+2026-07-07 19:09:32,691  INFO        run=3  answer_relevance: mean=0.9124  std=0.0864  min=0.8163  max=0.9836  (n=3)
+2026-07-07 19:09:32,691  INFO        run=3  context_precision: mean=0.6389  std=0.3368  min=0.3333  max=1.0000  (n=3)
+2026-07-07 19:09:32,692  INFO        run=3  context_recall: mean=1.0000  std=0.0000  min=1.0000  max=1.0000  (n=3)
+2026-07-07 19:09:32,692  INFO        run=3  total_time=235.6s
+2026-07-07 19:09:32,692  INFO      ======================================================================
+2026-07-07 19:09:32,692  INFO      Experiment complete.
+2026-07-07 19:09:32,693  INFO      Raw results   : /home/catalin/LLMOps-Pipeline/results/rq3/data/rq3_raw.csv
+2026-07-07 19:09:32,694  INFO      Run summary   : /home/catalin/LLMOps-Pipeline/results/rq3/data/rq3_run_summary.csv
+2026-07-07 19:09:32,694  INFO      Log file      : /home/catalin/LLMOps-Pipeline/results/rq3/data/rq3_experiment.log
+2026-07-07 19:09:32,694  INFO      ======================================================================
