@@ -26,17 +26,24 @@ RESTART_BETWEEN_RUNS = os.getenv("RESTART_BETWEEN_RUNS", "1") == "1"
 # server time to fully unload the model and release VRAM before reload.
 RESTART_SETTLE_SECONDS = float(os.getenv("RESTART_SETTLE_SECONDS", "3"))
 
-RESULTS_DIR = Path("results")
-RAW_CSV = RESULTS_DIR / "rq3_raw.csv"
-SUMMARY_CSV = RESULTS_DIR / "rq3_run_summary.csv"
-LOG_FILE = RESULTS_DIR / "rq3_experiment.log"
+# Paths resolved relative to this file (not the working directory) so the
+# project can be checked out anywhere and still reproduce, matching the
+# results/rq4/{data,csvs,images} layout used by analysis/rq4/rq4_experiment.py.
+SCRIPT_DIR = Path(__file__).resolve().parent  # analysis/rq3
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # repo root
+RESULTS_DIR = PROJECT_ROOT / "results" / "rq3"
+DATA_DIR = RESULTS_DIR / "data"
+
+RAW_CSV = DATA_DIR / "rq3_raw.csv"
+SUMMARY_CSV = DATA_DIR / "rq3_run_summary.csv"
+LOG_FILE = DATA_DIR / "rq3_experiment.log"
 
 METRICS = ["faithfulness", "answer_relevance", "context_precision", "context_recall"]
 
 # ---------------------------------------------------------------------------
 # Logging — console + file
 # ---------------------------------------------------------------------------
-RESULTS_DIR.mkdir(exist_ok=True)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 logging.basicConfig(
     level=logging.INFO,

@@ -1,52 +1,3 @@
-"""
-RQ4 VRAM validation: experiment and analysis in a single script.
-
-Purpose
--------
-Empirically validates the VRAM estimation formula (Equation eq:estimation in
-sections/methodology.tex) by sweeping Ollama's context length (num_ctx),
-measuring actual GPU memory usage, and comparing it against the formula's
-prediction.
-
-    M_total(N) = (P * b_w) + (0.55 + 0.08 * P) + (N * 2 * L * (d / g) * b_kv) * 1e-9
-
-Design
-------
-Weights (P, b_w), layer count (L), hidden dimension (d) and the GQA grouping
-factor (g) are fixed for a given model and quantisation, so the only free
-term is the KV cache, which scales with context length N. Sweeping N traces
-out the predicted line and lets measured VRAM be checked against both the
-intercept (weights + framework overhead) and the slope (KV cache growth).
-
-Layout
-------
-This script lives at analysis/rq4/rq4_experiment.py and writes to
-results/rq4/{data,csvs,images}, resolved relative to this file so the
-project can be checked out anywhere and still reproduce.
-
-    results/rq4/data    raw per run measurements (rq4_vram_raw.csv)
-    results/rq4/csvs    aggregated summary table (rq4_summary.csv)
-    results/rq4/images  fit plot and residual plot
-
-Measurement backend
---------------------
-VRAMReader is an abstract interface with two implementations: NvidiaSmiReader
-(default, used in this experiment) and a PrometheusReader stub. Nvidia smi is
-used by default because it needs no extra infrastructure and gives an on
-demand reading rather than one delayed by a scrape interval. The Prometheus
-path is left in place so switching backends later is a one line change
-(--backend prometheus) plus filling in the query in PrometheusReader.
-
-Usage
------
-    python rq4_experiment.py                      # sweep + measure + analyse, one shot
-    python rq4_experiment.py --repeats 3           # fewer repeats per N
-    python rq4_experiment.py --model <ollama_tag>  # overrides OLLAMA_MODEL env var
-
-NOTE: delete results/rq4/data/rq4_vram_raw.csv before rerunning a full sweep,
-since the script appends rather than overwrites.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -275,10 +226,8 @@ def run_experiment(
     prompt: str,
 ) -> None:
     if RAW_CSV_PATH.exists():
-        print(
-            f"WARNING: {RAW_CSV_PATH} already exists and will be appended to.\n"
-            "Delete it first if you want a clean run."
-        )
+        RAW_CSV_PATH.unlink()
+        print(f"Removed existing {RAW_CSV_PATH} to start a fresh run.")
 
     print(f"Baseline read on GPU {gpu_index} before any load")
     baseline_mib = reader.read_used_mib(gpu_index)
