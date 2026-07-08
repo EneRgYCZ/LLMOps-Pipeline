@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import requests
+from dotenv import load_dotenv
 
 # ---------------------------------------------------------------------------
 # Paths (all relative to this file)
@@ -21,6 +22,11 @@ import requests
 
 SCRIPT_DIR = Path(__file__).resolve().parent  # analysis/rq4
 PROJECT_ROOT = SCRIPT_DIR.parent.parent  # repo root
+
+# Run standalone from a local venv, not through docker-compose's env_file, so
+# load .env explicitly before any of the os.environ.get(...) calls below.
+load_dotenv(PROJECT_ROOT / ".env")
+
 RESULTS_DIR = PROJECT_ROOT / "results" / "rq4"
 DATA_DIR = RESULTS_DIR / "data"
 CSV_DIR = RESULTS_DIR / "csvs"

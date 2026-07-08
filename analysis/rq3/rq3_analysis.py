@@ -26,6 +26,7 @@ import sys
 from pathlib import Path
 
 import matplotlib
+from dotenv import load_dotenv
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -42,6 +43,9 @@ from icc import ReliabilityAnalysis  # noqa: E402
 # ---------------------------------------------------------------------------
 # Paths are resolved relative to this script file, not the working directory.
 _HERE = Path(__file__).resolve().parent
+# Run standalone from a local venv, not through docker-compose's env_file, so
+# load .env explicitly before reading any of the overrides below.
+load_dotenv(_HERE.parent.parent / ".env")
 RAW_CSV = Path(
     os.getenv("RAW_CSV", str(_HERE / "../../results/rq3/data/rq3_raw.csv"))
 ).resolve()

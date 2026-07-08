@@ -9,13 +9,31 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
+# Paths resolved relative to this file (not the working directory) so the
+# project can be checked out anywhere and still reproduce, matching the
+# results/rq4/{data,csvs,images} layout used by analysis/rq4/rq4_experiment.py.
+SCRIPT_DIR = Path(__file__).resolve().parent  # analysis/rq3
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # repo root
+RESULTS_DIR = PROJECT_ROOT / "results" / "rq3"
+DATA_DIR = RESULTS_DIR / "data"
+
+# Load .env before reading any env vars below — this script is normally run
+# standalone from a local venv (not through docker-compose's env_file), so
+# without this call every os.getenv() here would silently ignore .env and
+# only see actual exported shell vars or hardcoded defaults.
+load_dotenv(PROJECT_ROOT / ".env")
+
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M")
 EMBED_MODEL = os.getenv("EMBED_MODEL", "nomic-embed-text")
 N_RUNS = int(os.getenv("N_RUNS_RQ3_TEST", "5"))
+JUDGE_TEMPERATURE = float(os.getenv("EVAL_JUDGE_TEMPERATURE", "0.1"))
+JUDGE_TOP_P = float(os.getenv("EVAL_JUDGE_TOP_P", "0.95"))
 
 # Restart the Ollama model process between runs to clear llama.cpp's prompt
 # cache. Default ON — set to "0" to disable (e.g. for quick debugging runs
@@ -25,14 +43,6 @@ RESTART_BETWEEN_RUNS = os.getenv("RESTART_BETWEEN_RUNS", "1") == "1"
 # Seconds to wait after `ollama stop` before the next run starts, giving the
 # server time to fully unload the model and release VRAM before reload.
 RESTART_SETTLE_SECONDS = float(os.getenv("RESTART_SETTLE_SECONDS", "3"))
-
-# Paths resolved relative to this file (not the working directory) so the
-# project can be checked out anywhere and still reproduce, matching the
-# results/rq4/{data,csvs,images} layout used by analysis/rq4/rq4_experiment.py.
-SCRIPT_DIR = Path(__file__).resolve().parent  # analysis/rq3
-PROJECT_ROOT = SCRIPT_DIR.parent.parent  # repo root
-RESULTS_DIR = PROJECT_ROOT / "results" / "rq3"
-DATA_DIR = RESULTS_DIR / "data"
 
 RAW_CSV = DATA_DIR / "rq3_raw.csv"
 SUMMARY_CSV = DATA_DIR / "rq3_run_summary.csv"
@@ -156,24 +166,24 @@ def build_ragas_components():
         api_key="ollama",
         base_url=f"{OLLAMA_HOST}/v1",
     )
-    # temperature=0.1 follows the recommendation in the temperature-vs-LLM-judge
-    # literature (peak self-consistency at t=0.1).
+    # JUDGE_TEMPERATURE default (0.1) follows the recommendation in the
+    # temperature-vs-LLM-judge literature (peak self-consistency at t=0.1).
     #
     # CRITICAL: top_p must be set explicitly. ragas's llm_factory defaults
-    # top_p to match the temperature value (top_p=0.1 here) unless overridden,
-    # which collapses nucleus sampling to near-greedy decoding regardless of
-    # temperature -- temperature only perturbs the candidate pool that top_p
-    # selects, and a pool of size ~1 leaves nothing for temperature to act on.
-    # Confirmed empirically: with top_p left at its temperature-matched
-    # default, repeated raw completions and RAGAS scores were bit-identical
-    # across 20 runs; setting top_p=0.95 restored genuine run-to-run variation.
+    # top_p to match the temperature value unless overridden, which collapses
+    # nucleus sampling to near-greedy decoding regardless of temperature --
+    # temperature only perturbs the candidate pool that top_p selects, and a
+    # pool of size ~1 leaves nothing for temperature to act on. Confirmed
+    # empirically: with top_p left at its temperature-matched default,
+    # repeated raw completions and RAGAS scores were bit-identical across 20
+    # runs; setting top_p=0.95 restored genuine run-to-run variation.
     llm = llm_factory(
         OLLAMA_MODEL,
         provider="openai",
         client=client,
         max_tokens=4096,
-        temperature=0.1,
-        top_p=0.95,
+        temperature=JUDGE_TEMPERATURE,
+        top_p=JUDGE_TOP_P,
     )
 
     # HuggingFaceEmbeddings runs locally on CPU — no Ollama embedding endpoint needed.
@@ -349,12 +359,14 @@ async def main():
     log.info("Started at %s", datetime.now().isoformat())
     log.info(
         "OLLAMA_HOST=%s  OLLAMA_MODEL=%s  EMBED_MODEL=%s  N_RUNS=%d  "
-        "RESTART_BETWEEN_RUNS=%s",
+        "RESTART_BETWEEN_RUNS=%s  JUDGE_TEMPERATURE=%s  JUDGE_TOP_P=%s",
         OLLAMA_HOST,
         OLLAMA_MODEL,
         EMBED_MODEL,
         N_RUNS,
         RESTART_BETWEEN_RUNS,
+        JUDGE_TEMPERATURE,
+        JUDGE_TOP_P,
     )
     log.info("=" * 70)
 
