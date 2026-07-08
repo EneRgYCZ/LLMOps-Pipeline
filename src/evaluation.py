@@ -3,16 +3,25 @@
 Computes RAG quality metrics on inference requests using RAGAS (LLM-as-judge).
 Runs in a background asyncio worker; inference is never blocked by evaluation.
 
-Dependencies: ragas==0.2.13, langchain-ollama==0.2.3.
-RAGAS imports ragas.executor at module-load time which calls nest_asyncio.apply().
-nest_asyncio cannot patch uvloop. uvicorn must run with --loop asyncio (not uvloop).
+Dependencies: ragas==0.4.3.
+Uses the ragas.metrics.collections async API (metric.ascore(...)) exclusively.
+That path never touches ragas.executor's nest_asyncio.apply() — it is only
+invoked by the legacy synchronous evaluate()/score() APIs, which this module
+does not use — so uvicorn's event loop policy is unconstrained by RAGAS here.
 
 Configuration (all via env vars):
     EVAL_ENABLED            bool  default False — no eval worker started when False
     EVAL_JUDGE_HOST         str   default OLLAMA_HOST — LLM endpoint for RAGAS judge
     EVAL_JUDGE_MODEL        str   default OLLAMA_MODEL — model used for judging
-    EVAL_EMBEDDING_MODEL    str   default nomic-embed-text — Ollama embedding model
-                                  (must support /api/embeddings; separate from judge LLM)
+    EVAL_JUDGE_TEMPERATURE  float default 0.1 — judge sampling temperature
+    EVAL_JUDGE_TOP_P        float default 0.95 — judge nucleus sampling top_p.
+                                  Must always be set alongside temperature: ragas's
+                                  llm_factory defaults top_p to match temperature when
+                                  unset, which collapses sampling to near-greedy
+                                  decoding regardless of temperature.
+    EVAL_EMBEDDING_MODEL    str   default all-MiniLM-L6-v2 — local HuggingFace
+                                  embedding model for AnswerRelevancy (same model
+                                  already used by src/rag.py and baked into the image)
     EVAL_QUEUE_MAX_SIZE     int   default 100 — max pending evals before drops
     EVAL_SAMPLE_RATE        float default 1.0 — fraction of requests to evaluate
     EVAL_DB_PATH            str   default /data/evaluations.db — SQLite path
@@ -36,6 +45,7 @@ Streaming limitation:
 """
 
 import asyncio
+import inspect
 import json
 import logging
 import os
@@ -136,8 +146,12 @@ class EvaluationConfig:
             "EVAL_JUDGE_MODEL",
             os.getenv("OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M"),
         )
+        self.eval_judge_temperature: float = float(
+            os.getenv("EVAL_JUDGE_TEMPERATURE", "0.1")
+        )
+        self.eval_judge_top_p: float = float(os.getenv("EVAL_JUDGE_TOP_P", "0.95"))
         self.eval_embedding_model: str = os.getenv(
-            "EVAL_EMBEDDING_MODEL", "nomic-embed-text"
+            "EVAL_EMBEDDING_MODEL", "all-MiniLM-L6-v2"
         )
         self.eval_queue_max_size: int = int(os.getenv("EVAL_QUEUE_MAX_SIZE", "100"))
         self.eval_sample_rate: float = float(os.getenv("EVAL_SAMPLE_RATE", "1.0"))
@@ -222,25 +236,34 @@ class EvaluationService:
 
     def _init_ragas(self) -> None:
         try:
-            from langchain_ollama import OllamaLLM as LangchainOllama
-            from langchain_ollama import OllamaEmbeddings
-            from ragas.llms import LangchainLLMWrapper
-            from ragas.embeddings import LangchainEmbeddingsWrapper
+            from openai import AsyncOpenAI
+            from ragas.embeddings import HuggingFaceEmbeddings
+            from ragas.llms import llm_factory
 
-            langchain_llm = LangchainOllama(
-                base_url=self._config.eval_judge_host,
-                model=self._config.eval_judge_model,
+            client = AsyncOpenAI(
+                api_key="ollama",
+                base_url=f"{self._config.eval_judge_host}/v1",
             )
-            langchain_emb = OllamaEmbeddings(
-                base_url=self._config.eval_judge_host,
-                model=self._config.eval_embedding_model,
+            # top_p must always be set explicitly alongside temperature: llm_factory
+            # otherwise defaults top_p to match temperature, which collapses nucleus
+            # sampling to near-greedy decoding regardless of the temperature value.
+            self._llm_wrapper = llm_factory(
+                self._config.eval_judge_model,
+                provider="openai",
+                client=client,
+                max_tokens=4096,
+                temperature=self._config.eval_judge_temperature,
+                top_p=self._config.eval_judge_top_p,
             )
-            self._llm_wrapper = LangchainLLMWrapper(langchain_llm)
-            self._emb_wrapper = LangchainEmbeddingsWrapper(langchain_emb)
+            self._emb_wrapper = HuggingFaceEmbeddings(
+                model=self._config.eval_embedding_model
+            )
             logger.info(
-                "RAGAS judge initialised: host=%s model=%s",
+                "RAGAS judge initialised: host=%s model=%s temperature=%s top_p=%s",
                 self._config.eval_judge_host,
                 self._config.eval_judge_model,
+                self._config.eval_judge_temperature,
+                self._config.eval_judge_top_p,
             )
         except Exception as exc:
             logger.error("Failed to initialise RAGAS judge wrappers: %s", exc)
@@ -332,26 +355,24 @@ class EvaluationService:
                 EVAL_ERRORS_TOTAL.labels(error_type="judge_error").inc()
             else:
                 try:
-                    from ragas.metrics import (
-                        Faithfulness,
+                    from ragas.metrics.collections import (
                         AnswerRelevancy,
-                        ContextPrecision,
+                        ContextPrecisionWithReference,
+                        ContextPrecisionWithoutReference,
                         ContextRecall,
-                    )
-                    from ragas.dataset_schema import SingleTurnSample
-
-                    sample = SingleTurnSample(
-                        user_input=task.query,
-                        response=task.response,
-                        retrieved_contexts=[c["text"] for c in task.retrieved_chunks],
-                        reference=task.reference_answer,
+                        Faithfulness,
                     )
 
-                    from ragas.metrics import LLMContextPrecisionWithoutReference
+                    available_args = {
+                        "user_input": task.query,
+                        "response": task.response,
+                        "retrieved_contexts": [c["text"] for c in task.retrieved_chunks],
+                        "reference": task.reference_answer,
+                    }
 
                     faithfulness = await self._score_metric(
                         Faithfulness(llm=self._llm_wrapper),
-                        sample,
+                        available_args,
                         "faithfulness",
                         metric_errors,
                     )
@@ -360,29 +381,30 @@ class EvaluationService:
                             llm=self._llm_wrapper,
                             embeddings=self._emb_wrapper,
                         ),
-                        sample,
+                        available_args,
                         "answer_relevance",
                         metric_errors,
                     )
-                    # ContextPrecision requires reference; use without-reference variant
-                    # when no ground truth is available.
+                    # ContextPrecision/ContextRecall require reference; use the
+                    # without-reference variant for context_precision and skip
+                    # context_recall entirely when no ground truth is available.
                     if task.reference_answer is not None:
                         context_precision = await self._score_metric(
-                            ContextPrecision(llm=self._llm_wrapper),
-                            sample,
+                            ContextPrecisionWithReference(llm=self._llm_wrapper),
+                            available_args,
                             "context_precision",
                             metric_errors,
                         )
                         context_recall = await self._score_metric(
                             ContextRecall(llm=self._llm_wrapper),
-                            sample,
+                            available_args,
                             "context_recall",
                             metric_errors,
                         )
                     else:
                         context_precision = await self._score_metric(
-                            LLMContextPrecisionWithoutReference(llm=self._llm_wrapper),
-                            sample,
+                            ContextPrecisionWithoutReference(llm=self._llm_wrapper),
+                            available_args,
                             "context_precision",
                             metric_errors,
                         )
@@ -427,19 +449,27 @@ class EvaluationService:
         )
 
     async def _score_metric(
-        self, metric, sample, metric_name: str, errors: list[str]
+        self, metric, available_args: dict, metric_name: str, errors: list[str]
     ) -> float | None:
         """Evaluate one RAGAS metric with timeout. Returns None on any failure.
+
+        Metrics take different, non-overlapping subsets of available_args (e.g.
+        AnswerRelevancy has no retrieved_contexts param, ContextPrecisionWithReference
+        has no response param) — filter to what metric.ascore actually accepts,
+        mirroring analysis/rq3/rq3_experiment.py's score_sample.
 
         Appends a short error description to `errors` on failure so the caller
         can build a summary error string for EvaluationResult.
         """
         try:
-            score = await asyncio.wait_for(
-                metric.single_turn_ascore(sample),
+            sig = inspect.signature(metric.ascore)
+            kwargs = {k: v for k, v in available_args.items() if k in sig.parameters}
+            result = await asyncio.wait_for(
+                metric.ascore(**kwargs),
                 timeout=self._config.eval_timeout_seconds,
             )
-            return float(score)
+            score = result.value if hasattr(result, "value") else result
+            return float(score) if score is not None else None
         except asyncio.TimeoutError:
             logger.warning("Metric %s timed out for request", metric_name)
             EVAL_ERRORS_TOTAL.labels(error_type="timeout").inc()

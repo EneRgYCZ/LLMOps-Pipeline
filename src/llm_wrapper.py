@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import random
 import time
@@ -13,6 +14,12 @@ from prometheus_client import Counter, Gauge, Histogram, generate_latest, CONTEN
 
 from settings import SettingsFactory, Settings
 from telemetry import OpenTelemetryHelper
+
+# uvicorn's default logging config only wires up its own uvicorn/uvicorn.access/
+# uvicorn.error loggers, not the root logger. Without this, every logger.info(...)
+# call in this app (evaluation.py's judge-init line included) is silently dropped —
+# the root logger's effective level defaults to WARNING with no handler attached.
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
 ACTIVE_REQUESTS = Gauge("llm_active_requests", "Current in-flight LLM inference requests")
 REQUEST_TOTAL = Counter("llm_requests_total", "Total LLM inference requests", ["endpoint"])

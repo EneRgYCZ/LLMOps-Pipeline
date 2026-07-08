@@ -1,0 +1,5 @@
+The LLMOps pipeline's evaluation module runs in a background asyncio worker and computes RAGAS quality metrics after each response, without blocking inference. It computes four core metrics for each non-streaming request: faithfulness, answer relevance, context precision, and context recall.
+
+Faithfulness measures whether the generated response is grounded in the retrieved context, checking each claim in the response against the retrieved chunks. Answer relevance measures whether the response actually addresses the user's original query. Context precision measures whether the retrieved chunks are relevant to the query. Context recall measures whether the retrieved chunks contain enough information to support the reference answer, and requires a ground-truth reference to compute.
+
+Results are stored in a SQLite database, one per replica, and the evaluation worker never affects inference latency because it runs asynchronously in a background queue after the response has already been returned to the caller.
