@@ -20,7 +20,7 @@ data:
   CHROMA_PORT: "8000"
   EVAL_ENABLED: "true"
   EVAL_DB_PATH: "/data/evaluations.db"
-  EVAL_EMBEDDING_MODEL: "nomic-embed-text"
+  EVAL_EMBEDDING_MODEL: "all-MiniLM-L6-v2"
   EVAL_SAMPLE_RATE: "1.0"
   EVAL_QUEUE_MAX_SIZE: "100"
   EVAL_TIMEOUT_SECONDS: "300.0"

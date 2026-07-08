@@ -1,0 +1,6 @@
+[
+  {
+    "query": "What metrics does the RAGAS evaluation module compute for each request?",
+    "reference": "The evaluation module computes four RAGAS metrics for each non-streaming request: faithfulness, answer relevance, context precision, and context recall. Faithfulness measures whether the response is grounded in the retrieved context, answer relevance measures whether the response addresses the query, context precision measures whether retrieved chunks are relevant, and context recall measures whether retrieved chunks contain enough information to support the reference answer."
+  }
+]

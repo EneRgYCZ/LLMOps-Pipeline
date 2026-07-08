@@ -82,12 +82,14 @@ services:
       - EVAL_ENABLED=${EVAL_ENABLED:-true}
       - EVAL_DB_PATH=/data/evaluations.db
       - EVAL_SAMPLE_RATE=${EVAL_SAMPLE_RATE:-1.0}
-      - EVAL_EMBEDDING_MODEL=${EVAL_EMBEDDING_MODEL:-nomic-embed-text}
+      - EVAL_EMBEDDING_MODEL=${EVAL_EMBEDDING_MODEL:-all-MiniLM-L6-v2}
       - EVAL_TIMEOUT_SECONDS=${EVAL_TIMEOUT_SECONDS:-300.0}
+      - EVAL_REFERENCES_PATH=/app/refs/production_references.json
     env_file:
       - ../.env
     volumes:
       - eval_data:/data
+      - ../refs:/app/refs:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
