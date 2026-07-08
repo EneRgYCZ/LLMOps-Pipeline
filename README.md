@@ -385,8 +385,11 @@ All options read from `.env` (single-node) or the `chat-app-config` ConfigMap (K
 | `EVAL_ENABLED` | `true` | Enable background RAGAS evaluation |
 | `EVAL_DB_PATH` | `/data/evaluations.db` | SQLite path for storing evaluation results |
 | `EVAL_SAMPLE_RATE` | `1.0` | Fraction of requests to evaluate (0.0–1.0) |
-| `EVAL_EMBEDDING_MODEL` | `nomic-embed-text` | Ollama model used for RAGAS embeddings |
+| `EVAL_JUDGE_TEMPERATURE` | `0.1` | RAGAS judge LLM sampling temperature |
+| `EVAL_JUDGE_TOP_P` | `0.95` | RAGAS judge LLM nucleus sampling top_p (must be set explicitly alongside temperature) |
+| `EVAL_EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | Local HuggingFace model used for RAGAS AnswerRelevancy embeddings |
 | `EVAL_TIMEOUT_SECONDS` | `300.0` | Max seconds to wait for RAGAS evaluation |
+| `EVAL_REFERENCES_PATH` | unset | JSON file of query/reference pairs enabling context_recall |
 
 ### Observability
 

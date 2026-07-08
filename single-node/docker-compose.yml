@@ -78,16 +78,13 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=http://otel-collector:4318/v1/metrics
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otel-collector:4318/v1/traces
-      - RAG_ENABLED=${RAG_ENABLED:-true}
-      - EVAL_ENABLED=${EVAL_ENABLED:-true}
       - EVAL_DB_PATH=/data/evaluations.db
-      - EVAL_SAMPLE_RATE=${EVAL_SAMPLE_RATE:-1.0}
-      - EVAL_EMBEDDING_MODEL=${EVAL_EMBEDDING_MODEL:-nomic-embed-text}
-      - EVAL_TIMEOUT_SECONDS=${EVAL_TIMEOUT_SECONDS:-300.0}
+      - EVAL_REFERENCES_PATH=/app/refs/production_references.json
     env_file:
       - ../.env
     volumes:
       - eval_data:/data
+      - ../refs:/app/refs:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8000/health"]
