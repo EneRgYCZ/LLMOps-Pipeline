@@ -1,10 +1,26 @@
 run_id,sample_id,question,elapsed_seconds,faithfulness,answer_relevance,context_precision,context_recall
-1,1,What are the global implications of the USA Supreme Court ruling on abortion?,77.05,0.6,0.9356125623906549,0.9999999999666667,1.0
-1,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,78.45,0.23076923076923078,0.8163455179604333,0.3333333333,1.0
-1,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,51.64,0.3333333333333333,0.978856340171217,0.3333333333,1.0
-2,1,What are the global implications of the USA Supreme Court ruling on abortion?,81.82,0.7272727272727273,0.9374527991475033,0.99999999995,1.0
-2,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,92.81,0.16666666666666666,0.8163455179604333,0.5833333333041666,1.0
-2,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,49.43,0.3333333333333333,0.9740762299481888,0.3333333333,1.0
-3,1,What are the global implications of the USA Supreme Court ruling on abortion?,85.88,0.7272727272727273,0.9373381194741969,0.99999999995,1.0
-3,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,96.98,0.041666666666666664,0.8163455179604333,0.5833333333041666,1.0
-3,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,52.73,0.3333333333333333,0.9836364503942452,0.3333333333,1.0
+1,1,What are the global implications of the USA Supreme Court ruling on abortion?,79.45,0.7272727272727273,0.9373381194741969,0.99999999995,1.0
+1,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,92.32,0.041666666666666664,0.8163455179604333,0.5833333333041666,1.0
+1,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,49.16,0.3333333333333333,0.9740762299481888,0.3333333333,1.0
+1,4,What action did Amnesty International urge its supporters to take in response to the killing of the Ogoni 9?,31.51,0.6,0.8525088317978325,0.49999999995,1.0
+1,5,What are the recommendations made by Amnesty International to the Special Rapporteur on Human Rights Defenders?,70.84,0.09523809523809523,0.9629064978410519,0.49999999995,1.0
+2,1,What are the global implications of the USA Supreme Court ruling on abortion?,82.69,0.6666666666666666,0.9415657720297945,0.99999999995,1.0
+2,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,93.31,0.041666666666666664,0.8163455179604333,0.5833333333041666,1.0
+2,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,52.83,0.3333333333333333,0.9740762299481888,0.3333333333,1.0
+2,4,What action did Amnesty International urge its supporters to take in response to the killing of the Ogoni 9?,34.46,0.4,0.8655890341645538,0.49999999995,1.0
+2,5,What are the recommendations made by Amnesty International to the Special Rapporteur on Human Rights Defenders?,64.24,0.047619047619047616,0.9645106389295249,0.49999999995,1.0
+3,1,What are the global implications of the USA Supreme Court ruling on abortion?,78.7,0.65,0.9356125623906549,0.99999999995,1.0
+3,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,93.8,0.041666666666666664,0.8163455179604333,0.3333333333,1.0
+3,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,48.0,0.4166666666666667,0.9788563401712169,0.3333333333,1.0
+3,4,What action did Amnesty International urge its supporters to take in response to the killing of the Ogoni 9?,33.99,0.4,0.8629742442082969,0.49999999995,1.0
+3,5,What are the recommendations made by Amnesty International to the Special Rapporteur on Human Rights Defenders?,71.65,0.047619047619047616,0.9645106389295249,0.49999999995,1.0
+4,1,What are the global implications of the USA Supreme Court ruling on abortion?,81.79,0.7619047619047619,0.9356125623906549,0.99999999995,1.0
+4,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,98.38,0.041666666666666664,0.8163455179604333,0.5833333333041666,1.0
+4,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,49.89,0.3333333333333333,0.9788563401712169,0.3333333333,1.0
+4,4,What action did Amnesty International urge its supporters to take in response to the killing of the Ogoni 9?,33.82,0.4,0.8556664314685362,0.49999999995,1.0
+4,5,What are the recommendations made by Amnesty International to the Special Rapporteur on Human Rights Defenders?,67.24,0.047619047619047616,0.960700583476633,0.49999999995,1.0
+5,1,What are the global implications of the USA Supreme Court ruling on abortion?,78.75,0.7,0.9374527991475033,0.9999999999,1.0
+5,2,Which companies are the main contributors to GHG emissions and their role in global warming according to the Carbon Majors database?,94.69,0.041666666666666664,0.8163455179604333,0.3333333333,1.0
+5,3,Which private companies in the Americas are the largest GHG emitters according to the Carbon Majors database?,48.41,0.3333333333333333,0.9740762299481888,0.3333333333,1.0
+5,4,What action did Amnesty International urge its supporters to take in response to the killing of the Ogoni 9?,32.75,0.4,0.8451447845271206,0.49999999995,1.0
+5,5,What are the recommendations made by Amnesty International to the Special Rapporteur on Human Rights Defenders?,70.14,0.047619047619047616,0.9645106389295249,0.49999999995,1.0
