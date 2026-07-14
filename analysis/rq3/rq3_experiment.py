@@ -380,7 +380,7 @@ async def main():
         log.error("Cannot reach Ollama at %s: %s", OLLAMA_HOST, exc)
         sys.exit(1)
 
-    samples = load_amnesty_qa()[:5]
+    samples = load_amnesty_qa()
 
     log.info(
         "Building RAGAS judge (model=%s, embeddings=all-MiniLM-L6-v2 local) ...",
