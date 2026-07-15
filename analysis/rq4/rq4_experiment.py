@@ -13,6 +13,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import re
 import requests
 from dotenv import load_dotenv
 
@@ -74,6 +75,154 @@ DEFAULT_MODEL_TAG = "ministral-3:8b-instruct-2512-q4_K_M"
 
 # All five model tags for the "all" option
 ALL_MODEL_TAGS = list(MODEL_REGISTRY.keys())
+
+# ---------------------------------------------------------------------------
+# Wikipedia-based prompt generation
+# ---------------------------------------------------------------------------
+
+# Cache for Wikipedia text
+_WIKI_TEXT_CACHE: str | None = None
+
+COMPLETION_PROMPT = "Continue the sentence:"
+
+
+def _count_tokens_simple(text: str) -> int:
+    """Simple token counter that approximates LLM tokenization.
+    
+    Splits on whitespace and common punctuation. For English text, this is
+    typically within 10-20% of actual LLM token counts, which is sufficient
+    for generating prompts of approximately the target length.
+    """
+    return len(re.findall(r"\w+|[^\w\s]", text))
+
+
+def _get_wikipedia_text() -> str:
+    """Fetch and cache Wikipedia text for prompt generation.
+    
+    Tries multiple sources in order:
+    1. Hugging Face datasets (wikimedia/wikipedia)
+    2. Wikipedia API (Artificial_intelligence article)
+    3. Hardcoded fallback text
+    
+    The text is cached after first fetch to avoid repeated downloads.
+    """
+    global _WIKI_TEXT_CACHE
+    if _WIKI_TEXT_CACHE is not None:
+        return _WIKI_TEXT_CACHE
+
+    # Try Hugging Face datasets first
+    try:
+        from datasets import load_dataset
+        dataset = load_dataset("wikimedia/wikipedia", "20220301.simple", split="train")
+        _WIKI_TEXT_CACHE = dataset[0]["text"]
+        return _WIKI_TEXT_CACHE
+    except ImportError:
+        pass
+
+    # Fallback: Wikipedia API
+    try:
+        response = requests.get(
+            "https://en.wikipedia.org/w/api.php",
+            params={
+                "action": "query",
+                "format": "json",
+                "prop": "extracts",
+                "explaintext": True,
+                "titles": "Artificial_intelligence",
+            },
+            timeout=30,
+        )
+        data = response.json()
+        pages = data.get("query", {}).get("pages", {})
+        if pages:
+            page = next(iter(pages.values()))
+            extract = page.get("extract", "")
+            if extract:
+                _WIKI_TEXT_CACHE = extract
+                return _WIKI_TEXT_CACHE
+    except Exception:
+        pass
+
+    # Final fallback: hardcoded Wikipedia excerpt
+    _WIKI_TEXT_CACHE = (
+        "Artificial intelligence (AI) is intelligence demonstrated by machines, "
+        "as opposed to the natural intelligence displayed by humans and other animals. "
+        "Leading AI textbooks define the field as the study of intelligent agents: "
+        "any system that perceives its environment and takes actions that maximize "
+        "its chance of successfully achieving its goals. Colloquially, the term "
+        "artificial intelligence is often used to describe machines that mimic "
+        "cognitive functions that humans associate with the human mind, such as "
+        "learning and problem solving. The scope of AI is disputed: as machines "
+        "become increasingly capable, tasks considered to require intelligence are "
+        "often removed from the definition of AI, a phenomenon known as the AI effect. "
+        "For instance, optical character recognition is frequently excluded from "
+        "things considered to be AI, having become a routine technology. AI was founded "
+        "as an academic discipline in 1956, and in the years since has experienced "
+        "several waves of optimism, followed by disappointment and the loss of "
+        "funding, known as AI winter, followed by new approaches, success and "
+        "renewed funding. For most of its history, AI research has been divided into "
+        "subfields that often fail to communicate with each other. These sub-fields "
+        "are based on technical considerations, such as particular goals, the use "
+        "of particular tools, or deep philosophical differences. Subsymbolic AI "
+        "includes evolutionary computation and swarm intelligence algorithms. "
+        "Deep learning models such as recurrent neural networks and large language "
+        "models have been particularly successful in solving problems that require "
+        "understanding of natural language, speech recognition, and computer vision. "
+        "However, these models are often criticized for their lack of explainability "
+        "and potential for bias. The discipline was founded on the claim that "
+        "a central property of humans, intelligence, can be so precisely described "
+        "that a machine can be made to simulate it. This raises philosophical "
+        "arguments about the mind and the ethics of creating artificial beings "
+        "endowed with human-like intelligence, issues which have been explored "
+        "by myth, fiction and philosophy since antiquity. "
+    )
+    return _WIKI_TEXT_CACHE
+
+
+def generate_prompt(context_length: int) -> str:
+    """Generate a prompt of approximately context_length tokens.
+    
+    Takes a prefix from Wikipedia text and appends the completion prompt
+    'Continue the sentence:' so that the total is approximately context_length tokens.
+    
+    For context lengths longer than the Wikipedia text, the text is repeated
+    to reach the target length. Uses a simple tokenizer that approximates LLM
+    tokenization. The actual token count may vary slightly, but this ensures
+    we're testing with real text rather than a fixed prompt.
+    """
+    wiki_text = _get_wikipedia_text()
+    completion_token_count = _count_tokens_simple(COMPLETION_PROMPT)
+
+    if context_length <= completion_token_count:
+        # Context too short for completion prompt, truncate it
+        return COMPLETION_PROMPT[:context_length]
+
+    # Calculate how many tokens we need from Wikipedia text
+    target_prefix_tokens = context_length - completion_token_count
+
+    # Get all words from Wikipedia text
+    all_words = wiki_text.split()
+
+    # If we need more tokens than available, repeat the text
+    if target_prefix_tokens > _count_tokens_simple(wiki_text):
+        # Calculate how many repetitions we need
+        text_token_count = _count_tokens_simple(wiki_text)
+        repetitions = (target_prefix_tokens // text_token_count) + 1
+        wiki_text = (wiki_text + " ") * repetitions
+        all_words = wiki_text.split()
+
+    # Build prefix by adding words until we reach the target token count
+    prefix = ""
+    for word in all_words:
+        test_prefix = prefix + (" " + word if prefix else word)
+        new_token_count = _count_tokens_simple(test_prefix)
+        if new_token_count > target_prefix_tokens:
+            break
+        prefix = test_prefix
+
+    # Combine prefix with completion prompt
+    return prefix + (" " if prefix else "") + COMPLETION_PROMPT
+
 
 # ---------------------------------------------------------------------------
 # Paths (all relative to this file)
@@ -296,12 +445,17 @@ def run_experiment(
     ollama_config: OllamaConfig,
     reader: VRAMReader,
     model_spec: ModelSpec,
-    prompt: str,
+    prompt: str | None,
     data_path: Path,
 ) -> None:
     if data_path.exists():
         data_path.unlink()
         print(f"Removed existing {data_path} to start a fresh run.")
+
+    # Pre-fetch Wikipedia text once before the loop
+    if prompt is None:
+        wiki_text = _get_wikipedia_text()
+        print(f"Using Wikipedia-based prompts (first {len(wiki_text.split())} words)")
 
     print(f"Baseline read on GPU {gpu_index} before any load")
     baseline_mib = reader.read_used_mib(gpu_index)
@@ -321,7 +475,16 @@ def run_experiment(
             )
 
             stop_model(ollama_config)
-            load_model_with_context(ollama_config, context_length, prompt)
+            
+            # Generate prompt for this context length
+            if prompt is None:
+                # Use Wikipedia-based prompt
+                actual_prompt = generate_prompt(context_length)
+            else:
+                # Use the provided fixed prompt (for backward compatibility)
+                actual_prompt = prompt
+            
+            load_model_with_context(ollama_config, context_length, actual_prompt)
             time.sleep(1)
 
             measured_mib = reader.read_used_mib(gpu_index)
@@ -759,11 +922,6 @@ def run_analysis(
 # the hardware ceiling of the NVIDIA L4 (23 GiB VRAM).
 DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 114688]
 
-DEFAULT_PROMPT = (
-    "Summarise, in a few sentences, the main considerations involved in "
-    "deploying a large language model in production."
-)
-
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -791,7 +949,6 @@ def parse_args() -> argparse.Namespace:
         choices=["all"] + list(MODEL_REGISTRY.keys()),
         help="Model tag from registry or 'all' to run all five models",
     )
-    parser.add_argument("--prompt", default=DEFAULT_PROMPT)
     return parser.parse_args()
 
 
@@ -898,7 +1055,7 @@ def main() -> None:
             error_plot_path,
         ) = get_model_paths(model_tag)
 
-        # Run experiment
+        # Run experiment (using Wikipedia-based prompts by default)
         run_experiment(
             context_lengths=args.context_lengths,
             repeats=args.repeats,
@@ -906,7 +1063,7 @@ def main() -> None:
             ollama_config=ollama_config,
             reader=reader,
             model_spec=model_spec,
-            prompt=args.prompt,
+            prompt=None,  # Use Wikipedia-based prompts
             data_path=data_path,
         )
 
