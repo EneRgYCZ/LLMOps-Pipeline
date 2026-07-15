@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import requests
+from dotenv import load_dotenv
 
 # ---------------------------------------------------------------------------
 # Paths (all relative to this file)
@@ -21,6 +22,11 @@ import requests
 
 SCRIPT_DIR = Path(__file__).resolve().parent  # analysis/rq4
 PROJECT_ROOT = SCRIPT_DIR.parent.parent  # repo root
+
+# Run standalone from a local venv, not through docker-compose's env_file, so
+# load .env explicitly before any of the os.environ.get(...) calls below.
+load_dotenv(PROJECT_ROOT / ".env")
+
 RESULTS_DIR = PROJECT_ROOT / "results" / "rq4"
 DATA_DIR = RESULTS_DIR / "data"
 CSV_DIR = RESULTS_DIR / "csvs"
@@ -594,6 +600,18 @@ def plot_error(summary: pd.DataFrame, model_name: str) -> None:
             for n in summary["context_length"]
         ]
         ax.bar(labels, summary["pct_error"], color=colors, alpha=0.85)
+
+        # Auto-scaled ylim is fit to bar heights only, not the offset annotation
+        # text above/below each bar. A small-magnitude bar near the axis floor
+        # (e.g. a lone negative bar) then gets its label pushed past the axis
+        # line into the tick labels. Padding both ends of the range, with a
+        # floor so a near-zero min/max still reserves real room, keeps every
+        # annotation clear of the plot border regardless of the data mix.
+        y_min = summary["pct_error"].min()
+        y_max = summary["pct_error"].max()
+        y_pad = max((y_max - y_min) * 0.15, 2.0)
+        ax.set_ylim(y_min - y_pad, y_max + y_pad)
+
         for i, pct in enumerate(summary["pct_error"]):
             ax.annotate(
                 f"{pct:+.1f}%",
