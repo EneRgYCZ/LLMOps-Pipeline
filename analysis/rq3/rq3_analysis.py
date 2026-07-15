@@ -1,28 +1,3 @@
-"""
-RQ3 Analysis: RAGAS Metric Consistency
-=======================================
-Reads results/rq3_raw.csv produced by rq3_experiment.py and outputs:
-  - results/rq3_stats.csv        — per-sample per-metric descriptive statistics
-  - results/rq3_icc.csv          — ICC(2,1) per metric with interpretation
-  - results/rq3_fig1a_score_distributions_primary.png   (faithfulness, context precision)
-  - results/rq3_fig1b_score_distributions_secondary.png (answer relevance, context recall)
-  - results/rq3_fig2_faithfulness_per_sample.png
-  - results/rq3_fig3_heatmap.png
-  - results/rq3_fig4_run_stability.png
-
-Plot style matches analysis/rq4/rq4_experiment.py's ACADEMIC_STYLE so both
-RQ chapters use the same fonts, colors, and axis conventions.
-
-Usage
------
-    python rq3_analysis.py
-
-    # Override input/output paths via env vars:
-    RAW_CSV=results/rq3_raw.csv \
-    OUT_DIR=results \
-    python rq3_analysis.py
-"""
-
 import csv
 import math
 import os
