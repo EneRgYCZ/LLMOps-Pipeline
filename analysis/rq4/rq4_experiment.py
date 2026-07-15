@@ -520,16 +520,24 @@ def stop_model(config: OllamaConfig) -> None:
 def load_model_with_context(
     config: OllamaConfig, context_length: int, prompt: str
 ) -> None:
-    """Forces a model load at a given context length via one generate call."""
+    """Forces a model load at a given context length via one generate call.
+
+    num_predict=1 caps generation to a single token: this call only needs to
+    force the prefill/KV-cache allocation for context_length, not produce
+    real output, and at large N an uncapped generation was what pushed the
+    request past the read timeout, not the prefill itself.
+    """
     response = requests.post(
         f"{config.host}/api/generate",
         json={
             "model": config.model,
             "prompt": prompt,
             "stream": False,
-            "options": {"num_ctx": context_length},
+            "options": {"num_ctx": context_length, "num_predict": 1},
         },
-        timeout=300,
+        # Scales with context_length as a safety margin for prefill time on
+        # very large N, floored at the original 300s for small contexts.
+        timeout=max(300, context_length // 40),
     )
     response.raise_for_status()
 
