@@ -100,50 +100,67 @@ def _get_wikipedia_text() -> str:
     """Fetch and cache Wikipedia text for prompt generation.
     
     Tries multiple sources in order:
-    1. Hugging Face datasets (wikimedia/wikipedia)
-    2. Wikipedia API (Artificial_intelligence article)
-    3. Hardcoded fallback text
+    1. Hugging Face datasets (wikimedia/wikipedia) - tries English first, then simple
+    2. Wikipedia API (multiple large articles concatenated)
+    3. Hardcoded fallback text (sufficient for ~10k tokens before repetition)
     
     The text is cached after first fetch to avoid repeated downloads.
+    Note: For very long context lengths (>text length), the text is repeated.
     """
     global _WIKI_TEXT_CACHE
     if _WIKI_TEXT_CACHE is not None:
         return _WIKI_TEXT_CACHE
 
-    # Try Hugging Face datasets first
+    # Try Hugging Face datasets - English Wikipedia first
     try:
         from datasets import load_dataset
-        dataset = load_dataset("wikimedia/wikipedia", "20220301.simple", split="train")
+        # Try full English Wikipedia
+        dataset = load_dataset("wikimedia/wikipedia", "20231101.en", split="train")
         _WIKI_TEXT_CACHE = dataset[0]["text"]
         return _WIKI_TEXT_CACHE
     except ImportError:
-        pass
+        pass  # datasets library not installed
+    except Exception:
+        # Try Simple English Wikipedia as fallback
+        try:
+            dataset = load_dataset("wikimedia/wikipedia", "20231101.simple", split="train")
+            _WIKI_TEXT_CACHE = dataset[0]["text"]
+            return _WIKI_TEXT_CACHE
+        except Exception:
+            pass  # datasets loading failed
 
-    # Fallback: Wikipedia API
+    # Fallback: Wikipedia API - fetch multiple articles
     try:
-        response = requests.get(
-            "https://en.wikipedia.org/w/api.php",
-            params={
-                "action": "query",
-                "format": "json",
-                "prop": "extracts",
-                "explaintext": True,
-                "titles": "Artificial_intelligence",
-            },
-            timeout=30,
-        )
-        data = response.json()
-        pages = data.get("query", {}).get("pages", {})
-        if pages:
-            page = next(iter(pages.values()))
-            extract = page.get("extract", "")
-            if extract:
-                _WIKI_TEXT_CACHE = extract
-                return _WIKI_TEXT_CACHE
+        articles = ["Artificial_intelligence", "Machine_learning", "Deep_learning", 
+                    "Natural_language_processing", "Neural_network"]
+        all_texts = []
+        for title in articles:
+            response = requests.get(
+                "https://en.wikipedia.org/w/api.php",
+                params={
+                    "action": "query",
+                    "format": "json",
+                    "prop": "extracts",
+                    "explaintext": True,
+                    "titles": title,
+                },
+                timeout=30,
+            )
+            data = response.json()
+            pages = data.get("query", {}).get("pages", {})
+            if pages:
+                page = next(iter(pages.values()))
+                extract = page.get("extract", "")
+                if extract:
+                    all_texts.append(extract)
+        if all_texts:
+            _WIKI_TEXT_CACHE = " ".join(all_texts)
+            return _WIKI_TEXT_CACHE
     except Exception:
         pass
 
-    # Final fallback: hardcoded Wikipedia excerpt
+    # Final fallback: hardcoded text (~2000+ tokens when concatenated)
+    # This is long enough that repetition only kicks in for very large N
     _WIKI_TEXT_CACHE = (
         "Artificial intelligence (AI) is intelligence demonstrated by machines, "
         "as opposed to the natural intelligence displayed by humans and other animals. "
@@ -175,6 +192,38 @@ def _get_wikipedia_text() -> str:
         "arguments about the mind and the ethics of creating artificial beings "
         "endowed with human-like intelligence, issues which have been explored "
         "by myth, fiction and philosophy since antiquity. "
+        "Machine learning is the study of computer algorithms that improve automatically "
+        "through experience and by the use of data. It is seen as a subset of artificial "
+        "intelligence. Machine learning algorithms build a mathematical model based on "
+        "sample data, known as training data, in order to make predictions or decisions "
+        "without being explicitly programmed to perform the task. Machine learning is "
+        "closely related to computational statistics, which focuses on making predictions "
+        "using computers. The study of mathematical optimization delivers methods, theory "
+        "and application domains to the field of machine learning. Data mining is a "
+        "related field of study, focusing on exploratory data analysis through "
+        "unsupervised learning. In its application across business problems, machine "
+        "learning is also referred to as predictive analytics. The goal of machine "
+        "learning is to understand the structure of data and fit that data into models "
+        "that can be understood and utilized by humans. Machine learning is the science "
+        "of getting computers to learn and act like humans do, and improve their learning "
+        "over time in autonomous fashion, by feeding them data and information in the "
+        "form of observations and real-world interactions. The primary objective is to "
+        "allow the computers learn automatically without human assistance or intervention "
+        "and adjust actions accordingly. Neural networks are a set of algorithms, modeled "
+        "loosely after the human brain, that are designed to recognize patterns. They "
+        "interpret sensory data through machine perception, labeling or clustering raw "
+        "input. The patterns they recognize are numerical, contained in vectors, into "
+        "which all real-world data, be it images, sound, text or time series, must be "
+        "translated. Neural networks are particularly useful for solving problems that "
+        "are difficult to solve with traditional rule-based programming. They have "
+        "achieved remarkable success in recent years, particularly in the fields of "
+        "computer vision, natural language processing, and game playing. The most "
+        "common type of neural network used today is the feedforward neural network, "
+        "also known as a multilayer perceptron, which consists of multiple layers of "
+        "nodes, or neurons, with connections between them. Each connection has a "
+        "weight that determines the strength of the signal passed from one neuron "
+        "to another. During training, these weights are adjusted to minimize the "
+        "difference between the predicted output and the actual output. "
     )
     return _WIKI_TEXT_CACHE
 
