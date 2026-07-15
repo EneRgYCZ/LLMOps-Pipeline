@@ -17,32 +17,7 @@ import requests
 from dotenv import load_dotenv
 
 # ---------------------------------------------------------------------------
-# Paths (all relative to this file)
-# ---------------------------------------------------------------------------
-
-SCRIPT_DIR = Path(__file__).resolve().parent  # analysis/rq4
-PROJECT_ROOT = SCRIPT_DIR.parent.parent  # repo root
-
-# Run standalone from a local venv, not through docker-compose's env_file, so
-# load .env explicitly before any of the os.environ.get(...) calls below.
-load_dotenv(PROJECT_ROOT / ".env")
-
-RESULTS_DIR = PROJECT_ROOT / "results" / "rq4"
-DATA_DIR = RESULTS_DIR / "data"
-CSV_DIR = RESULTS_DIR / "csvs"
-IMAGES_DIR = RESULTS_DIR / "images"
-
-RAW_CSV_PATH = DATA_DIR / "rq4_vram_raw.csv"
-SUMMARY_CSV_PATH = CSV_DIR / "rq4_summary.csv"
-SUMMARY_TEX_PATH = CSV_DIR / "rq4_summary_table.tex"
-FIT_PLOT_PATH = IMAGES_DIR / "rq4_predicted_vs_measured.png"
-ERROR_PLOT_PATH = IMAGES_DIR / "rq4_errors.png"
-
-for directory in (DATA_DIR, CSV_DIR, IMAGES_DIR):
-    directory.mkdir(parents=True, exist_ok=True)
-
-# ---------------------------------------------------------------------------
-# Formula constants
+# Model registry
 # ---------------------------------------------------------------------------
 
 
@@ -69,6 +44,69 @@ class ModelSpec:
         kv_bytes = context_length * 2 * self.L * (self.d / self.g) * self.b_kv
         kv_gb = kv_bytes * 1e-9
         return weights_gb + overhead_gb + kv_gb
+
+
+# All five 8B-class models with their architectural parameters.
+# b_kv=2.0 (fp16 KV cache, Ollama default) and b_w=0.56 (Q4_K_M) for all.
+MODEL_REGISTRY: dict[str, ModelSpec] = {
+    "ministral-3:8b-instruct-2512-q4_K_M": ModelSpec(
+        P=8.0e9, b_w=0.56, L=34, d=4096, g=4, b_kv=2.0
+    ),
+    "llama3.1:8b": ModelSpec(P=8.03e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0),
+    "qwen3:8b": ModelSpec(P=8.2e9, b_w=0.56, L=36, d=4096, g=4, b_kv=2.0),
+    "qwen2.5:7b": ModelSpec(P=7.61e9, b_w=0.56, L=28, d=3584, g=7, b_kv=2.0),
+    "mistral-7b-instruct-q4_K_M": ModelSpec(
+        P=7.24e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0
+    ),
+}
+
+
+def sanitize_tag(tag: str) -> str:
+    """Sanitise an Ollama tag for use as a directory name.
+
+    Replaces ':' with '_' since colons are not safe on all filesystems.
+    """
+    return tag.replace(":", "_")
+
+
+# The default model tag for backwards compatibility
+DEFAULT_MODEL_TAG = "ministral-3:8b-instruct-2512-q4_K_M"
+
+# All five model tags for the "all" option
+ALL_MODEL_TAGS = list(MODEL_REGISTRY.keys())
+
+# ---------------------------------------------------------------------------
+# Paths (all relative to this file)
+# ---------------------------------------------------------------------------
+
+SCRIPT_DIR = Path(__file__).resolve().parent  # analysis/rq4
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # repo root
+
+# Run standalone from a local venv, not through docker-compose's env_file, so
+# load .env explicitly before any of the os.environ.get(...) calls below.
+load_dotenv(PROJECT_ROOT / ".env")
+
+RESULTS_DIR = PROJECT_ROOT / "results" / "rq4"
+DATA_DIR = RESULTS_DIR / "data"
+CSV_DIR = RESULTS_DIR / "csvs"
+IMAGES_DIR = RESULTS_DIR / "images"
+
+# Cross-model comparison output
+CROSS_MODEL_CSV_PATH = CSV_DIR / "rq4_cross_model_summary.csv"
+
+for directory in (DATA_DIR, CSV_DIR, IMAGES_DIR):
+    directory.mkdir(parents=True, exist_ok=True)
+
+
+def get_model_paths(model_tag: str) -> tuple[Path, Path, Path, Path, Path]:
+    """Get the per-model output paths for data, summary CSV, LaTeX, and plots."""
+    sanitized = sanitize_tag(model_tag)
+    data_path = DATA_DIR / sanitized / "rq4_vram_raw.csv"
+    summary_csv_path = CSV_DIR / sanitized / "rq4_summary.csv"
+    summary_tex_path = CSV_DIR / sanitized / "rq4_summary_table.tex"
+    fit_plot_path = IMAGES_DIR / sanitized / "rq4_predicted_vs_measured.png"
+    error_plot_path = IMAGES_DIR / sanitized / "rq4_errors.png"
+    return data_path, summary_csv_path, summary_tex_path, fit_plot_path, error_plot_path
 
 
 # ---------------------------------------------------------------------------
@@ -164,6 +202,34 @@ class OllamaConfig:
     )
 
 
+def is_model_pulled(model_tag: str, container: str = "ollama") -> bool:
+    """Check if a model is already pulled in the Ollama container."""
+    try:
+        result = subprocess.run(
+            ["docker", "exec", container, "ollama", "list"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        # Check if the exact tag appears in the output
+        return model_tag in result.stdout
+    except subprocess.CalledProcessError:
+        return False
+
+
+def pull_model(model_tag: str, container: str = "ollama") -> None:
+    """Pull a model if not already present."""
+    if is_model_pulled(model_tag, container):
+        print(f"Model {model_tag} already pulled, skipping.")
+    else:
+        print(f"Pulling {model_tag}...")
+        subprocess.run(
+            ["docker", "exec", container, "ollama", "pull", model_tag],
+            check=True,
+        )
+        print(f"Successfully pulled {model_tag}")
+
+
 def stop_model(config: OllamaConfig) -> None:
     """Unloads the model and clears Ollama's prompt cache.
 
@@ -213,9 +279,10 @@ RAW_CSV_FIELDS = [
 ]
 
 
-def append_row(row: dict) -> None:
-    write_header = not RAW_CSV_PATH.exists()
-    with open(RAW_CSV_PATH, "a", newline="") as f:
+def append_row(row: dict, data_path: Path) -> None:
+    write_header = not data_path.exists()
+    data_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(data_path, "a", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=RAW_CSV_FIELDS)
         if write_header:
             writer.writeheader()
@@ -230,10 +297,11 @@ def run_experiment(
     reader: VRAMReader,
     model_spec: ModelSpec,
     prompt: str,
+    data_path: Path,
 ) -> None:
-    if RAW_CSV_PATH.exists():
-        RAW_CSV_PATH.unlink()
-        print(f"Removed existing {RAW_CSV_PATH} to start a fresh run.")
+    if data_path.exists():
+        data_path.unlink()
+        print(f"Removed existing {data_path} to start a fresh run.")
 
     print(f"Baseline read on GPU {gpu_index} before any load")
     baseline_mib = reader.read_used_mib(gpu_index)
@@ -273,10 +341,11 @@ def run_experiment(
                     "delta_vram_gb": round(delta_gb, 4),
                     "predicted_vram_gb": round(predicted_gb, 4),
                     "gpu_index": gpu_index,
-                }
+                },
+                data_path,
             )
 
-    print(f"Raw results written to {RAW_CSV_PATH}")
+    print(f"Raw results written to {data_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -284,10 +353,10 @@ def run_experiment(
 # ---------------------------------------------------------------------------
 
 
-def load_raw_data() -> pd.DataFrame:
-    if not RAW_CSV_PATH.exists():
-        raise FileNotFoundError(f"No raw data at {RAW_CSV_PATH}.")
-    return pd.read_csv(RAW_CSV_PATH)
+def load_raw_data(data_path: Path) -> pd.DataFrame:
+    if not data_path.exists():
+        raise FileNotFoundError(f"No raw data at {data_path}.")
+    return pd.read_csv(data_path)
 
 
 def build_summary(df: pd.DataFrame) -> pd.DataFrame:
@@ -331,12 +400,13 @@ def compute_overall_metrics(summary: pd.DataFrame) -> dict:
     return {"mae_gb": mae, "mape_pct": mape, "r_squared": r_squared}
 
 
-def save_summary(summary: pd.DataFrame, metrics: dict) -> None:
+def save_summary(summary: pd.DataFrame, metrics: dict, summary_csv_path: Path) -> None:
     summary_out = summary.copy()
     for key, value in metrics.items():
         summary_out[key] = value
-    summary_out.to_csv(SUMMARY_CSV_PATH, index=False)
-    print(f"Summary written to {SUMMARY_CSV_PATH}")
+    summary_csv_path.parent.mkdir(parents=True, exist_ok=True)
+    summary_out.to_csv(summary_csv_path, index=False)
+    print(f"Summary written to {summary_csv_path}")
     print(
         f"Overall fit: MAE={metrics['mae_gb']:.3f} GB, "
         f"MAPE={metrics['mape_pct']:.2f}%, R^2={metrics['r_squared']:.4f}"
@@ -476,7 +546,9 @@ def _escape_latex(text: str) -> str:
 
 
 def write_latex_table(
-    summary: pd.DataFrame, model_name: str, path: Path = SUMMARY_TEX_PATH
+    summary: pd.DataFrame,
+    model_name: str,
+    path: Path,
 ) -> None:
     """Writes the summary as a booktabs-style .tex fragment for \\input{}."""
     s = summary.sort_values("context_length")
@@ -485,13 +557,13 @@ def write_latex_table(
         r"\centering",
         r"\begin{tabular}{rrrr}",
         r"\toprule",
-        r"$N$ (tokens) & Predicted (GB) & Measured (GB) & Error (\%) \\",
+        r"$N$ (tokens) & Predicted (GB) & Measured (GB) & Error (\)) \\",
         r"\midrule",
     ]
     for _, row in s.iterrows():
         n = f"{int(row['context_length']):,}"
         predicted = f"{row['predicted_gb']:.2f}"
-        measured = f"{row['measured_mean_gb']:.2f} $\\pm$ {row['measured_std_gb']:.2f}"
+        measured = f"{row['measured_mean_gb']:.2f} \\pm {row['measured_std_gb']:.2f}"
         error = f"{row['pct_error']:+.2f}"
         lines.append(f"{n} & {predicted} & {measured} & {error} \\\\")
     lines.append(r"\bottomrule")
@@ -507,6 +579,10 @@ def write_latex_table(
     path.write_text("\n".join(lines) + "\n")
     print(f"LaTeX summary table written to {path}")
 
+
+# ---------------------------------------------------------------------------
+# Plotting
+# ---------------------------------------------------------------------------
 
 ACADEMIC_STYLE = {
     "font.family": "serif",
@@ -535,7 +611,12 @@ COLOR_ERROR_POS = "#c0392b"
 COLOR_ERROR_NEG = "#2e7d5b"
 
 
-def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> None:
+def plot_fit(
+    summary: pd.DataFrame,
+    model_spec: ModelSpec,
+    model_name: str,
+    fit_plot_path: Path,
+) -> None:
     with plt.rc_context(ACADEMIC_STYLE):
         fig, ax = plt.subplots(figsize=(8, 5))
 
@@ -583,12 +664,17 @@ def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> N
         ax.grid(False, axis="x")
 
         fig.tight_layout()
-        fig.savefig(FIT_PLOT_PATH, dpi=200)
+        fit_plot_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(fit_plot_path, dpi=200)
         plt.close(fig)
-    print(f"Fit plot written to {FIT_PLOT_PATH}")
+    print(f"Fit plot written to {fit_plot_path}")
 
 
-def plot_error(summary: pd.DataFrame, model_name: str) -> None:
+def plot_error(
+    summary: pd.DataFrame,
+    model_name: str,
+    error_plot_path: Path,
+) -> None:
     with plt.rc_context(ACADEMIC_STYLE):
         fig, ax = plt.subplots(figsize=(9, 4))
 
@@ -629,21 +715,40 @@ def plot_error(summary: pd.DataFrame, model_name: str) -> None:
         ax.grid(True, axis="y", alpha=0.6)
 
         fig.tight_layout()
-        fig.savefig(ERROR_PLOT_PATH, dpi=200)
+        error_plot_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(error_plot_path, dpi=200)
         plt.close(fig)
-    print(f"Error plot written to {ERROR_PLOT_PATH}")
+    print(f"Error plot written to {error_plot_path}")
 
 
-def run_analysis(model_spec: ModelSpec, model_name: str) -> None:
-    df = load_raw_data()
+def run_analysis(
+    model_spec: ModelSpec,
+    model_name: str,
+    data_path: Path,
+    summary_csv_path: Path,
+    summary_tex_path: Path,
+    fit_plot_path: Path,
+    error_plot_path: Path,
+) -> dict:
+    """Run analysis for a single model and return the metrics dict for cross-model comparison."""
+    df = load_raw_data(data_path)
     summary = build_summary(df)
     metrics = compute_overall_metrics(summary)
-    save_summary(summary, metrics)
+    save_summary(summary, metrics, summary_csv_path)
     regime = compute_regime_split(summary)
     print_regime_split(regime)
-    write_latex_table(summary, model_name)
-    plot_fit(summary, model_spec, model_name)
-    plot_error(summary, model_name)
+    write_latex_table(summary, model_name, summary_tex_path)
+    plot_fit(summary, model_spec, model_name, fit_plot_path)
+    plot_error(summary, model_name, error_plot_path)
+
+    # Return metrics for cross-model comparison
+    return {
+        "model_tag": model_name,
+        "mae_gb": metrics["mae_gb"],
+        "mape_pct": metrics["mape_pct"],
+        "r_squared": metrics["r_squared"],
+        "breakpoint_n": regime["breakpoint_n"],
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -651,11 +756,7 @@ def run_analysis(model_spec: ModelSpec, model_name: str) -> None:
 # ---------------------------------------------------------------------------
 
 # Doubling sequence from 512 to 65536, then 114688 (112*1024) pushing toward
-# the hardware ceiling of the NVIDIA L4 (23 GiB VRAM). At N=114688 the
-# formula predicts ~21.6 GB. N=122880 was tested and excluded: Ollama silently
-# fell back to a smaller internal context at that size, making the GPU reading
-# invalid as a formula validation point. 114688 is therefore the empirical
-# hardware ceiling for this model and GPU combination.
+# the hardware ceiling of the NVIDIA L4 (23 GiB VRAM).
 DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 114688]
 
 DEFAULT_PROMPT = (
@@ -684,32 +785,182 @@ def parse_args() -> argparse.Namespace:
         "--prometheus-url",
         default=os.environ.get("PROMETHEUS_URL", "http://localhost:9090"),
     )
-    parser.add_argument("--model", default=None, help="Overrides OLLAMA_MODEL env var")
+    parser.add_argument(
+        "--model-tag",
+        default=DEFAULT_MODEL_TAG,
+        choices=["all"] + list(MODEL_REGISTRY.keys()),
+        help="Model tag from registry or 'all' to run all five models",
+    )
     parser.add_argument("--prompt", default=DEFAULT_PROMPT)
     return parser.parse_args()
 
 
+def migrate_existing_results():
+    """Migrate existing Ministral results to the new per-model directory layout."""
+    old_data_path = DATA_DIR / "rq4_vram_raw.csv"
+    old_summary_path = CSV_DIR / "rq4_summary.csv"
+    old_tex_path = CSV_DIR / "rq4_summary_table.tex"
+    old_fit_plot = IMAGES_DIR / "rq4_predicted_vs_measured.png"
+    old_error_plot = IMAGES_DIR / "rq4_errors.png"
+
+    # Only migrate if old files exist and new structure doesn't
+    sanitized = sanitize_tag(DEFAULT_MODEL_TAG)
+    new_data_dir = DATA_DIR / sanitized
+    new_csv_dir = CSV_DIR / sanitized
+    new_image_dir = IMAGES_DIR / sanitized
+
+    # Check if migration is needed
+    if (
+        old_data_path.exists()
+        or old_summary_path.exists()
+        or old_fit_plot.exists()
+        or old_error_plot.exists()
+    ):
+        if not (
+            new_data_dir.exists() or new_csv_dir.exists() or new_image_dir.exists()
+        ):
+            print("Migrating existing Ministral results to new layout...")
+
+            # Create directories
+            new_data_dir.mkdir(parents=True, exist_ok=True)
+            new_csv_dir.mkdir(parents=True, exist_ok=True)
+            new_image_dir.mkdir(parents=True, exist_ok=True)
+
+            # Move files
+            if old_data_path.exists():
+                new_data_path = new_data_dir / "rq4_vram_raw.csv"
+                old_data_path.rename(new_data_path)
+                print(f"  Moved {old_data_path} -> {new_data_path}")
+
+            if old_summary_path.exists():
+                new_summary_path = new_csv_dir / "rq4_summary.csv"
+                old_summary_path.rename(new_summary_path)
+                print(f"  Moved {old_summary_path} -> {new_summary_path}")
+
+            if old_tex_path.exists():
+                new_tex_path = new_csv_dir / "rq4_summary_table.tex"
+                old_tex_path.rename(new_tex_path)
+                print(f"  Moved {old_tex_path} -> {new_tex_path}")
+
+            if old_fit_plot.exists():
+                new_fit_path = new_image_dir / "rq4_predicted_vs_measured.png"
+                old_fit_plot.rename(new_fit_path)
+                print(f"  Moved {old_fit_plot} -> {new_fit_path}")
+
+            if old_error_plot.exists():
+                new_error_path = new_image_dir / "rq4_errors.png"
+                old_error_plot.rename(new_error_path)
+                print(f"  Moved {old_error_plot} -> {new_error_path}")
+
+            print("Migration complete.")
+
+
 def main() -> None:
     args = parse_args()
-    model_spec = ModelSpec()
 
-    ollama_config = OllamaConfig()
-    if args.model:
-        ollama_config.model = args.model
+    # Migrate existing results first
+    migrate_existing_results()
+
+    # Get the model tag(s) to run
+    model_tags = [args.model_tag] if args.model_tag != "all" else ALL_MODEL_TAGS
+
+    # For "all" mode, check and pull models first
+    if args.model_tag == "all":
+        for tag in model_tags:
+            pull_model(tag, "ollama")
+    else:
+        # For single model, check if it's in the registry
+        if args.model_tag not in MODEL_REGISTRY:
+            raise ValueError(f"Model tag {args.model_tag} not found in MODEL_REGISTRY")
 
     reader = get_reader(args.backend, prometheus_url=args.prometheus_url)
 
-    run_experiment(
-        context_lengths=args.context_lengths,
-        repeats=args.repeats,
-        gpu_index=args.gpu_index,
-        ollama_config=ollama_config,
-        reader=reader,
-        model_spec=model_spec,
-        prompt=args.prompt,
-    )
-    run_analysis(model_spec, ollama_config.model)
+    # Collect metrics for cross-model comparison
+    all_metrics = []
+
+    for model_tag in model_tags:
+        print(f"\n{'=' * 60}")
+        print(f"Running experiment for model: {model_tag}")
+        print(f"{'=' * 60}")
+
+        model_spec = MODEL_REGISTRY[model_tag]
+
+        # Create OllamaConfig for this model
+        ollama_config = OllamaConfig()
+        ollama_config.model = model_tag
+
+        # Get paths for this model
+        (
+            data_path,
+            summary_csv_path,
+            summary_tex_path,
+            fit_plot_path,
+            error_plot_path,
+        ) = get_model_paths(model_tag)
+
+        # Run experiment
+        run_experiment(
+            context_lengths=args.context_lengths,
+            repeats=args.repeats,
+            gpu_index=args.gpu_index,
+            ollama_config=ollama_config,
+            reader=reader,
+            model_spec=model_spec,
+            prompt=args.prompt,
+            data_path=data_path,
+        )
+
+        # Run analysis
+        metrics = run_analysis(
+            model_spec=model_spec,
+            model_name=model_tag,
+            data_path=data_path,
+            summary_csv_path=summary_csv_path,
+            summary_tex_path=summary_tex_path,
+            fit_plot_path=fit_plot_path,
+            error_plot_path=error_plot_path,
+        )
+        all_metrics.append(metrics)
+
+        print(f"Completed analysis for {model_tag}")
+
+    # Generate cross-model summary if all five models were run
+    if args.model_tag == "all":
+        # Check if all five models have data
+        missing_models = []
+        for tag in ALL_MODEL_TAGS:
+            sanitized = sanitize_tag(tag)
+            data_path = DATA_DIR / sanitized / "rq4_vram_raw.csv"
+            if not data_path.exists():
+                missing_models.append(tag)
+
+        if missing_models:
+            print(
+                f"\nCannot generate cross-model summary: missing data for {missing_models}"
+            )
+        else:
+            # Generate the cross-model summary
+            csv_path = CSV_DIR / "rq4_cross_model_summary.csv"
+            csv_path.parent.mkdir(parents=True, exist_ok=True)
+
+            with open(csv_path, "w", newline="") as f:
+                writer = csv.DictWriter(
+                    f,
+                    fieldnames=[
+                        "model_tag",
+                        "mae_gb",
+                        "mape_pct",
+                        "r_squared",
+                        "breakpoint_n",
+                    ],
+                )
+                writer.writeheader()
+                for metrics in all_metrics:
+                    writer.writerow(metrics)
+
+            print(f"\nCross-model summary written to {csv_path}")
 
 
 if __name__ == "__main__":
     main()
+
