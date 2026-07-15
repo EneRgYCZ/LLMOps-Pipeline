@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import argparse
+import bisect
 import csv
+import itertools
 import os
 import subprocess
 import time
@@ -82,13 +84,25 @@ ALL_MODEL_TAGS = list(MODEL_REGISTRY.keys())
 
 # Cache for Wikipedia text
 _WIKI_TEXT_CACHE: str | None = None
+_WIKI_WORDS_CACHE: list[str] | None = None
+_WIKI_CUMSUM_CACHE: list[int] | None = None
 
 COMPLETION_PROMPT = "Continue the sentence:"
+
+# Long enough that every context length in a sweep draws from the same
+# single-article text instead of some lengths spilling into the repeated-text
+# branch of generate_prompt while others don't.
+MIN_WIKI_TOKENS = 120_000
+
+# Committed to the repo once generated, so every run - local or on the
+# deployment server - reads byte-identical prompt source text instead of
+# depending on a live fetch that could return different articles run to run.
+_WIKI_CACHE_PATH = Path(__file__).resolve().parent / "wiki_prompt_source.txt"
 
 
 def _count_tokens_simple(text: str) -> int:
     """Simple token counter that approximates LLM tokenization.
-    
+
     Splits on whitespace and common punctuation. For English text, this is
     typically within 10-20% of actual LLM token counts, which is sufficient
     for generating prompts of approximately the target length.
@@ -98,66 +112,95 @@ def _count_tokens_simple(text: str) -> int:
 
 def _get_wikipedia_text() -> str:
     """Fetch and cache Wikipedia text for prompt generation.
-    
-    Tries multiple sources in order:
-    1. Hugging Face datasets (wikimedia/wikipedia) - tries English first, then simple
-    2. Wikipedia API (multiple large articles concatenated)
-    3. Hardcoded fallback text (sufficient for ~10k tokens before repetition)
-    
-    The text is cached after first fetch to avoid repeated downloads.
-    Note: For very long context lengths (>text length), the text is repeated.
+
+    Reads from the committed on-disk cache (_WIKI_CACHE_PATH) if present, so
+    every run uses identical text. Otherwise fetches at least MIN_WIKI_TOKENS
+    tokens worth of articles and writes that cache file, trying in order:
+    1. Hugging Face datasets (wikimedia/wikipedia) - English then Simple English
+    2. Wikipedia API (multiple articles concatenated)
+    3. Hardcoded fallback text
+
+    Note: For context lengths beyond MIN_WIKI_TOKENS, the text is repeated.
     """
     global _WIKI_TEXT_CACHE
     if _WIKI_TEXT_CACHE is not None:
         return _WIKI_TEXT_CACHE
 
+    if _WIKI_CACHE_PATH.exists():
+        _WIKI_TEXT_CACHE = _WIKI_CACHE_PATH.read_text(encoding="utf-8")
+        return _WIKI_TEXT_CACHE
+
+    def _accumulate(dataset) -> str:
+        parts: list[str] = []
+        total_tokens = 0
+        for example in dataset:
+            text = example.get("text", "")
+            if not text:
+                continue
+            parts.append(text)
+            total_tokens += _count_tokens_simple(text)
+            if total_tokens >= MIN_WIKI_TOKENS:
+                break
+        return " ".join(parts)
+
     # Try Hugging Face datasets - English Wikipedia first
     try:
         from datasets import load_dataset
-        # Stream instead of downloading the full split - we only need one article
+        # Stream instead of downloading the full split
         dataset = load_dataset("wikimedia/wikipedia", "20231101.en", split="train", streaming=True)
-        _WIKI_TEXT_CACHE = next(iter(dataset))["text"]
-        return _WIKI_TEXT_CACHE
+        _WIKI_TEXT_CACHE = _accumulate(dataset)
     except ImportError:
         pass  # datasets library not installed
     except Exception:
         # Try Simple English Wikipedia as fallback
         try:
             dataset = load_dataset("wikimedia/wikipedia", "20231101.simple", split="train", streaming=True)
-            _WIKI_TEXT_CACHE = next(iter(dataset))["text"]
-            return _WIKI_TEXT_CACHE
+            _WIKI_TEXT_CACHE = _accumulate(dataset)
         except Exception:
             pass  # datasets loading failed
 
     # Fallback: Wikipedia API - fetch multiple articles
-    try:
-        articles = ["Artificial_intelligence", "Machine_learning", "Deep_learning", 
-                    "Natural_language_processing", "Neural_network"]
-        all_texts = []
-        for title in articles:
-            response = requests.get(
-                "https://en.wikipedia.org/w/api.php",
-                params={
-                    "action": "query",
-                    "format": "json",
-                    "prop": "extracts",
-                    "explaintext": True,
-                    "titles": title,
-                },
-                timeout=30,
-            )
-            data = response.json()
-            pages = data.get("query", {}).get("pages", {})
-            if pages:
-                page = next(iter(pages.values()))
-                extract = page.get("extract", "")
-                if extract:
-                    all_texts.append(extract)
-        if all_texts:
-            _WIKI_TEXT_CACHE = " ".join(all_texts)
-            return _WIKI_TEXT_CACHE
-    except Exception:
-        pass
+    if not _WIKI_TEXT_CACHE:
+        try:
+            articles = [
+                "Artificial_intelligence", "Machine_learning", "Deep_learning",
+                "Natural_language_processing", "Neural_network", "Computer_vision",
+                "Reinforcement_learning", "Data_science", "Robotics",
+                "Computer_science", "Statistics", "Mathematics", "Physics",
+                "Information_theory", "Algorithm",
+            ]
+            all_texts = []
+            total_tokens = 0
+            for title in articles:
+                response = requests.get(
+                    "https://en.wikipedia.org/w/api.php",
+                    params={
+                        "action": "query",
+                        "format": "json",
+                        "prop": "extracts",
+                        "explaintext": True,
+                        "titles": title,
+                    },
+                    timeout=30,
+                )
+                data = response.json()
+                pages = data.get("query", {}).get("pages", {})
+                if pages:
+                    page = next(iter(pages.values()))
+                    extract = page.get("extract", "")
+                    if extract:
+                        all_texts.append(extract)
+                        total_tokens += _count_tokens_simple(extract)
+                        if total_tokens >= MIN_WIKI_TOKENS:
+                            break
+            if all_texts:
+                _WIKI_TEXT_CACHE = " ".join(all_texts)
+        except Exception:
+            pass
+
+    if _WIKI_TEXT_CACHE:
+        _WIKI_CACHE_PATH.write_text(_WIKI_TEXT_CACHE, encoding="utf-8")
+        return _WIKI_TEXT_CACHE
 
     # Final fallback: hardcoded text (~2000+ tokens when concatenated)
     # This is long enough that repetition only kicks in for very large N
@@ -228,21 +271,38 @@ def _get_wikipedia_text() -> str:
     return _WIKI_TEXT_CACHE
 
 
+def _wiki_words_and_cumsum() -> tuple[list[str], list[int]]:
+    """Words of the cached Wikipedia text with cumulative token counts.
+
+    Per-word token counts don't change between calls, so caching them lets
+    prefix/repeat lookups binary-search a precomputed cumulative array
+    instead of re-tokenizing an ever-growing joined string on every word,
+    which made prompt generation quadratic in the target token count.
+    """
+    global _WIKI_WORDS_CACHE, _WIKI_CUMSUM_CACHE
+    if _WIKI_WORDS_CACHE is None:
+        words = _get_wikipedia_text().split()
+        counts = [_count_tokens_simple(w) for w in words]
+        _WIKI_WORDS_CACHE = words
+        _WIKI_CUMSUM_CACHE = list(itertools.accumulate(counts))
+    return _WIKI_WORDS_CACHE, _WIKI_CUMSUM_CACHE
+
+
 def generate_prompt(context_length: int) -> str:
     """Generate a prompt of approximately context_length tokens.
-    
-    For context_length <= text_length: takes a prefix from Wikipedia text and 
+
+    For context_length <= text_length: takes a prefix from Wikipedia text and
     appends 'Continue the sentence:' so the total is approximately context_length.
-    
-    For context_length > text_length: uses context_length tokens from Wikipedia 
+
+    For context_length > text_length: uses context_length tokens from Wikipedia
     text (repeating if needed) WITHOUT the completion prompt, since adding it
     after repeated text wouldn't be semantically meaningful.
-    
+
     Uses a simple tokenizer that approximates LLM tokenization. The actual
     token count may vary slightly from the target.
     """
-    wiki_text = _get_wikipedia_text()
-    text_token_count = _count_tokens_simple(wiki_text)
+    words, cumsum = _wiki_words_and_cumsum()
+    text_token_count = cumsum[-1] if cumsum else 0
     completion_token_count = _count_tokens_simple(COMPLETION_PROMPT)
 
     if context_length <= completion_token_count:
@@ -254,36 +314,37 @@ def generate_prompt(context_length: int) -> str:
 
     # If the text is long enough to accommodate prefix + completion
     if target_prefix_tokens <= text_token_count:
-        # Build prefix + completion prompt
-        all_words = wiki_text.split()
-        prefix = ""
-        for word in all_words:
-            test_prefix = prefix + (" " + word if prefix else word)
-            new_token_count = _count_tokens_simple(test_prefix)
-            if new_token_count > target_prefix_tokens:
-                break
-            prefix = test_prefix
+        # Number of leading words whose cumulative token count stays <= target
+        idx = bisect.bisect_right(cumsum, target_prefix_tokens)
+        prefix = " ".join(words[:idx])
         return prefix + (" " if prefix else "") + COMPLETION_PROMPT
     else:
         # For very long contexts, just return N tokens from Wikipedia text
         # (repeating if needed) - no completion prompt since it wouldn't make sense
-        return _generate_n_tokens(wiki_text, context_length)
+        return _generate_n_tokens(words, cumsum, context_length)
 
 
-def _generate_n_tokens(text: str, n: int) -> str:
-    """Generate exactly n tokens from text, repeating if needed."""
-    all_words = text.split()
-    tokens = []
-    while _count_tokens_simple(" ".join(tokens)) < n:
-        tokens.extend(all_words)
-    # Trim to exactly n tokens (approximately)
-    result = ""
-    for word in tokens:
-        test = result + (" " + word if result else word)
-        if _count_tokens_simple(test) > n:
-            break
-        result = test
-    return result
+def _generate_n_tokens(words: list[str], cumsum: list[int], n: int) -> str:
+    """Generate exactly n tokens by repeating the word list as whole blocks.
+
+    Each repetition's cumulative counts are the base cumsum shifted by a
+    running offset, so repeating never re-tokenizes text - it only tokenizes
+    the base word list once (in _wiki_words_and_cumsum).
+    """
+    base_total = cumsum[-1] if cumsum else 0
+    if base_total == 0:
+        return ""
+
+    all_words: list[str] = []
+    all_cumsum: list[int] = []
+    offset = 0
+    while not all_cumsum or all_cumsum[-1] < n:
+        all_words.extend(words)
+        all_cumsum.extend(c + offset for c in cumsum)
+        offset += base_total
+
+    idx = bisect.bisect_right(all_cumsum, n)
+    return " ".join(all_words[:idx])
 
 
 # ---------------------------------------------------------------------------
