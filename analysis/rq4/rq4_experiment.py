@@ -114,17 +114,17 @@ def _get_wikipedia_text() -> str:
     # Try Hugging Face datasets - English Wikipedia first
     try:
         from datasets import load_dataset
-        # Try full English Wikipedia
-        dataset = load_dataset("wikimedia/wikipedia", "20231101.en", split="train")
-        _WIKI_TEXT_CACHE = dataset[0]["text"]
+        # Stream instead of downloading the full split - we only need one article
+        dataset = load_dataset("wikimedia/wikipedia", "20231101.en", split="train", streaming=True)
+        _WIKI_TEXT_CACHE = next(iter(dataset))["text"]
         return _WIKI_TEXT_CACHE
     except ImportError:
         pass  # datasets library not installed
     except Exception:
         # Try Simple English Wikipedia as fallback
         try:
-            dataset = load_dataset("wikimedia/wikipedia", "20231101.simple", split="train")
-            _WIKI_TEXT_CACHE = dataset[0]["text"]
+            dataset = load_dataset("wikimedia/wikipedia", "20231101.simple", split="train", streaming=True)
+            _WIKI_TEXT_CACHE = next(iter(dataset))["text"]
             return _WIKI_TEXT_CACHE
         except Exception:
             pass  # datasets loading failed
