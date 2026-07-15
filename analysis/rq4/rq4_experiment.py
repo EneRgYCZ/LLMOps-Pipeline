@@ -58,7 +58,7 @@ MODEL_REGISTRY: dict[str, ModelSpec] = {
     "llama3.1:8b": ModelSpec(P=8.03e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0),
     "qwen3:8b": ModelSpec(P=8.2e9, b_w=0.56, L=36, d=4096, g=4, b_kv=2.0),
     "qwen2.5:7b": ModelSpec(P=7.61e9, b_w=0.56, L=28, d=3584, g=7, b_kv=2.0),
-    "mistral-7b-instruct-q4_K_M": ModelSpec(
+    "mistral:7b-instruct-q4_K_M": ModelSpec(
         P=7.24e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0
     ),
 }
