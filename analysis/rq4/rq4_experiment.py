@@ -274,7 +274,7 @@ def _generate_n_tokens(text: str, n: int) -> str:
     """Generate exactly n tokens from text, repeating if needed."""
     all_words = text.split()
     tokens = []
-    while len(_count_tokens_simple(" ".join(tokens))) < n:
+    while _count_tokens_simple(" ".join(tokens)) < n:
         tokens.extend(all_words)
     # Trim to exactly n tokens (approximately)
     result = ""
