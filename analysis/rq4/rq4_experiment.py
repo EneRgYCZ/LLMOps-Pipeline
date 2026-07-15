@@ -231,15 +231,18 @@ def _get_wikipedia_text() -> str:
 def generate_prompt(context_length: int) -> str:
     """Generate a prompt of approximately context_length tokens.
     
-    Takes a prefix from Wikipedia text and appends the completion prompt
-    'Continue the sentence:' so that the total is approximately context_length tokens.
+    For context_length <= text_length: takes a prefix from Wikipedia text and 
+    appends 'Continue the sentence:' so the total is approximately context_length.
     
-    For context lengths longer than the Wikipedia text, the text is repeated
-    to reach the target length. Uses a simple tokenizer that approximates LLM
-    tokenization. The actual token count may vary slightly, but this ensures
-    we're testing with real text rather than a fixed prompt.
+    For context_length > text_length: uses context_length tokens from Wikipedia 
+    text (repeating if needed) WITHOUT the completion prompt, since adding it
+    after repeated text wouldn't be semantically meaningful.
+    
+    Uses a simple tokenizer that approximates LLM tokenization. The actual
+    token count may vary slightly from the target.
     """
     wiki_text = _get_wikipedia_text()
+    text_token_count = _count_tokens_simple(wiki_text)
     completion_token_count = _count_tokens_simple(COMPLETION_PROMPT)
 
     if context_length <= completion_token_count:
@@ -249,28 +252,38 @@ def generate_prompt(context_length: int) -> str:
     # Calculate how many tokens we need from Wikipedia text
     target_prefix_tokens = context_length - completion_token_count
 
-    # Get all words from Wikipedia text
-    all_words = wiki_text.split()
-
-    # If we need more tokens than available, repeat the text
-    if target_prefix_tokens > _count_tokens_simple(wiki_text):
-        # Calculate how many repetitions we need
-        text_token_count = _count_tokens_simple(wiki_text)
-        repetitions = (target_prefix_tokens // text_token_count) + 1
-        wiki_text = (wiki_text + " ") * repetitions
+    # If the text is long enough to accommodate prefix + completion
+    if target_prefix_tokens <= text_token_count:
+        # Build prefix + completion prompt
         all_words = wiki_text.split()
+        prefix = ""
+        for word in all_words:
+            test_prefix = prefix + (" " + word if prefix else word)
+            new_token_count = _count_tokens_simple(test_prefix)
+            if new_token_count > target_prefix_tokens:
+                break
+            prefix = test_prefix
+        return prefix + (" " if prefix else "") + COMPLETION_PROMPT
+    else:
+        # For very long contexts, just return N tokens from Wikipedia text
+        # (repeating if needed) - no completion prompt since it wouldn't make sense
+        return _generate_n_tokens(wiki_text, context_length)
 
-    # Build prefix by adding words until we reach the target token count
-    prefix = ""
-    for word in all_words:
-        test_prefix = prefix + (" " + word if prefix else word)
-        new_token_count = _count_tokens_simple(test_prefix)
-        if new_token_count > target_prefix_tokens:
+
+def _generate_n_tokens(text: str, n: int) -> str:
+    """Generate exactly n tokens from text, repeating if needed."""
+    all_words = text.split()
+    tokens = []
+    while len(_count_tokens_simple(" ".join(tokens))) < n:
+        tokens.extend(all_words)
+    # Trim to exactly n tokens (approximately)
+    result = ""
+    for word in tokens:
+        test = result + (" " + word if result else word)
+        if _count_tokens_simple(test) > n:
             break
-        prefix = test_prefix
-
-    # Combine prefix with completion prompt
-    return prefix + (" " if prefix else "") + COMPLETION_PROMPT
+        result = test
+    return result
 
 
 # ---------------------------------------------------------------------------
