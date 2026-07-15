@@ -1,5 +1,5 @@
 metric,icc,interpretation,n_samples,n_runs
-faithfulness,0.955165,excellent,5,20
-answer_relevance,0.995803,excellent,5,20
-context_precision,0.967611,excellent,5,20
-context_recall,1.0,excellent,5,20
+faithfulness,0.903975,excellent,20,20
+answer_relevance,0.989611,excellent,20,20
+context_precision,0.944543,excellent,20,20
+context_recall,0.111526,poor,20,20
