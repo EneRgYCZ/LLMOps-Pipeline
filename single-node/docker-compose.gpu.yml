@@ -4,7 +4,7 @@ services:
   ollama:
     runtime: nvidia
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_VISIBLE_DEVICES=${GPU_INDEX:-all}
     deploy:
       resources:
         limits:
