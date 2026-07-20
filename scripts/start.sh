@@ -51,7 +51,10 @@ if [[ "$TARGET" == "GPU" ]]; then
 fi
 
 # --- Compose file selection ---------------------------------------------------
-COMPOSE_ARGS=(-f "$COMPOSE_FILE")
+# --env-file is explicit here because docker compose otherwise resolves its
+# default .env lookup relative to the first -f file's directory (single-node/),
+# not the repo root, silently ignoring the root .env for interpolated values.
+COMPOSE_ARGS=(--env-file "$REPO_ROOT/.env" -f "$COMPOSE_FILE")
 if [[ "$TARGET" == "GPU" ]]; then
   COMPOSE_ARGS+=(-f "$COMPOSE_GPU_FILE")
   echo "==> GPU mode: loading overlay $COMPOSE_GPU_FILE"
