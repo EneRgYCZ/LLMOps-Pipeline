@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrr}
+\toprule
+$N$ (tokens) & Predicted (GB) & Measured (GB) & Error (\)) \\
+\midrule
+512 & 5.25 & 6.56 \pm 0.10 & +24.88 \\
+1,024 & 5.32 & 6.52 \pm 0.10 & +22.61 \\
+2,048 & 5.45 & 6.63 \pm 0.00 & +21.62 \\
+4,096 & 5.72 & 6.56 \pm 0.10 & +14.62 \\
+8,192 & 6.26 & 6.59 \pm 0.08 & +5.38 \\
+16,384 & 7.33 & 6.56 \pm 0.10 & -10.56 \\
+32,768 & 9.48 & 7.69 \pm 0.97 & -18.82 \\
+65,536 & 13.77 & 8.40 \pm 0.00 & -38.99 \\
+114,688 & 20.22 & 8.40 \pm 0.00 & -58.43 \\
+\bottomrule
+\end{tabular}
+\caption{Predicted vs. measured VRAM usage across context length for mistral:7b-instruct-q4\_K\_M.}
+\label{tab:rq4-vram-summary}
+\end{table}

@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrr}
+\toprule
+$N$ (tokens) & Predicted (GB) & Measured (GB) & Error (\)) \\
+\midrule
+512 & 5.87 & 15.27 \pm 0.00 & +159.95 \\
+1,024 & 5.95 & 15.34 \pm 0.00 & +157.87 \\
+2,048 & 6.10 & 15.49 \pm 0.00 & +153.86 \\
+4,096 & 6.40 & 15.77 \pm 0.00 & +146.34 \\
+8,192 & 7.01 & 16.33 \pm 0.00 & +133.11 \\
+16,384 & 8.21 & 10.72 \pm 4.88 & +30.52 \\
+32,768 & 10.63 & 9.45 \pm 0.00 & -11.13 \\
+65,536 & 15.46 & 10.57 \pm 0.00 & -31.63 \\
+114,688 & 22.71 & 10.57 \pm 0.00 & -53.45 \\
+\bottomrule
+\end{tabular}
+\caption{Predicted vs. measured VRAM usage across context length for qwen3:8b.}
+\label{tab:rq4-vram-summary}
+\end{table}
