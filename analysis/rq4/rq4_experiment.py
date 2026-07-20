@@ -49,15 +49,18 @@ class ModelSpec:
         return weights_gb + overhead_gb + kv_gb
 
 
-# All five 8B-class models with their architectural parameters.
+# The four 8B-class Q4_K_M instruct models pulled on the deployment server.
 # b_kv=2.0 (fp16 KV cache, Ollama default) and b_w=0.56 (Q4_K_M) for all.
 MODEL_REGISTRY: dict[str, ModelSpec] = {
     "ministral-3:8b-instruct-2512-q4_K_M": ModelSpec(
         P=8.0e9, b_w=0.56, L=34, d=4096, g=4, b_kv=2.0
     ),
-    "llama3.1:8b": ModelSpec(P=8.03e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0),
-    "qwen3:8b": ModelSpec(P=8.2e9, b_w=0.56, L=36, d=4096, g=4, b_kv=2.0),
-    "qwen2.5:7b": ModelSpec(P=7.61e9, b_w=0.56, L=28, d=3584, g=7, b_kv=2.0),
+    "llama3.1:8b-instruct-q4_K_M": ModelSpec(
+        P=8.03e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0
+    ),
+    "qwen2.5:7b-instruct-q4_K_M": ModelSpec(
+        P=7.61e9, b_w=0.56, L=28, d=3584, g=7, b_kv=2.0
+    ),
     "mistral:7b-instruct-q4_K_M": ModelSpec(
         P=7.24e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0
     ),
@@ -75,7 +78,7 @@ def sanitize_tag(tag: str) -> str:
 # The default model tag for backwards compatibility
 DEFAULT_MODEL_TAG = "ministral-3:8b-instruct-2512-q4_K_M"
 
-# All five model tags for the "all" option
+# All four model tags for the "all" option
 ALL_MODEL_TAGS = list(MODEL_REGISTRY.keys())
 
 # ---------------------------------------------------------------------------
