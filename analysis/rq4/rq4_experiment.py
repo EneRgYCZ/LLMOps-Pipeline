@@ -5,6 +5,7 @@ import bisect
 import csv
 import itertools
 import os
+import re
 import subprocess
 import time
 from abc import ABC, abstractmethod
@@ -15,7 +16,6 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import re
 import requests
 from dotenv import load_dotenv
 
@@ -149,15 +149,20 @@ def _get_wikipedia_text() -> str:
     # Try Hugging Face datasets - English Wikipedia first
     try:
         from datasets import load_dataset
+
         # Stream instead of downloading the full split
-        dataset = load_dataset("wikimedia/wikipedia", "20231101.en", split="train", streaming=True)
+        dataset = load_dataset(
+            "wikimedia/wikipedia", "20231101.en", split="train", streaming=True
+        )
         _WIKI_TEXT_CACHE = _accumulate(dataset)
     except ImportError:
         pass  # datasets library not installed
     except Exception:
         # Try Simple English Wikipedia as fallback
         try:
-            dataset = load_dataset("wikimedia/wikipedia", "20231101.simple", split="train", streaming=True)
+            dataset = load_dataset(
+                "wikimedia/wikipedia", "20231101.simple", split="train", streaming=True
+            )
             _WIKI_TEXT_CACHE = _accumulate(dataset)
         except Exception:
             pass  # datasets loading failed
@@ -166,11 +171,21 @@ def _get_wikipedia_text() -> str:
     if not _WIKI_TEXT_CACHE:
         try:
             articles = [
-                "Artificial_intelligence", "Machine_learning", "Deep_learning",
-                "Natural_language_processing", "Neural_network", "Computer_vision",
-                "Reinforcement_learning", "Data_science", "Robotics",
-                "Computer_science", "Statistics", "Mathematics", "Physics",
-                "Information_theory", "Algorithm",
+                "Artificial_intelligence",
+                "Machine_learning",
+                "Deep_learning",
+                "Natural_language_processing",
+                "Neural_network",
+                "Computer_vision",
+                "Reinforcement_learning",
+                "Data_science",
+                "Robotics",
+                "Computer_science",
+                "Statistics",
+                "Mathematics",
+                "Physics",
+                "Information_theory",
+                "Algorithm",
             ]
             all_texts = []
             total_tokens = 0
@@ -609,7 +624,7 @@ def run_experiment(
             )
 
             stop_model(ollama_config)
-            
+
             # Generate prompt for this context length
             if prompt is None:
                 # Use Wikipedia-based prompt
@@ -617,7 +632,7 @@ def run_experiment(
             else:
                 # Use the provided fixed prompt (for backward compatibility)
                 actual_prompt = prompt
-            
+
             load_model_with_context(ollama_config, context_length, actual_prompt)
             time.sleep(1)
 
@@ -1054,7 +1069,7 @@ def run_analysis(
 
 # Doubling sequence from 512 to 65536, then 114688 (112*1024) pushing toward
 # the hardware ceiling of the NVIDIA L4 (23 GiB VRAM).
-DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 114688]
+DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 100000]
 
 
 def parse_args() -> argparse.Namespace:
@@ -1254,4 +1269,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
