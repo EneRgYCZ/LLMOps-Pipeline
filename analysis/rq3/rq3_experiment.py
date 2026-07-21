@@ -291,6 +291,7 @@ async def run_pass(run_id: int, samples: list, metrics: dict) -> list[dict]:
             "run_id": run_id,
             "sample_id": sample_id,
             "question": sample["question"],
+            "answer": sample["answer"],
             "elapsed_seconds": round(elapsed, 2),
             **{m: scores.get(m) for m in METRICS},
         }
@@ -308,7 +309,7 @@ async def run_pass(run_id: int, samples: list, metrics: dict) -> list[dict]:
 # ---------------------------------------------------------------------------
 # CSV helpers
 # ---------------------------------------------------------------------------
-RAW_FIELDNAMES = ["run_id", "sample_id", "question", "elapsed_seconds"] + METRICS
+RAW_FIELDNAMES = ["run_id", "sample_id", "question", "answer", "elapsed_seconds"] + METRICS
 
 # Summary includes mean + std + min + max per metric per run
 SUMMARY_FIELDNAMES = ["run_id", "n_samples"] + [
