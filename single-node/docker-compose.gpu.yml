@@ -4,7 +4,7 @@ services:
   ollama:
     runtime: nvidia
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_VISIBLE_DEVICES=${GPU_INDEX:-all}
     deploy:
       resources:
         limits:
@@ -13,9 +13,6 @@ services:
         reservations:
           cpus: "${SINGLE_NODE_CPU_RESERVATION:-12}"
           memory: ${SINGLE_NODE_MEMORY_RESERVATION:-10G}
-          devices:
-            - driver: nvidia
-              capabilities: [gpu]
   dcgm-exporter:
     image: nvcr.io/nvidia/k8s/dcgm-exporter:3.3.5-3.4.0-ubuntu22.04
     container_name: dcgm-exporter

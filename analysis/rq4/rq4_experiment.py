@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import bisect
 import csv
+import itertools
 import os
+import re
 import subprocess
 import time
 from abc import ABC, abstractmethod
@@ -17,32 +20,7 @@ import requests
 from dotenv import load_dotenv
 
 # ---------------------------------------------------------------------------
-# Paths (all relative to this file)
-# ---------------------------------------------------------------------------
-
-SCRIPT_DIR = Path(__file__).resolve().parent  # analysis/rq4
-PROJECT_ROOT = SCRIPT_DIR.parent.parent  # repo root
-
-# Run standalone from a local venv, not through docker-compose's env_file, so
-# load .env explicitly before any of the os.environ.get(...) calls below.
-load_dotenv(PROJECT_ROOT / ".env")
-
-RESULTS_DIR = PROJECT_ROOT / "results" / "rq4"
-DATA_DIR = RESULTS_DIR / "data"
-CSV_DIR = RESULTS_DIR / "csvs"
-IMAGES_DIR = RESULTS_DIR / "images"
-
-RAW_CSV_PATH = DATA_DIR / "rq4_vram_raw.csv"
-SUMMARY_CSV_PATH = CSV_DIR / "rq4_summary.csv"
-SUMMARY_TEX_PATH = CSV_DIR / "rq4_summary_table.tex"
-FIT_PLOT_PATH = IMAGES_DIR / "rq4_predicted_vs_measured.png"
-ERROR_PLOT_PATH = IMAGES_DIR / "rq4_errors.png"
-
-for directory in (DATA_DIR, CSV_DIR, IMAGES_DIR):
-    directory.mkdir(parents=True, exist_ok=True)
-
-# ---------------------------------------------------------------------------
-# Formula constants
+# Model registry
 # ---------------------------------------------------------------------------
 
 
@@ -62,6 +40,7 @@ class ModelSpec:
     d: int = 4096
     g: int = 4
     b_kv: float = 2.0
+    quantisation: str = "Q4_K_M"
 
     def predicted_vram_gb(self, context_length: int) -> float:
         weights_gb = self.P * self.b_w * 1e-9
@@ -69,6 +48,367 @@ class ModelSpec:
         kv_bytes = context_length * 2 * self.L * (self.d / self.g) * self.b_kv
         kv_gb = kv_bytes * 1e-9
         return weights_gb + overhead_gb + kv_gb
+
+
+# Ministral and Llama 3.1 8B, each at Q4_K_M and Q8_0, to isolate the effect
+# of b_w on formula accuracy within the same architecture. b_kv=2.0 (fp16
+# KV cache, Ollama default) for all; b_w=0.56 for Q4_K_M, b_w=1.00 for
+# Q8_0, per the thesis's quantisation format table. Architecture values
+# (P, L, d, g) are unchanged between quantisation tiers of the same model.
+MODEL_REGISTRY: dict[str, ModelSpec] = {
+    "ministral-3:8b-instruct-2512-q4_K_M": ModelSpec(
+        P=8.0e9, b_w=0.56, L=34, d=4096, g=4, b_kv=2.0, quantisation="Q4_K_M"
+    ),
+    "llama3.1:8b-instruct-q4_K_M": ModelSpec(
+        P=8.03e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q4_K_M"
+    ),
+    "ministral-3:8b-instruct-2512-q8_0": ModelSpec(
+        P=8.0e9, b_w=1.00, L=34, d=4096, g=4, b_kv=2.0, quantisation="Q8_0"
+    ),
+    "llama3.1:8b-instruct-q8_0": ModelSpec(
+        P=8.03e9, b_w=1.00, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q8_0"
+    ),
+}
+
+# The two Q8_0 tags added to isolate quantisation effects. Used by
+# --all-quants to run only these, leaving the four already-collected
+# Q4_K_M sweeps untouched.
+NEW_Q8_TAGS = [
+    "ministral-3:8b-instruct-2512-q8_0",
+    "llama3.1:8b-instruct-q8_0",
+]
+
+
+def sanitize_tag(tag: str) -> str:
+    """Sanitise an Ollama tag for use as a directory name.
+
+    Replaces ':' with '_' since colons are not safe on all filesystems.
+    """
+    return tag.replace(":", "_")
+
+
+# The default model tag for backwards compatibility
+DEFAULT_MODEL_TAG = "ministral-3:8b-instruct-2512-q4_K_M"
+
+# All registry tags, for the "all" option
+ALL_MODEL_TAGS = list(MODEL_REGISTRY.keys())
+
+# ---------------------------------------------------------------------------
+# Wikipedia-based prompt generation
+# ---------------------------------------------------------------------------
+
+# Cache for Wikipedia text
+_WIKI_TEXT_CACHE: str | None = None
+_WIKI_WORDS_CACHE: list[str] | None = None
+_WIKI_CUMSUM_CACHE: list[int] | None = None
+
+COMPLETION_PROMPT = "Continue the sentence:"
+
+# Long enough that every context length in a sweep draws from the same
+# single-article text instead of some lengths spilling into the repeated-text
+# branch of generate_prompt while others don't.
+MIN_WIKI_TOKENS = 120_000
+
+# Committed to the repo once generated, so every run - local or on the
+# deployment server - reads byte-identical prompt source text instead of
+# depending on a live fetch that could return different articles run to run.
+_WIKI_CACHE_PATH = Path(__file__).resolve().parent / "wiki_prompt_source.txt"
+
+
+def _count_tokens_simple(text: str) -> int:
+    """Simple token counter that approximates LLM tokenization.
+
+    Splits on whitespace and common punctuation. For English text, this is
+    typically within 10-20% of actual LLM token counts, which is sufficient
+    for generating prompts of approximately the target length.
+    """
+    return len(re.findall(r"\w+|[^\w\s]", text))
+
+
+def _get_wikipedia_text() -> str:
+    """Fetch and cache Wikipedia text for prompt generation.
+
+    Reads from the committed on-disk cache (_WIKI_CACHE_PATH) if present, so
+    every run uses identical text. Otherwise fetches at least MIN_WIKI_TOKENS
+    tokens worth of articles and writes that cache file, trying in order:
+    1. Hugging Face datasets (wikimedia/wikipedia) - English then Simple English
+    2. Wikipedia API (multiple articles concatenated)
+    3. Hardcoded fallback text
+
+    Note: For context lengths beyond MIN_WIKI_TOKENS, the text is repeated.
+    """
+    global _WIKI_TEXT_CACHE
+    if _WIKI_TEXT_CACHE is not None:
+        return _WIKI_TEXT_CACHE
+
+    if _WIKI_CACHE_PATH.exists():
+        _WIKI_TEXT_CACHE = _WIKI_CACHE_PATH.read_text(encoding="utf-8")
+        return _WIKI_TEXT_CACHE
+
+    def _accumulate(dataset) -> str:
+        parts: list[str] = []
+        total_tokens = 0
+        for example in dataset:
+            text = example.get("text", "")
+            if not text:
+                continue
+            parts.append(text)
+            total_tokens += _count_tokens_simple(text)
+            if total_tokens >= MIN_WIKI_TOKENS:
+                break
+        return " ".join(parts)
+
+    # Try Hugging Face datasets - English Wikipedia first
+    try:
+        from datasets import load_dataset
+
+        # Stream instead of downloading the full split
+        dataset = load_dataset(
+            "wikimedia/wikipedia", "20231101.en", split="train", streaming=True
+        )
+        _WIKI_TEXT_CACHE = _accumulate(dataset)
+    except ImportError:
+        pass  # datasets library not installed
+    except Exception:
+        # Try Simple English Wikipedia as fallback
+        try:
+            dataset = load_dataset(
+                "wikimedia/wikipedia", "20231101.simple", split="train", streaming=True
+            )
+            _WIKI_TEXT_CACHE = _accumulate(dataset)
+        except Exception:
+            pass  # datasets loading failed
+
+    # Fallback: Wikipedia API - fetch multiple articles
+    if not _WIKI_TEXT_CACHE:
+        try:
+            articles = [
+                "Artificial_intelligence",
+                "Machine_learning",
+                "Deep_learning",
+                "Natural_language_processing",
+                "Neural_network",
+                "Computer_vision",
+                "Reinforcement_learning",
+                "Data_science",
+                "Robotics",
+                "Computer_science",
+                "Statistics",
+                "Mathematics",
+                "Physics",
+                "Information_theory",
+                "Algorithm",
+            ]
+            all_texts = []
+            total_tokens = 0
+            for title in articles:
+                response = requests.get(
+                    "https://en.wikipedia.org/w/api.php",
+                    params={
+                        "action": "query",
+                        "format": "json",
+                        "prop": "extracts",
+                        "explaintext": True,
+                        "titles": title,
+                    },
+                    timeout=30,
+                )
+                data = response.json()
+                pages = data.get("query", {}).get("pages", {})
+                if pages:
+                    page = next(iter(pages.values()))
+                    extract = page.get("extract", "")
+                    if extract:
+                        all_texts.append(extract)
+                        total_tokens += _count_tokens_simple(extract)
+                        if total_tokens >= MIN_WIKI_TOKENS:
+                            break
+            if all_texts:
+                _WIKI_TEXT_CACHE = " ".join(all_texts)
+        except Exception:
+            pass
+
+    if _WIKI_TEXT_CACHE:
+        _WIKI_CACHE_PATH.write_text(_WIKI_TEXT_CACHE, encoding="utf-8")
+        return _WIKI_TEXT_CACHE
+
+    # Final fallback: hardcoded text (~2000+ tokens when concatenated)
+    # This is long enough that repetition only kicks in for very large N
+    _WIKI_TEXT_CACHE = (
+        "Artificial intelligence (AI) is intelligence demonstrated by machines, "
+        "as opposed to the natural intelligence displayed by humans and other animals. "
+        "Leading AI textbooks define the field as the study of intelligent agents: "
+        "any system that perceives its environment and takes actions that maximize "
+        "its chance of successfully achieving its goals. Colloquially, the term "
+        "artificial intelligence is often used to describe machines that mimic "
+        "cognitive functions that humans associate with the human mind, such as "
+        "learning and problem solving. The scope of AI is disputed: as machines "
+        "become increasingly capable, tasks considered to require intelligence are "
+        "often removed from the definition of AI, a phenomenon known as the AI effect. "
+        "For instance, optical character recognition is frequently excluded from "
+        "things considered to be AI, having become a routine technology. AI was founded "
+        "as an academic discipline in 1956, and in the years since has experienced "
+        "several waves of optimism, followed by disappointment and the loss of "
+        "funding, known as AI winter, followed by new approaches, success and "
+        "renewed funding. For most of its history, AI research has been divided into "
+        "subfields that often fail to communicate with each other. These sub-fields "
+        "are based on technical considerations, such as particular goals, the use "
+        "of particular tools, or deep philosophical differences. Subsymbolic AI "
+        "includes evolutionary computation and swarm intelligence algorithms. "
+        "Deep learning models such as recurrent neural networks and large language "
+        "models have been particularly successful in solving problems that require "
+        "understanding of natural language, speech recognition, and computer vision. "
+        "However, these models are often criticized for their lack of explainability "
+        "and potential for bias. The discipline was founded on the claim that "
+        "a central property of humans, intelligence, can be so precisely described "
+        "that a machine can be made to simulate it. This raises philosophical "
+        "arguments about the mind and the ethics of creating artificial beings "
+        "endowed with human-like intelligence, issues which have been explored "
+        "by myth, fiction and philosophy since antiquity. "
+        "Machine learning is the study of computer algorithms that improve automatically "
+        "through experience and by the use of data. It is seen as a subset of artificial "
+        "intelligence. Machine learning algorithms build a mathematical model based on "
+        "sample data, known as training data, in order to make predictions or decisions "
+        "without being explicitly programmed to perform the task. Machine learning is "
+        "closely related to computational statistics, which focuses on making predictions "
+        "using computers. The study of mathematical optimization delivers methods, theory "
+        "and application domains to the field of machine learning. Data mining is a "
+        "related field of study, focusing on exploratory data analysis through "
+        "unsupervised learning. In its application across business problems, machine "
+        "learning is also referred to as predictive analytics. The goal of machine "
+        "learning is to understand the structure of data and fit that data into models "
+        "that can be understood and utilized by humans. Machine learning is the science "
+        "of getting computers to learn and act like humans do, and improve their learning "
+        "over time in autonomous fashion, by feeding them data and information in the "
+        "form of observations and real-world interactions. The primary objective is to "
+        "allow the computers learn automatically without human assistance or intervention "
+        "and adjust actions accordingly. Neural networks are a set of algorithms, modeled "
+        "loosely after the human brain, that are designed to recognize patterns. They "
+        "interpret sensory data through machine perception, labeling or clustering raw "
+        "input. The patterns they recognize are numerical, contained in vectors, into "
+        "which all real-world data, be it images, sound, text or time series, must be "
+        "translated. Neural networks are particularly useful for solving problems that "
+        "are difficult to solve with traditional rule-based programming. They have "
+        "achieved remarkable success in recent years, particularly in the fields of "
+        "computer vision, natural language processing, and game playing. The most "
+        "common type of neural network used today is the feedforward neural network, "
+        "also known as a multilayer perceptron, which consists of multiple layers of "
+        "nodes, or neurons, with connections between them. Each connection has a "
+        "weight that determines the strength of the signal passed from one neuron "
+        "to another. During training, these weights are adjusted to minimize the "
+        "difference between the predicted output and the actual output. "
+    )
+    return _WIKI_TEXT_CACHE
+
+
+def _wiki_words_and_cumsum() -> tuple[list[str], list[int]]:
+    """Words of the cached Wikipedia text with cumulative token counts.
+
+    Per-word token counts don't change between calls, so caching them lets
+    prefix/repeat lookups binary-search a precomputed cumulative array
+    instead of re-tokenizing an ever-growing joined string on every word,
+    which made prompt generation quadratic in the target token count.
+    """
+    global _WIKI_WORDS_CACHE, _WIKI_CUMSUM_CACHE
+    if _WIKI_WORDS_CACHE is None:
+        words = _get_wikipedia_text().split()
+        counts = [_count_tokens_simple(w) for w in words]
+        _WIKI_WORDS_CACHE = words
+        _WIKI_CUMSUM_CACHE = list(itertools.accumulate(counts))
+    return _WIKI_WORDS_CACHE, _WIKI_CUMSUM_CACHE
+
+
+def generate_prompt(context_length: int) -> str:
+    """Generate a prompt of approximately context_length tokens.
+
+    For context_length <= text_length: takes a prefix from Wikipedia text and
+    appends 'Continue the sentence:' so the total is approximately context_length.
+
+    For context_length > text_length: uses context_length tokens from Wikipedia
+    text (repeating if needed) WITHOUT the completion prompt, since adding it
+    after repeated text wouldn't be semantically meaningful.
+
+    Uses a simple tokenizer that approximates LLM tokenization. The actual
+    token count may vary slightly from the target.
+    """
+    words, cumsum = _wiki_words_and_cumsum()
+    text_token_count = cumsum[-1] if cumsum else 0
+    completion_token_count = _count_tokens_simple(COMPLETION_PROMPT)
+
+    if context_length <= completion_token_count:
+        # Context too short for completion prompt, truncate it
+        return COMPLETION_PROMPT[:context_length]
+
+    # Calculate how many tokens we need from Wikipedia text
+    target_prefix_tokens = context_length - completion_token_count
+
+    # If the text is long enough to accommodate prefix + completion
+    if target_prefix_tokens <= text_token_count:
+        # Number of leading words whose cumulative token count stays <= target
+        idx = bisect.bisect_right(cumsum, target_prefix_tokens)
+        prefix = " ".join(words[:idx])
+        return prefix + (" " if prefix else "") + COMPLETION_PROMPT
+    else:
+        # For very long contexts, just return N tokens from Wikipedia text
+        # (repeating if needed) - no completion prompt since it wouldn't make sense
+        return _generate_n_tokens(words, cumsum, context_length)
+
+
+def _generate_n_tokens(words: list[str], cumsum: list[int], n: int) -> str:
+    """Generate exactly n tokens by repeating the word list as whole blocks.
+
+    Each repetition's cumulative counts are the base cumsum shifted by a
+    running offset, so repeating never re-tokenizes text - it only tokenizes
+    the base word list once (in _wiki_words_and_cumsum).
+    """
+    base_total = cumsum[-1] if cumsum else 0
+    if base_total == 0:
+        return ""
+
+    all_words: list[str] = []
+    all_cumsum: list[int] = []
+    offset = 0
+    while not all_cumsum or all_cumsum[-1] < n:
+        all_words.extend(words)
+        all_cumsum.extend(c + offset for c in cumsum)
+        offset += base_total
+
+    idx = bisect.bisect_right(all_cumsum, n)
+    return " ".join(all_words[:idx])
+
+
+# ---------------------------------------------------------------------------
+# Paths (all relative to this file)
+# ---------------------------------------------------------------------------
+
+SCRIPT_DIR = Path(__file__).resolve().parent  # analysis/rq4
+PROJECT_ROOT = SCRIPT_DIR.parent.parent  # repo root
+
+# Run standalone from a local venv, not through docker-compose's env_file, so
+# load .env explicitly before any of the os.environ.get(...) calls below.
+load_dotenv(PROJECT_ROOT / ".env")
+
+RESULTS_DIR = PROJECT_ROOT / "results" / "rq4"
+DATA_DIR = RESULTS_DIR / "data"
+CSV_DIR = RESULTS_DIR / "csvs"
+IMAGES_DIR = RESULTS_DIR / "images"
+
+# Cross-model comparison output
+CROSS_MODEL_CSV_PATH = CSV_DIR / "rq4_cross_model_summary.csv"
+
+for directory in (DATA_DIR, CSV_DIR, IMAGES_DIR):
+    directory.mkdir(parents=True, exist_ok=True)
+
+
+def get_model_paths(model_tag: str) -> tuple[Path, Path, Path, Path, Path]:
+    """Get the per-model output paths for data, summary CSV, LaTeX, and plots."""
+    sanitized = sanitize_tag(model_tag)
+    data_path = DATA_DIR / sanitized / "rq4_vram_raw.csv"
+    summary_csv_path = CSV_DIR / sanitized / "rq4_summary.csv"
+    summary_tex_path = CSV_DIR / sanitized / "rq4_summary_table.tex"
+    fit_plot_path = IMAGES_DIR / sanitized / "rq4_predicted_vs_measured.png"
+    error_plot_path = IMAGES_DIR / sanitized / "rq4_errors.png"
+    return data_path, summary_csv_path, summary_tex_path, fit_plot_path, error_plot_path
 
 
 # ---------------------------------------------------------------------------
@@ -164,6 +504,34 @@ class OllamaConfig:
     )
 
 
+def is_model_pulled(model_tag: str, container: str = "ollama") -> bool:
+    """Check if a model is already pulled in the Ollama container."""
+    try:
+        result = subprocess.run(
+            ["docker", "exec", container, "ollama", "list"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        # Check if the exact tag appears in the output
+        return model_tag in result.stdout
+    except subprocess.CalledProcessError:
+        return False
+
+
+def pull_model(model_tag: str, container: str = "ollama") -> None:
+    """Pull a model if not already present."""
+    if is_model_pulled(model_tag, container):
+        print(f"Model {model_tag} already pulled, skipping.")
+    else:
+        print(f"Pulling {model_tag}...")
+        subprocess.run(
+            ["docker", "exec", container, "ollama", "pull", model_tag],
+            check=True,
+        )
+        print(f"Successfully pulled {model_tag}")
+
+
 def stop_model(config: OllamaConfig) -> None:
     """Unloads the model and clears Ollama's prompt cache.
 
@@ -182,16 +550,24 @@ def stop_model(config: OllamaConfig) -> None:
 def load_model_with_context(
     config: OllamaConfig, context_length: int, prompt: str
 ) -> None:
-    """Forces a model load at a given context length via one generate call."""
+    """Forces a model load at a given context length via one generate call.
+
+    num_predict=1 caps generation to a single token: this call only needs to
+    force the prefill/KV-cache allocation for context_length, not produce
+    real output, and at large N an uncapped generation was what pushed the
+    request past the read timeout, not the prefill itself.
+    """
     response = requests.post(
         f"{config.host}/api/generate",
         json={
             "model": config.model,
             "prompt": prompt,
             "stream": False,
-            "options": {"num_ctx": context_length},
+            "options": {"num_ctx": context_length, "num_predict": 1},
         },
-        timeout=300,
+        # Scales with context_length as a safety margin for prefill time on
+        # very large N, floored at the original 300s for small contexts.
+        timeout=max(300, context_length // 40),
     )
     response.raise_for_status()
 
@@ -213,9 +589,10 @@ RAW_CSV_FIELDS = [
 ]
 
 
-def append_row(row: dict) -> None:
-    write_header = not RAW_CSV_PATH.exists()
-    with open(RAW_CSV_PATH, "a", newline="") as f:
+def append_row(row: dict, data_path: Path) -> None:
+    write_header = not data_path.exists()
+    data_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(data_path, "a", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=RAW_CSV_FIELDS)
         if write_header:
             writer.writeheader()
@@ -229,11 +606,17 @@ def run_experiment(
     ollama_config: OllamaConfig,
     reader: VRAMReader,
     model_spec: ModelSpec,
-    prompt: str,
+    prompt: str | None,
+    data_path: Path,
 ) -> None:
-    if RAW_CSV_PATH.exists():
-        RAW_CSV_PATH.unlink()
-        print(f"Removed existing {RAW_CSV_PATH} to start a fresh run.")
+    if data_path.exists():
+        data_path.unlink()
+        print(f"Removed existing {data_path} to start a fresh run.")
+
+    # Pre-fetch Wikipedia text once before the loop
+    if prompt is None:
+        wiki_text = _get_wikipedia_text()
+        print(f"Using Wikipedia-based prompts (first {len(wiki_text.split())} words)")
 
     print(f"Baseline read on GPU {gpu_index} before any load")
     baseline_mib = reader.read_used_mib(gpu_index)
@@ -253,7 +636,16 @@ def run_experiment(
             )
 
             stop_model(ollama_config)
-            load_model_with_context(ollama_config, context_length, prompt)
+
+            # Generate prompt for this context length
+            if prompt is None:
+                # Use Wikipedia-based prompt
+                actual_prompt = generate_prompt(context_length)
+            else:
+                # Use the provided fixed prompt (for backward compatibility)
+                actual_prompt = prompt
+
+            load_model_with_context(ollama_config, context_length, actual_prompt)
             time.sleep(1)
 
             measured_mib = reader.read_used_mib(gpu_index)
@@ -273,10 +665,11 @@ def run_experiment(
                     "delta_vram_gb": round(delta_gb, 4),
                     "predicted_vram_gb": round(predicted_gb, 4),
                     "gpu_index": gpu_index,
-                }
+                },
+                data_path,
             )
 
-    print(f"Raw results written to {RAW_CSV_PATH}")
+    print(f"Raw results written to {data_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -284,10 +677,10 @@ def run_experiment(
 # ---------------------------------------------------------------------------
 
 
-def load_raw_data() -> pd.DataFrame:
-    if not RAW_CSV_PATH.exists():
-        raise FileNotFoundError(f"No raw data at {RAW_CSV_PATH}.")
-    return pd.read_csv(RAW_CSV_PATH)
+def load_raw_data(data_path: Path) -> pd.DataFrame:
+    if not data_path.exists():
+        raise FileNotFoundError(f"No raw data at {data_path}.")
+    return pd.read_csv(data_path)
 
 
 def build_summary(df: pd.DataFrame) -> pd.DataFrame:
@@ -331,12 +724,13 @@ def compute_overall_metrics(summary: pd.DataFrame) -> dict:
     return {"mae_gb": mae, "mape_pct": mape, "r_squared": r_squared}
 
 
-def save_summary(summary: pd.DataFrame, metrics: dict) -> None:
+def save_summary(summary: pd.DataFrame, metrics: dict, summary_csv_path: Path) -> None:
     summary_out = summary.copy()
     for key, value in metrics.items():
         summary_out[key] = value
-    summary_out.to_csv(SUMMARY_CSV_PATH, index=False)
-    print(f"Summary written to {SUMMARY_CSV_PATH}")
+    summary_csv_path.parent.mkdir(parents=True, exist_ok=True)
+    summary_out.to_csv(summary_csv_path, index=False)
+    print(f"Summary written to {summary_csv_path}")
     print(
         f"Overall fit: MAE={metrics['mae_gb']:.3f} GB, "
         f"MAPE={metrics['mape_pct']:.2f}%, R^2={metrics['r_squared']:.4f}"
@@ -476,7 +870,9 @@ def _escape_latex(text: str) -> str:
 
 
 def write_latex_table(
-    summary: pd.DataFrame, model_name: str, path: Path = SUMMARY_TEX_PATH
+    summary: pd.DataFrame,
+    model_name: str,
+    path: Path,
 ) -> None:
     """Writes the summary as a booktabs-style .tex fragment for \\input{}."""
     s = summary.sort_values("context_length")
@@ -485,13 +881,13 @@ def write_latex_table(
         r"\centering",
         r"\begin{tabular}{rrrr}",
         r"\toprule",
-        r"$N$ (tokens) & Predicted (GB) & Measured (GB) & Error (\%) \\",
+        r"$N$ (tokens) & Predicted (GB) & Measured (GB) & Error (\)) \\",
         r"\midrule",
     ]
     for _, row in s.iterrows():
         n = f"{int(row['context_length']):,}"
         predicted = f"{row['predicted_gb']:.2f}"
-        measured = f"{row['measured_mean_gb']:.2f} $\\pm$ {row['measured_std_gb']:.2f}"
+        measured = f"{row['measured_mean_gb']:.2f} \\pm {row['measured_std_gb']:.2f}"
         error = f"{row['pct_error']:+.2f}"
         lines.append(f"{n} & {predicted} & {measured} & {error} \\\\")
     lines.append(r"\bottomrule")
@@ -507,6 +903,10 @@ def write_latex_table(
     path.write_text("\n".join(lines) + "\n")
     print(f"LaTeX summary table written to {path}")
 
+
+# ---------------------------------------------------------------------------
+# Plotting
+# ---------------------------------------------------------------------------
 
 ACADEMIC_STYLE = {
     "font.family": "serif",
@@ -535,7 +935,12 @@ COLOR_ERROR_POS = "#c0392b"
 COLOR_ERROR_NEG = "#2e7d5b"
 
 
-def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> None:
+def plot_fit(
+    summary: pd.DataFrame,
+    model_spec: ModelSpec,
+    model_name: str,
+    fit_plot_path: Path,
+) -> None:
     with plt.rc_context(ACADEMIC_STYLE):
         fig, ax = plt.subplots(figsize=(8, 5))
 
@@ -583,12 +988,17 @@ def plot_fit(summary: pd.DataFrame, model_spec: ModelSpec, model_name: str) -> N
         ax.grid(False, axis="x")
 
         fig.tight_layout()
-        fig.savefig(FIT_PLOT_PATH, dpi=200)
+        fit_plot_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(fit_plot_path, dpi=200)
         plt.close(fig)
-    print(f"Fit plot written to {FIT_PLOT_PATH}")
+    print(f"Fit plot written to {fit_plot_path}")
 
 
-def plot_error(summary: pd.DataFrame, model_name: str) -> None:
+def plot_error(
+    summary: pd.DataFrame,
+    model_name: str,
+    error_plot_path: Path,
+) -> None:
     with plt.rc_context(ACADEMIC_STYLE):
         fig, ax = plt.subplots(figsize=(9, 4))
 
@@ -629,39 +1039,84 @@ def plot_error(summary: pd.DataFrame, model_name: str) -> None:
         ax.grid(True, axis="y", alpha=0.6)
 
         fig.tight_layout()
-        fig.savefig(ERROR_PLOT_PATH, dpi=200)
+        error_plot_path.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(error_plot_path, dpi=200)
         plt.close(fig)
-    print(f"Error plot written to {ERROR_PLOT_PATH}")
+    print(f"Error plot written to {error_plot_path}")
 
 
-def run_analysis(model_spec: ModelSpec, model_name: str) -> None:
-    df = load_raw_data()
+def run_analysis(
+    model_spec: ModelSpec,
+    model_name: str,
+    data_path: Path,
+    summary_csv_path: Path,
+    summary_tex_path: Path,
+    fit_plot_path: Path,
+    error_plot_path: Path,
+) -> dict:
+    """Run analysis for a single model and return the metrics dict for cross-model comparison."""
+    df = load_raw_data(data_path)
     summary = build_summary(df)
     metrics = compute_overall_metrics(summary)
-    save_summary(summary, metrics)
+    save_summary(summary, metrics, summary_csv_path)
     regime = compute_regime_split(summary)
     print_regime_split(regime)
-    write_latex_table(summary, model_name)
-    plot_fit(summary, model_spec, model_name)
-    plot_error(summary, model_name)
+    write_latex_table(summary, model_name, summary_tex_path)
+    plot_fit(summary, model_spec, model_name, fit_plot_path)
+    plot_error(summary, model_name, error_plot_path)
+
+    # Return metrics for cross-model comparison
+    return {
+        "model_tag": model_name,
+        "quantisation": model_spec.quantisation,
+        "mae_gb": metrics["mae_gb"],
+        "mape_pct": metrics["mape_pct"],
+        "r_squared": metrics["r_squared"],
+        "breakpoint_n": regime["breakpoint_n"],
+    }
+
+
+def compute_filtered_metrics(
+    model_spec: ModelSpec,
+    model_tag: str,
+    data_path: Path,
+    max_context_length: int,
+) -> dict:
+    """Cross-model metrics for an existing raw CSV, filtered to N <= cap.
+
+    Used for the two already-collected Q4_K_M models: their raw data still
+    includes points above the new 65536 sweep ceiling (e.g. from the old
+    114688/90000 runs), and those points must not leak into the "clean"
+    comparison against the Q8_0 sweeps, which never exceed 65536. Doesn't
+    rerun the sweep or touch that model's own summary CSV/LaTeX/plots.
+    """
+    df = load_raw_data(data_path)
+    df = df[df["context_length"] <= max_context_length]
+    summary = build_summary(df)
+    metrics = compute_overall_metrics(summary)
+    regime = compute_regime_split(summary)
+    return {
+        "model_tag": model_tag,
+        "quantisation": model_spec.quantisation,
+        "mae_gb": metrics["mae_gb"],
+        "mape_pct": metrics["mape_pct"],
+        "r_squared": metrics["r_squared"],
+        "breakpoint_n": regime["breakpoint_n"],
+    }
 
 
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 
-# Doubling sequence from 512 to 65536, then 114688 (112*1024) pushing toward
-# the hardware ceiling of the NVIDIA L4 (23 GiB VRAM). At N=114688 the
-# formula predicts ~21.6 GB. N=122880 was tested and excluded: Ollama silently
-# fell back to a smaller internal context at that size, making the GPU reading
-# invalid as a formula validation point. 114688 is therefore the empirical
-# hardware ceiling for this model and GPU combination.
-DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 114688]
-
-DEFAULT_PROMPT = (
-    "Summarise, in a few sentences, the main considerations involved in "
-    "deploying a large language model in production."
-)
+# Doubling sequence from 512 to 65536. Originally extended to 114688
+# (112*1024), then 90000, pushing toward the hardware ceiling of the
+# NVIDIA L4 (23 GiB VRAM); both were dropped from the default after
+# `ollama ps` showed some models get partially CPU-offloaded or hit a hard
+# context ceiling above 65536, violating the formula's all-on-GPU
+# assumption. 65536 is the largest N where every model stayed 100% GPU
+# resident. Pass --context-lengths explicitly to sweep past it on purpose.
+DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
 
 
 def parse_args() -> argparse.Namespace:
@@ -684,31 +1139,222 @@ def parse_args() -> argparse.Namespace:
         "--prometheus-url",
         default=os.environ.get("PROMETHEUS_URL", "http://localhost:9090"),
     )
-    parser.add_argument("--model", default=None, help="Overrides OLLAMA_MODEL env var")
-    parser.add_argument("--prompt", default=DEFAULT_PROMPT)
+    parser.add_argument(
+        "--model-tag",
+        default=DEFAULT_MODEL_TAG,
+        choices=["all"] + list(MODEL_REGISTRY.keys()),
+        help="Model tag from registry or 'all' to run every registry entry",
+    )
+    parser.add_argument(
+        "--all-quants",
+        action="store_true",
+        help=(
+            "Run the sweep only for the two new Q8_0 tags (Ministral and "
+            "Llama 3.1), then write a 4-row cross-model summary combining "
+            "them with the existing Q4_K_M data (filtered to "
+            "context_length <= 65536, not rerun). Overrides --model-tag."
+        ),
+    )
     return parser.parse_args()
+
+
+def migrate_existing_results():
+    """Migrate existing Ministral results to the new per-model directory layout."""
+    old_data_path = DATA_DIR / "rq4_vram_raw.csv"
+    old_summary_path = CSV_DIR / "rq4_summary.csv"
+    old_tex_path = CSV_DIR / "rq4_summary_table.tex"
+    old_fit_plot = IMAGES_DIR / "rq4_predicted_vs_measured.png"
+    old_error_plot = IMAGES_DIR / "rq4_errors.png"
+
+    # Only migrate if old files exist and new structure doesn't
+    sanitized = sanitize_tag(DEFAULT_MODEL_TAG)
+    new_data_dir = DATA_DIR / sanitized
+    new_csv_dir = CSV_DIR / sanitized
+    new_image_dir = IMAGES_DIR / sanitized
+
+    # Check if migration is needed
+    if (
+        old_data_path.exists()
+        or old_summary_path.exists()
+        or old_fit_plot.exists()
+        or old_error_plot.exists()
+    ):
+        if not (
+            new_data_dir.exists() or new_csv_dir.exists() or new_image_dir.exists()
+        ):
+            print("Migrating existing Ministral results to new layout...")
+
+            # Create directories
+            new_data_dir.mkdir(parents=True, exist_ok=True)
+            new_csv_dir.mkdir(parents=True, exist_ok=True)
+            new_image_dir.mkdir(parents=True, exist_ok=True)
+
+            # Move files
+            if old_data_path.exists():
+                new_data_path = new_data_dir / "rq4_vram_raw.csv"
+                old_data_path.rename(new_data_path)
+                print(f"  Moved {old_data_path} -> {new_data_path}")
+
+            if old_summary_path.exists():
+                new_summary_path = new_csv_dir / "rq4_summary.csv"
+                old_summary_path.rename(new_summary_path)
+                print(f"  Moved {old_summary_path} -> {new_summary_path}")
+
+            if old_tex_path.exists():
+                new_tex_path = new_csv_dir / "rq4_summary_table.tex"
+                old_tex_path.rename(new_tex_path)
+                print(f"  Moved {old_tex_path} -> {new_tex_path}")
+
+            if old_fit_plot.exists():
+                new_fit_path = new_image_dir / "rq4_predicted_vs_measured.png"
+                old_fit_plot.rename(new_fit_path)
+                print(f"  Moved {old_fit_plot} -> {new_fit_path}")
+
+            if old_error_plot.exists():
+                new_error_path = new_image_dir / "rq4_errors.png"
+                old_error_plot.rename(new_error_path)
+                print(f"  Moved {old_error_plot} -> {new_error_path}")
+
+            print("Migration complete.")
 
 
 def main() -> None:
     args = parse_args()
-    model_spec = ModelSpec()
 
-    ollama_config = OllamaConfig()
-    if args.model:
-        ollama_config.model = args.model
+    # Migrate existing results first
+    migrate_existing_results()
+
+    # Get the model tag(s) to run
+    if args.all_quants:
+        model_tags = NEW_Q8_TAGS
+    elif args.model_tag == "all":
+        model_tags = ALL_MODEL_TAGS
+    else:
+        model_tags = [args.model_tag]
+
+    # For "all"/"all-quants" mode, check and pull models first
+    if args.all_quants or args.model_tag == "all":
+        for tag in model_tags:
+            pull_model(tag, "ollama")
+    else:
+        # For single model, check if it's in the registry
+        if args.model_tag not in MODEL_REGISTRY:
+            raise ValueError(f"Model tag {args.model_tag} not found in MODEL_REGISTRY")
 
     reader = get_reader(args.backend, prometheus_url=args.prometheus_url)
 
-    run_experiment(
-        context_lengths=args.context_lengths,
-        repeats=args.repeats,
-        gpu_index=args.gpu_index,
-        ollama_config=ollama_config,
-        reader=reader,
-        model_spec=model_spec,
-        prompt=args.prompt,
-    )
-    run_analysis(model_spec, ollama_config.model)
+    # Collect metrics for cross-model comparison
+    all_metrics = []
+
+    for model_tag in model_tags:
+        print(f"\n{'=' * 60}")
+        print(f"Running experiment for model: {model_tag}")
+        print(f"{'=' * 60}")
+
+        model_spec = MODEL_REGISTRY[model_tag]
+
+        # Create OllamaConfig for this model
+        ollama_config = OllamaConfig()
+        ollama_config.model = model_tag
+
+        # Get paths for this model
+        (
+            data_path,
+            summary_csv_path,
+            summary_tex_path,
+            fit_plot_path,
+            error_plot_path,
+        ) = get_model_paths(model_tag)
+
+        # Run experiment (using Wikipedia-based prompts by default)
+        run_experiment(
+            context_lengths=args.context_lengths,
+            repeats=args.repeats,
+            gpu_index=args.gpu_index,
+            ollama_config=ollama_config,
+            reader=reader,
+            model_spec=model_spec,
+            prompt=None,  # Use Wikipedia-based prompts
+            data_path=data_path,
+        )
+
+        # Run analysis
+        metrics = run_analysis(
+            model_spec=model_spec,
+            model_name=model_tag,
+            data_path=data_path,
+            summary_csv_path=summary_csv_path,
+            summary_tex_path=summary_tex_path,
+            fit_plot_path=fit_plot_path,
+            error_plot_path=error_plot_path,
+        )
+        all_metrics.append(metrics)
+
+        print(f"Completed analysis for {model_tag}")
+
+    cross_model_fieldnames = [
+        "model_tag",
+        "quantisation",
+        "mae_gb",
+        "mape_pct",
+        "r_squared",
+        "breakpoint_n",
+    ]
+
+    if args.all_quants:
+        # Combine the freshly-collected Q8_0 metrics with the existing
+        # Q4_K_M models' metrics, recomputed from their already-collected
+        # raw data filtered to context_length <= 65536 - not rerun.
+        q4_tags = [
+            "ministral-3:8b-instruct-2512-q4_K_M",
+            "llama3.1:8b-instruct-q4_K_M",
+        ]
+        q4_metrics = []
+        for tag in q4_tags:
+            data_path, *_ = get_model_paths(tag)
+            q4_metrics.append(
+                compute_filtered_metrics(
+                    model_spec=MODEL_REGISTRY[tag],
+                    model_tag=tag,
+                    data_path=data_path,
+                    max_context_length=65536,
+                )
+            )
+
+        combined_metrics = q4_metrics + all_metrics
+        csv_path = CSV_DIR / "rq4_cross_model_summary.csv"
+        csv_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(csv_path, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=cross_model_fieldnames)
+            writer.writeheader()
+            for metrics in combined_metrics:
+                writer.writerow(metrics)
+        print(f"\nCross-model summary written to {csv_path}")
+
+    elif args.model_tag == "all":
+        # Check if all registry models have data
+        missing_models = []
+        for tag in ALL_MODEL_TAGS:
+            sanitized = sanitize_tag(tag)
+            data_path = DATA_DIR / sanitized / "rq4_vram_raw.csv"
+            if not data_path.exists():
+                missing_models.append(tag)
+
+        if missing_models:
+            print(
+                f"\nCannot generate cross-model summary: missing data for {missing_models}"
+            )
+        else:
+            csv_path = CSV_DIR / "rq4_cross_model_summary.csv"
+            csv_path.parent.mkdir(parents=True, exist_ok=True)
+
+            with open(csv_path, "w", newline="") as f:
+                writer = csv.DictWriter(f, fieldnames=cross_model_fieldnames)
+                writer.writeheader()
+                for metrics in all_metrics:
+                    writer.writerow(metrics)
+
+            print(f"\nCross-model summary written to {csv_path}")
 
 
 if __name__ == "__main__":
