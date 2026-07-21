@@ -50,24 +50,17 @@ class ModelSpec:
         return weights_gb + overhead_gb + kv_gb
 
 
-# The four 8B-class Q4_K_M instruct models pulled on the deployment server,
-# plus Q8_0 tiers of Ministral and Llama 3.1 to isolate the effect of b_w on
-# formula accuracy within the same architecture. b_kv=2.0 (fp16 KV cache,
-# Ollama default) for all; b_w=0.56 for Q4_K_M, b_w=1.00 for Q8_0, per the
-# thesis's quantisation format table. Architecture values (P, L, d, g) are
-# unchanged between quantisation tiers of the same model.
+# Ministral and Llama 3.1 8B, each at Q4_K_M and Q8_0, to isolate the effect
+# of b_w on formula accuracy within the same architecture. b_kv=2.0 (fp16
+# KV cache, Ollama default) for all; b_w=0.56 for Q4_K_M, b_w=1.00 for
+# Q8_0, per the thesis's quantisation format table. Architecture values
+# (P, L, d, g) are unchanged between quantisation tiers of the same model.
 MODEL_REGISTRY: dict[str, ModelSpec] = {
     "ministral-3:8b-instruct-2512-q4_K_M": ModelSpec(
         P=8.0e9, b_w=0.56, L=34, d=4096, g=4, b_kv=2.0, quantisation="Q4_K_M"
     ),
     "llama3.1:8b-instruct-q4_K_M": ModelSpec(
         P=8.03e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q4_K_M"
-    ),
-    "qwen2.5:7b-instruct-q4_K_M": ModelSpec(
-        P=7.61e9, b_w=0.56, L=28, d=3584, g=7, b_kv=2.0, quantisation="Q4_K_M"
-    ),
-    "mistral:7b-instruct-q4_K_M": ModelSpec(
-        P=7.24e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q4_K_M"
     ),
     "ministral-3:8b-instruct-2512-q8_0": ModelSpec(
         P=8.0e9, b_w=1.00, L=34, d=4096, g=4, b_kv=2.0, quantisation="Q8_0"
