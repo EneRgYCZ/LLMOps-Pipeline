@@ -1069,7 +1069,7 @@ def run_analysis(
 
 # Doubling sequence from 512 to 65536, then 114688 (112*1024) pushing toward
 # the hardware ceiling of the NVIDIA L4 (23 GiB VRAM).
-DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 100000]
+DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 90000]
 
 
 def parse_args() -> argparse.Namespace:
