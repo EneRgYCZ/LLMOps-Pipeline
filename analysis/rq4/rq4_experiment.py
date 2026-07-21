@@ -40,6 +40,7 @@ class ModelSpec:
     d: int = 4096
     g: int = 4
     b_kv: float = 2.0
+    quantisation: str = "Q4_K_M"
 
     def predicted_vram_gb(self, context_length: int) -> float:
         weights_gb = self.P * self.b_w * 1e-9
@@ -49,22 +50,40 @@ class ModelSpec:
         return weights_gb + overhead_gb + kv_gb
 
 
-# The four 8B-class Q4_K_M instruct models pulled on the deployment server.
-# b_kv=2.0 (fp16 KV cache, Ollama default) and b_w=0.56 (Q4_K_M) for all.
+# The four 8B-class Q4_K_M instruct models pulled on the deployment server,
+# plus Q8_0 tiers of Ministral and Llama 3.1 to isolate the effect of b_w on
+# formula accuracy within the same architecture. b_kv=2.0 (fp16 KV cache,
+# Ollama default) for all; b_w=0.56 for Q4_K_M, b_w=1.00 for Q8_0, per the
+# thesis's quantisation format table. Architecture values (P, L, d, g) are
+# unchanged between quantisation tiers of the same model.
 MODEL_REGISTRY: dict[str, ModelSpec] = {
     "ministral-3:8b-instruct-2512-q4_K_M": ModelSpec(
-        P=8.0e9, b_w=0.56, L=34, d=4096, g=4, b_kv=2.0
+        P=8.0e9, b_w=0.56, L=34, d=4096, g=4, b_kv=2.0, quantisation="Q4_K_M"
     ),
     "llama3.1:8b-instruct-q4_K_M": ModelSpec(
-        P=8.03e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0
+        P=8.03e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q4_K_M"
     ),
     "qwen2.5:7b-instruct-q4_K_M": ModelSpec(
-        P=7.61e9, b_w=0.56, L=28, d=3584, g=7, b_kv=2.0
+        P=7.61e9, b_w=0.56, L=28, d=3584, g=7, b_kv=2.0, quantisation="Q4_K_M"
     ),
     "mistral:7b-instruct-q4_K_M": ModelSpec(
-        P=7.24e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0
+        P=7.24e9, b_w=0.56, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q4_K_M"
+    ),
+    "ministral-3:8b-instruct-2512-q8_0": ModelSpec(
+        P=8.0e9, b_w=1.00, L=34, d=4096, g=4, b_kv=2.0, quantisation="Q8_0"
+    ),
+    "llama3.1:8b-instruct-q8_0": ModelSpec(
+        P=8.03e9, b_w=1.00, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q8_0"
     ),
 }
+
+# The two Q8_0 tags added to isolate quantisation effects. Used by
+# --all-quants to run only these, leaving the four already-collected
+# Q4_K_M sweeps untouched.
+NEW_Q8_TAGS = [
+    "ministral-3:8b-instruct-2512-q8_0",
+    "llama3.1:8b-instruct-q8_0",
+]
 
 
 def sanitize_tag(tag: str) -> str:
@@ -78,7 +97,7 @@ def sanitize_tag(tag: str) -> str:
 # The default model tag for backwards compatibility
 DEFAULT_MODEL_TAG = "ministral-3:8b-instruct-2512-q4_K_M"
 
-# All four model tags for the "all" option
+# All registry tags, for the "all" option
 ALL_MODEL_TAGS = list(MODEL_REGISTRY.keys())
 
 # ---------------------------------------------------------------------------
@@ -1056,6 +1075,36 @@ def run_analysis(
     # Return metrics for cross-model comparison
     return {
         "model_tag": model_name,
+        "quantisation": model_spec.quantisation,
+        "mae_gb": metrics["mae_gb"],
+        "mape_pct": metrics["mape_pct"],
+        "r_squared": metrics["r_squared"],
+        "breakpoint_n": regime["breakpoint_n"],
+    }
+
+
+def compute_filtered_metrics(
+    model_spec: ModelSpec,
+    model_tag: str,
+    data_path: Path,
+    max_context_length: int,
+) -> dict:
+    """Cross-model metrics for an existing raw CSV, filtered to N <= cap.
+
+    Used for the two already-collected Q4_K_M models: their raw data still
+    includes points above the new 65536 sweep ceiling (e.g. from the old
+    114688/90000 runs), and those points must not leak into the "clean"
+    comparison against the Q8_0 sweeps, which never exceed 65536. Doesn't
+    rerun the sweep or touch that model's own summary CSV/LaTeX/plots.
+    """
+    df = load_raw_data(data_path)
+    df = df[df["context_length"] <= max_context_length]
+    summary = build_summary(df)
+    metrics = compute_overall_metrics(summary)
+    regime = compute_regime_split(summary)
+    return {
+        "model_tag": model_tag,
+        "quantisation": model_spec.quantisation,
         "mae_gb": metrics["mae_gb"],
         "mape_pct": metrics["mape_pct"],
         "r_squared": metrics["r_squared"],
@@ -1067,9 +1116,14 @@ def run_analysis(
 # CLI
 # ---------------------------------------------------------------------------
 
-# Doubling sequence from 512 to 65536, then 114688 (112*1024) pushing toward
-# the hardware ceiling of the NVIDIA L4 (23 GiB VRAM).
-DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 90000]
+# Doubling sequence from 512 to 65536. Originally extended to 114688
+# (112*1024), then 90000, pushing toward the hardware ceiling of the
+# NVIDIA L4 (23 GiB VRAM); both were dropped from the default after
+# `ollama ps` showed some models get partially CPU-offloaded or hit a hard
+# context ceiling above 65536, violating the formula's all-on-GPU
+# assumption. 65536 is the largest N where every model stayed 100% GPU
+# resident. Pass --context-lengths explicitly to sweep past it on purpose.
+DEFAULT_CONTEXT_LENGTHS = [512, 1024, 2048, 4096, 8192, 16384, 32768, 65536]
 
 
 def parse_args() -> argparse.Namespace:
@@ -1096,7 +1150,17 @@ def parse_args() -> argparse.Namespace:
         "--model-tag",
         default=DEFAULT_MODEL_TAG,
         choices=["all"] + list(MODEL_REGISTRY.keys()),
-        help="Model tag from registry or 'all' to run all five models",
+        help="Model tag from registry or 'all' to run every registry entry",
+    )
+    parser.add_argument(
+        "--all-quants",
+        action="store_true",
+        help=(
+            "Run the sweep only for the two new Q8_0 tags (Ministral and "
+            "Llama 3.1), then write a 4-row cross-model summary combining "
+            "them with the existing Q4_K_M data (filtered to "
+            "context_length <= 65536, not rerun). Overrides --model-tag."
+        ),
     )
     return parser.parse_args()
 
@@ -1168,10 +1232,15 @@ def main() -> None:
     migrate_existing_results()
 
     # Get the model tag(s) to run
-    model_tags = [args.model_tag] if args.model_tag != "all" else ALL_MODEL_TAGS
+    if args.all_quants:
+        model_tags = NEW_Q8_TAGS
+    elif args.model_tag == "all":
+        model_tags = ALL_MODEL_TAGS
+    else:
+        model_tags = [args.model_tag]
 
-    # For "all" mode, check and pull models first
-    if args.model_tag == "all":
+    # For "all"/"all-quants" mode, check and pull models first
+    if args.all_quants or args.model_tag == "all":
         for tag in model_tags:
             pull_model(tag, "ollama")
     else:
@@ -1230,9 +1299,47 @@ def main() -> None:
 
         print(f"Completed analysis for {model_tag}")
 
-    # Generate cross-model summary if all five models were run
-    if args.model_tag == "all":
-        # Check if all five models have data
+    cross_model_fieldnames = [
+        "model_tag",
+        "quantisation",
+        "mae_gb",
+        "mape_pct",
+        "r_squared",
+        "breakpoint_n",
+    ]
+
+    if args.all_quants:
+        # Combine the freshly-collected Q8_0 metrics with the existing
+        # Q4_K_M models' metrics, recomputed from their already-collected
+        # raw data filtered to context_length <= 65536 - not rerun.
+        q4_tags = [
+            "ministral-3:8b-instruct-2512-q4_K_M",
+            "llama3.1:8b-instruct-q4_K_M",
+        ]
+        q4_metrics = []
+        for tag in q4_tags:
+            data_path, *_ = get_model_paths(tag)
+            q4_metrics.append(
+                compute_filtered_metrics(
+                    model_spec=MODEL_REGISTRY[tag],
+                    model_tag=tag,
+                    data_path=data_path,
+                    max_context_length=65536,
+                )
+            )
+
+        combined_metrics = q4_metrics + all_metrics
+        csv_path = CSV_DIR / "rq4_cross_model_summary.csv"
+        csv_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(csv_path, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=cross_model_fieldnames)
+            writer.writeheader()
+            for metrics in combined_metrics:
+                writer.writerow(metrics)
+        print(f"\nCross-model summary written to {csv_path}")
+
+    elif args.model_tag == "all":
+        # Check if all registry models have data
         missing_models = []
         for tag in ALL_MODEL_TAGS:
             sanitized = sanitize_tag(tag)
@@ -1245,21 +1352,11 @@ def main() -> None:
                 f"\nCannot generate cross-model summary: missing data for {missing_models}"
             )
         else:
-            # Generate the cross-model summary
             csv_path = CSV_DIR / "rq4_cross_model_summary.csv"
             csv_path.parent.mkdir(parents=True, exist_ok=True)
 
             with open(csv_path, "w", newline="") as f:
-                writer = csv.DictWriter(
-                    f,
-                    fieldnames=[
-                        "model_tag",
-                        "mae_gb",
-                        "mape_pct",
-                        "r_squared",
-                        "breakpoint_n",
-                    ],
-                )
+                writer = csv.DictWriter(f, fieldnames=cross_model_fieldnames)
                 writer.writeheader()
                 for metrics in all_metrics:
                     writer.writerow(metrics)
