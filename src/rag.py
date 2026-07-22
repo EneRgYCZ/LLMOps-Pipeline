@@ -37,19 +37,35 @@ _tracer = trace.get_tracer("rag")
 
 
 class RAGConfig:
-    """RAG configuration loaded from environment variables."""
+    """RAG configuration.
 
-    def __init__(self) -> None:
+    Sourced from the shared Settings object (single .env-backed source of truth)
+    when one is passed in. Falls back to reading environment variables directly
+    when constructed with no argument, so unit tests can build a config in
+    isolation without going through SettingsFactory.
+    """
+
+    def __init__(self, settings=None) -> None:
+        if settings is not None:
+            self.rag_enabled: bool = settings.rag_enabled
+            self.chroma_host: str = settings.chroma_host
+            self.chroma_port: int = settings.chroma_port
+            self.collection: str = settings.chroma_collection
+            self.top_k: int = settings.rag_top_k
+            self.embedding_model: str = settings.rag_embedding_model
+            self.min_similarity: float = settings.rag_min_similarity
+            return
+
         import os
 
         raw_enabled = os.getenv("RAG_ENABLED", "false").strip().lower()
-        self.rag_enabled: bool = raw_enabled in ("true", "1", "yes")
-        self.chroma_host: str = os.getenv("CHROMA_HOST", "localhost")
-        self.chroma_port: int = int(os.getenv("CHROMA_PORT", "8000"))
-        self.collection: str = os.getenv("CHROMA_COLLECTION", "documents")
-        self.top_k: int = int(os.getenv("RAG_TOP_K", "5"))
-        self.embedding_model: str = os.getenv("RAG_EMBEDDING_MODEL", "all-MiniLM-L6-v2")
-        self.min_similarity: float = float(os.getenv("RAG_MIN_SIMILARITY", "0.3"))
+        self.rag_enabled = raw_enabled in ("true", "1", "yes")
+        self.chroma_host = os.getenv("CHROMA_HOST", "localhost")
+        self.chroma_port = int(os.getenv("CHROMA_PORT", "8000"))
+        self.collection = os.getenv("CHROMA_COLLECTION", "documents")
+        self.top_k = int(os.getenv("RAG_TOP_K", "5"))
+        self.embedding_model = os.getenv("RAG_EMBEDDING_MODEL", "all-MiniLM-L6-v2")
+        self.min_similarity = float(os.getenv("RAG_MIN_SIMILARITY", "0.3"))
 
 
 class RAGService:

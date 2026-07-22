@@ -241,7 +241,7 @@ docker push <registry>/llmops-chat:latest
 
 The script reads `TARGET` from `.env`, renders the hardware-sensitive manifests via `envsubst`, then applies everything in dependency order:
 
-RBAC → OTel Collector → Prometheus → Grafana → node-exporter → DCGM exporter *(GPU mode only)* → prometheus-adapter → Ollama (PVC + Deployment + Service) → chat-app → HPA.
+RBAC → OTel Collector → Prometheus → Grafana → node-exporter → DCGM exporter *(GPU mode only)* → prometheus-adapter → Ollama (PVC + Deployment + Service) → ChromaDB (StatefulSet + Service) → chat-app → HPA.
 
 The HPA is applied last because it requires prometheus-adapter to already be serving the external metrics API.
 

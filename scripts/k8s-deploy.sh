@@ -203,6 +203,13 @@ fi
 render_apply "$K8S_DIR/ollama/deployment.yaml"
 apply "$K8S_DIR/ollama/service.yaml"
 
+echo "==> ChromaDB (RAG vector store, required by chat-app when RAG_ENABLED=true)"
+apply "$K8S_DIR/chromadb/statefulset.yaml"
+apply "$K8S_DIR/chromadb/service.yaml"
+if [[ "$DRY_RUN" != "--dry-run" ]]; then
+  kubectl rollout status statefulset/chromadb -n llmops --timeout=120s
+fi
+
 echo "==> Chat App"
 render_apply "$K8S_DIR/chat-app/configmap.yaml"
 apply "$K8S_DIR/chat-app/deployment.yaml"

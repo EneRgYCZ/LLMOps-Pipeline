@@ -26,6 +26,9 @@ class Settings:
     eval_enabled: bool
     eval_judge_host: str
     eval_judge_model: str
+    eval_judge_temperature: float
+    eval_judge_top_p: float
+    eval_embedding_model: str
     eval_queue_max_size: int
     eval_sample_rate: float
     eval_db_path: str
@@ -113,6 +116,13 @@ class SettingsFactory:
             eval_enabled=raw_eval_enabled in ("true", "1", "yes"),
             eval_judge_host=EnvConfigHelper.read("EVAL_JUDGE_HOST", ollama_host),
             eval_judge_model=EnvConfigHelper.read("EVAL_JUDGE_MODEL", ollama_model),
+            eval_judge_temperature=float(
+                EnvConfigHelper.read("EVAL_JUDGE_TEMPERATURE", "0.1")
+            ),
+            eval_judge_top_p=float(EnvConfigHelper.read("EVAL_JUDGE_TOP_P", "0.95")),
+            eval_embedding_model=EnvConfigHelper.read(
+                "EVAL_EMBEDDING_MODEL", "all-MiniLM-L6-v2"
+            ),
             eval_queue_max_size=int(EnvConfigHelper.read("EVAL_QUEUE_MAX_SIZE", "100")),
             eval_sample_rate=float(EnvConfigHelper.read("EVAL_SAMPLE_RATE", "1.0")),
             eval_db_path=EnvConfigHelper.read("EVAL_DB_PATH", "/data/evaluations.db"),

@@ -52,7 +52,7 @@ async def _lifespan(app: FastAPI):
         import asyncio
         from rag import RAGConfig, RAGService
 
-        rag_config = RAGConfig()
+        rag_config = RAGConfig(_settings)
         # RAGService.__init__ loads a SentenceTransformer model synchronously.
         # Run in a thread so the event loop stays responsive during startup (health probe).
         _rag_service = await asyncio.to_thread(RAGService, rag_config)
@@ -60,7 +60,7 @@ async def _lifespan(app: FastAPI):
     if _settings.eval_enabled:
         from evaluation import EvaluationConfig, EvaluationService, load_references
 
-        eval_config = EvaluationConfig()
+        eval_config = EvaluationConfig(_settings)
         _eval_service = EvaluationService(
             eval_config,
             deployment_environment=_settings.otel_deployment_environment,

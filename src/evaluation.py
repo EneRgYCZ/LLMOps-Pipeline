@@ -133,31 +133,53 @@ CREATE INDEX IF NOT EXISTS idx_evaluations_environment ON evaluations(deployment
 
 
 class EvaluationConfig:
-    """Loaded from environment variables."""
+    """Evaluation configuration.
 
-    def __init__(self) -> None:
+    Sourced from the shared Settings object (single .env-backed source of truth)
+    when one is passed in. Falls back to reading environment variables directly
+    when constructed with no argument, so unit tests can build a config in
+    isolation without going through SettingsFactory.
+    """
+
+    def __init__(self, settings=None) -> None:
+        if settings is not None:
+            self.eval_enabled: bool = settings.eval_enabled
+            self.eval_judge_host: str = settings.eval_judge_host
+            self.eval_judge_model: str = settings.eval_judge_model
+            self.eval_judge_temperature: float = settings.eval_judge_temperature
+            self.eval_judge_top_p: float = settings.eval_judge_top_p
+            self.eval_embedding_model: str = settings.eval_embedding_model
+            self.eval_queue_max_size: int = settings.eval_queue_max_size
+            self.eval_sample_rate: float = settings.eval_sample_rate
+            self.eval_db_path: str = settings.eval_db_path
+            self.eval_timeout_seconds: float = settings.eval_timeout_seconds
+            self.eval_faithfulness_hallucination_threshold: float = (
+                settings.eval_faithfulness_hallucination_threshold
+            )
+            return
+
         raw_enabled = os.getenv("EVAL_ENABLED", "false").strip().lower()
-        self.eval_enabled: bool = raw_enabled in ("true", "1", "yes")
-        self.eval_judge_host: str = os.getenv(
+        self.eval_enabled = raw_enabled in ("true", "1", "yes")
+        self.eval_judge_host = os.getenv(
             "EVAL_JUDGE_HOST",
             os.getenv("OLLAMA_HOST", "http://localhost:11434"),
         )
-        self.eval_judge_model: str = os.getenv(
+        self.eval_judge_model = os.getenv(
             "EVAL_JUDGE_MODEL",
             os.getenv("OLLAMA_MODEL", "ministral-3:8b-instruct-2512-q4_K_M"),
         )
-        self.eval_judge_temperature: float = float(
+        self.eval_judge_temperature = float(
             os.getenv("EVAL_JUDGE_TEMPERATURE", "0.1")
         )
-        self.eval_judge_top_p: float = float(os.getenv("EVAL_JUDGE_TOP_P", "0.95"))
-        self.eval_embedding_model: str = os.getenv(
+        self.eval_judge_top_p = float(os.getenv("EVAL_JUDGE_TOP_P", "0.95"))
+        self.eval_embedding_model = os.getenv(
             "EVAL_EMBEDDING_MODEL", "all-MiniLM-L6-v2"
         )
-        self.eval_queue_max_size: int = int(os.getenv("EVAL_QUEUE_MAX_SIZE", "100"))
-        self.eval_sample_rate: float = float(os.getenv("EVAL_SAMPLE_RATE", "1.0"))
-        self.eval_db_path: str = os.getenv("EVAL_DB_PATH", "/data/evaluations.db")
-        self.eval_timeout_seconds: float = float(os.getenv("EVAL_TIMEOUT_SECONDS", "60.0"))
-        self.eval_faithfulness_hallucination_threshold: float = float(
+        self.eval_queue_max_size = int(os.getenv("EVAL_QUEUE_MAX_SIZE", "100"))
+        self.eval_sample_rate = float(os.getenv("EVAL_SAMPLE_RATE", "1.0"))
+        self.eval_db_path = os.getenv("EVAL_DB_PATH", "/data/evaluations.db")
+        self.eval_timeout_seconds = float(os.getenv("EVAL_TIMEOUT_SECONDS", "60.0"))
+        self.eval_faithfulness_hallucination_threshold = float(
             os.getenv("EVAL_FAITHFULNESS_HALLUCINATION_THRESHOLD", "0.5")
         )
 

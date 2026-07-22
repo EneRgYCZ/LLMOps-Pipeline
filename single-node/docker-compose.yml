@@ -1,6 +1,6 @@
 services:
   ollama:
-    image: ollama/ollama:0.24.0
+    image: ollama/ollama:latest
     container_name: ollama
     ports:
       - "11434:11434"
@@ -43,7 +43,7 @@ services:
       retries: 3
 
   ollama-init:
-    image: ollama/ollama:0.24.0
+    image: ollama/ollama:latest
     container_name: ollama-init
     networks:
       - llmnet
