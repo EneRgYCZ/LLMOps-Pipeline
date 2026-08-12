@@ -68,6 +68,49 @@ MODEL_REGISTRY: dict[str, ModelSpec] = {
     "llama3.1:8b-instruct-q8_0": ModelSpec(
         P=8.03e9, b_w=1.00, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q8_0"
     ),
+    # Sub-Q8 Llama 3.1 8B Instruct quantisations, added to broaden the
+    # quantisation sweep below the already-collected Q4_K_M/Q8_0 points.
+    # b_w = bits-per-weight / 8, using llama.cpp's published k-quant
+    # bits-per-weight figures (ikawrakow's k-quants PR / llama.cpp docs),
+    # not re-derived from Ollama download size, since download size also
+    # bundles tokenizer/metadata bytes already covered by the formula's
+    # separate overhead_gb term.
+    "llama3.1:8b-instruct-q2_K": ModelSpec(
+        P=8.03e9, b_w=0.3203, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q2_K"
+    ),
+    "llama3.1:8b-instruct-q3_K_S": ModelSpec(
+        P=8.03e9, b_w=0.4297, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q3_K_S"
+    ),
+    "llama3.1:8b-instruct-q3_K_M": ModelSpec(
+        P=8.03e9, b_w=0.4708, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q3_K_M"
+    ),
+    "llama3.1:8b-instruct-q3_K_L": ModelSpec(
+        P=8.03e9, b_w=0.5078, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q3_K_L"
+    ),
+    "llama3.1:8b-instruct-q4_0": ModelSpec(
+        P=8.03e9, b_w=0.5625, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q4_0"
+    ),
+    "llama3.1:8b-instruct-q4_1": ModelSpec(
+        P=8.03e9, b_w=0.625, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q4_1"
+    ),
+    "llama3.1:8b-instruct-q4_K_S": ModelSpec(
+        P=8.03e9, b_w=0.5719, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q4_K_S"
+    ),
+    "llama3.1:8b-instruct-q5_0": ModelSpec(
+        P=8.03e9, b_w=0.6875, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q5_0"
+    ),
+    "llama3.1:8b-instruct-q5_1": ModelSpec(
+        P=8.03e9, b_w=0.75, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q5_1"
+    ),
+    "llama3.1:8b-instruct-q5_K_S": ModelSpec(
+        P=8.03e9, b_w=0.6875, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q5_K_S"
+    ),
+    "llama3.1:8b-instruct-q5_K_M": ModelSpec(
+        P=8.03e9, b_w=0.7109, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q5_K_M"
+    ),
+    "llama3.1:8b-instruct-q6_K": ModelSpec(
+        P=8.03e9, b_w=0.8203, L=32, d=4096, g=4, b_kv=2.0, quantisation="Q6_K"
+    ),
 }
 
 # The two Q8_0 tags added to isolate quantisation effects. Used by
@@ -76,6 +119,24 @@ MODEL_REGISTRY: dict[str, ModelSpec] = {
 NEW_Q8_TAGS = [
     "ministral-3:8b-instruct-2512-q8_0",
     "llama3.1:8b-instruct-q8_0",
+]
+
+# Sub-Q8 Llama 3.1 8B Instruct quantisations (below Q8_0, excluding the
+# already-collected Q4_K_M and Q8_0/fp16). Pulled and swept one at a time
+# on the deployment box to keep peak disk usage bounded.
+LLAMA31_SUB_Q8_TAGS = [
+    "llama3.1:8b-instruct-q2_K",
+    "llama3.1:8b-instruct-q3_K_S",
+    "llama3.1:8b-instruct-q3_K_M",
+    "llama3.1:8b-instruct-q3_K_L",
+    "llama3.1:8b-instruct-q4_0",
+    "llama3.1:8b-instruct-q4_1",
+    "llama3.1:8b-instruct-q4_K_S",
+    "llama3.1:8b-instruct-q5_0",
+    "llama3.1:8b-instruct-q5_1",
+    "llama3.1:8b-instruct-q5_K_S",
+    "llama3.1:8b-instruct-q5_K_M",
+    "llama3.1:8b-instruct-q6_K",
 ]
 
 
