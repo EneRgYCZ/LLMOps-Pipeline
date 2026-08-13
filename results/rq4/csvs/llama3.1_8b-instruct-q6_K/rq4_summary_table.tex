@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\begin{tabular}{rrrr}
+\toprule
+$N$ (tokens) & Predicted (GB) & Measured (GB) & Error (\)) \\
+\midrule
+512 & 7.85 & 6.30 \pm 0.00 & -19.71 \\
+1,024 & 7.91 & 6.36 \pm 0.00 & -19.60 \\
+2,048 & 8.05 & 6.49 \pm 0.00 & -19.39 \\
+4,096 & 8.32 & 6.74 \pm 0.00 & -18.99 \\
+8,192 & 8.85 & 7.24 \pm 0.00 & -18.25 \\
+16,384 & 9.93 & 10.23 \pm 2.66 & +3.04 \\
+32,768 & 12.07 & 15.10 \pm 0.00 & +25.05 \\
+65,536 & 16.37 & 14.33 \pm 0.00 & -12.48 \\
+\bottomrule
+\end{tabular}
+\caption{Predicted vs. measured VRAM usage across context length for llama3.1:8b-instruct-q6\_K.}
+\label{tab:rq4-vram-summary}
+\end{table}
