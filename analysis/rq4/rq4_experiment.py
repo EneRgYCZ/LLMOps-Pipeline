@@ -598,14 +598,17 @@ def stop_model(config: OllamaConfig) -> None:
 
     Same fix used in the RQ3 experiment: without this, a request can reuse
     a cached KV state from a previous context length, biasing the memory
-    reading toward whichever context length loaded first.
+    reading toward whichever context length loaded first. 10s (was 2s):
+    at large context (16k-65k tokens) the unload wasn't always finished
+    within 2s, so a reading would occasionally land mid-unload and measure
+    a stale, inconsistent VRAM state.
     """
     subprocess.run(
         ["docker", "exec", config.container, "ollama", "stop", config.model],
         capture_output=True,
         text=True,
     )
-    time.sleep(2)
+    time.sleep(10)
 
 
 def load_model_with_context(
