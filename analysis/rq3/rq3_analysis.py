@@ -72,8 +72,8 @@ MARKERS = {
     "context_recall": "D",
 }
 
-# Same style block as analysis/rq4/rq4_experiment.py, kept identical so RQ3
-# and RQ4 figures read as one consistent set in the report.
+# Same style block as analysis/rq2/rq2_experiment.py, kept identical so RQ3
+# and RQ2 figures read as one consistent set in the report.
 ACADEMIC_STYLE = {
     "font.family": "serif",
     "font.size": 11,
@@ -541,7 +541,7 @@ def fig4_run_stability(rows: list[dict], n_runs: int):
     whose real range is roughly ten times wider. Each panel here gets its
     own y-limits, scaled to that metric's actual data range with padding,
     the same principle already used for bar heights in
-    analysis/rq4/rq4_experiment.py's plot_error. Each metric also gets a
+    analysis/rq2/rq2_experiment.py's plot_error. Each metric also gets a
     distinct marker shape in addition to its color, and yellow is excluded
     from the palette, so the figure still reads correctly for colorblind
     viewers or in grayscale print.

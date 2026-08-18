@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 # ---------------------------------------------------------------------------
 # Paths resolved relative to this file (not the working directory) so the
 # project can be checked out anywhere and still reproduce, matching the
-# results/rq4/{data,csvs,images} layout used by analysis/rq4/rq4_experiment.py.
+# results/rq2/{data,csvs,images} layout used by analysis/rq2/rq2_experiment.py.
 SCRIPT_DIR = Path(__file__).resolve().parent  # analysis/rq3
 PROJECT_ROOT = SCRIPT_DIR.parent.parent  # repo root
 RESULTS_DIR = PROJECT_ROOT / "results" / "rq3"

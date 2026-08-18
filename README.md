@@ -24,8 +24,8 @@ src/            Application code: chat client, FastAPI wrapper, RAG, evaluation,
 docker/         Dockerfile for the chat-app image used in k8s
 scripts/        start.sh, k8s-deploy.sh, ingest.py, run-tests.sh, load_references.py
 tests/          pytest suite (no external services required; all calls mocked)
-analysis/       Thesis experiment scripts (RQ3 evaluation reliability, RQ4 VRAM formula validation)
-results/        Raw data, CSVs, and figures produced by the RQ3/RQ4 experiments
+analysis/       Thesis experiment scripts (RQ2 VRAM formula validation, RQ3 evaluation reliability)
+results/        Raw data, CSVs, and figures produced by the RQ2/RQ3 experiments
 corpus/         Sample documents ingested into ChromaDB for RAG
 refs/           Reference query/answer pairs used to enable RAGAS context_recall
 ```
@@ -111,10 +111,10 @@ No external services required — all external calls are mocked.
 
 ## Thesis experiments
 
-`analysis/` holds the standalone experiment scripts backing the thesis's empirical results (raw output in `results/`); folder names are internal experiment identifiers, not the thesis's RQ numbering:
+`analysis/` holds the standalone experiment scripts backing the thesis's empirical results (raw output in `results/`); folder names match the thesis's RQ numbering:
 
-- **`analysis/rq3/`** — repeated-measures reliability of the pipeline's own RAGAS evaluation metrics (ICC(2,1) across runs), plus a Jupyter notebook investigating a faithfulness drift effect. Backs the thesis's RQ3 (evaluation reliability).
-- **`analysis/rq4/`** — validates the analytical VRAM estimation formula (see below) against measured GPU telemetry across model quantisation levels. Backs the thesis's RQ2 (resource/hardware requirements).
+- **`analysis/rq2/`** — validates the analytical VRAM estimation formula (see below) against measured GPU telemetry across model quantisation levels.
+- **`analysis/rq3/`** — repeated-measures reliability of the pipeline's own RAGAS evaluation metrics (ICC(2,1) across runs), plus a Jupyter notebook investigating a faithfulness drift effect.
 
 These scripts run standalone against a live Ollama instance and are decoupled from the serving infrastructure above.
 
