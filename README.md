@@ -7,8 +7,8 @@ Default model: **Ministral 3 8B Instruct Q4_K_M** (~9.4 GB VRAM). Inference via 
 ## Contents
 
 - [Repository layout](#repository-layout)
-- [Strategy 1 — single-node (Docker Compose)](#strategy-1--single-node-docker-compose)
-- [Strategy 2 — Kubernetes multi-replica](#strategy-2--kubernetes-multi-replica)
+- [Strategy 1: single-node (Docker Compose)](#strategy-1--single-node-docker-compose)
+- [Strategy 2: Kubernetes multi-replica](#strategy-2--kubernetes-multi-replica)
 - [Configuration](#configuration)
 - [Tests](#tests)
 - [Thesis experiments](#thesis-experiments)
@@ -36,7 +36,7 @@ A shared observability stack instruments both deployment strategies: OpenLIT cap
 
 When `RAG_ENABLED=true`, prompts are augmented with context retrieved from ChromaDB (`scripts/ingest.py` loads documents). When `EVAL_ENABLED=true`, a background asyncio worker scores each response with RAGAS (faithfulness, answer relevancy, context recall) without adding to request latency, storing results in SQLite.
 
-## Strategy 1 — single-node (Docker Compose)
+## Strategy 1: single-node (Docker Compose)
 
 Single Ollama container, one request at a time. Simplest topology; used as the observability baseline.
 
@@ -57,7 +57,7 @@ Dashboards: `http://localhost:3000` (admin/admin), **LLMOps** dashboard pre-load
 
 Stop: `docker compose -f single-node/docker-compose.yml [-f single-node/docker-compose.gpu.yml] down`
 
-## Strategy 2 — Kubernetes multi-replica
+## Strategy 2: Kubernetes multi-replica
 
 Each Ollama pod holds a full model copy; a Service round-robins requests across pods, and an HPA scales replica count on in-flight request count (`target: AverageValue 3`, sourced from a Prometheus recording rule via `prometheus-adapter`).
 
@@ -91,12 +91,12 @@ Teardown: `kubectl delete namespace llmops && kubectl delete apiservice v1beta1.
 
 All options are read from `.env` (single-node) or the `chat-app-config` ConfigMap (k8s). See `.env.example` for the full list with defaults; key groups:
 
-| Group | Variables |
-|-------|-----------|
-| Inference | `TARGET`, `OLLAMA_HOST`, `OLLAMA_MODEL` |
-| RAG | `RAG_ENABLED`, `CHROMA_HOST`, `CHROMA_PORT`, `CHROMA_COLLECTION` |
-| Evaluation | `EVAL_ENABLED`, `EVAL_DB_PATH`, `EVAL_SAMPLE_RATE`, `EVAL_JUDGE_TEMPERATURE`, `EVAL_JUDGE_TOP_P`, `EVAL_EMBEDDING_MODEL`, `EVAL_REFERENCES_PATH` |
-| Observability | `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_SERVICE_NAME`, `OTEL_DEPLOYMENT_ENVIRONMENT`, `OTEL_METRICS_EXPORTER`, `OTEL_TRACES_EXPORTER` |
+| Group         | Variables                                                                                                                                        |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Inference     | `TARGET`, `OLLAMA_HOST`, `OLLAMA_MODEL`                                                                                                          |
+| RAG           | `RAG_ENABLED`, `CHROMA_HOST`, `CHROMA_PORT`, `CHROMA_COLLECTION`                                                                                 |
+| Evaluation    | `EVAL_ENABLED`, `EVAL_DB_PATH`, `EVAL_SAMPLE_RATE`, `EVAL_JUDGE_TEMPERATURE`, `EVAL_JUDGE_TOP_P`, `EVAL_EMBEDDING_MODEL`, `EVAL_REFERENCES_PATH` |
+| Observability | `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_SERVICE_NAME`, `OTEL_DEPLOYMENT_ENVIRONMENT`, `OTEL_METRICS_EXPORTER`, `OTEL_TRACES_EXPORTER`               |
 
 `TARGET` (`CPU`/`GPU`, case-insensitive, default `CPU`) toggles GPU resource requests, `runtimeClassName`, the DCGM exporter, PVC vs `emptyDir` model storage, and startup probe timeouts — see `scripts/start.sh` and `scripts/k8s-deploy.sh` for the exact conditionals.
 
