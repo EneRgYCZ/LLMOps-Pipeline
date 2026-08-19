@@ -18,16 +18,28 @@ Default model: **Ministral 3 8B Instruct Q4_K_M** (~9.4 GB VRAM). Inference via 
 ## Repository layout
 
 ```
-single-node/    Strategy 1: Docker Compose (CPU or GPU overlay), Prometheus, Grafana, OTel Collector
-k8s/            Strategy 2: Kubernetes manifests (Ollama, chat-app, ChromaDB, monitoring, HPA)
-src/            Application code: chat client, FastAPI wrapper, RAG, evaluation, telemetry, settings
-docker/         Dockerfile for the chat-app image used in k8s
-scripts/        start.sh, k8s-deploy.sh, ingest.py, run-tests.sh, load_references.py
-tests/          pytest suite (no external services required; all calls mocked)
-analysis/       Thesis experiment scripts (RQ2 VRAM formula validation, RQ3 evaluation reliability)
-results/        Raw data, CSVs, and figures produced by the RQ2/RQ3 experiments
-corpus/         Sample documents ingested into ChromaDB for RAG
-refs/           Reference query/answer pairs used to enable RAGAS context_recall
+.
+├── analysis            Thesis experiment scripts (RQ2 VRAM formula validation, RQ3 evaluation reliability)
+│   ├── helpers
+│   ├── rq2
+│   └── rq3
+├── corpus              Sample documents ingested into ChromaDB for RAG
+├── docker              Dockerfile for the chat-app image used in k8s
+├── k8s                 Strategy 2: Kubernetes manifests (Ollama, chat-app, ChromaDB, monitoring, HPA)
+│   ├── chat-app
+│   ├── chromadb
+│   ├── monitoring
+│   ├── ollama
+│   └── prometheus-adapter
+├── refs                Reference query/answer pairs used to enable RAGAS context_recall
+├── results             Raw data, CSVs, and figures produced by the RQ2/RQ3 experiments
+│   ├── rq2
+│   └── rq3
+├── scripts             start.sh, k8s-deploy.sh, ingest.py, run-tests.sh, load_references.py
+├── single-node         Strategy 1: Docker Compose (CPU or GPU overlay), Prometheus, Grafana, OTel Collector
+│   └── grafana
+├── src                 Application code: chat client, FastAPI wrapper, RAG, evaluation, telemetry, settings
+└── tests               pytest suite (no external services required; all calls mocked)
 ```
 
 ## How it works
