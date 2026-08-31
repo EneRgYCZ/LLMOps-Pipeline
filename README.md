@@ -67,6 +67,29 @@ To enable RAG: `python scripts/ingest.py --chroma-host localhost --chroma-port 8
 
 Dashboards: `http://localhost:3000` (admin/admin), **LLMOps** dashboard pre-loaded.
 
+### Query the system via the API wrapper
+
+`start.sh` also starts `chat-app`, a FastAPI wrapper around Ollama on port 8000. It adds RAG and evaluation on top of the raw Ollama API. Send requests to the wrapper, not to Ollama directly, to get these features.
+
+```bash
+# Chat request
+curl -X POST http://localhost:8000/api/chat -H 'Content-Type: application/json' \
+  -d '{"model":"ministral-3:8b-instruct-2512-q4_K_M","messages":[{"role":"user","content":"Hello"}]}'
+
+# One-shot generate request
+curl -X POST http://localhost:8000/api/generate -H 'Content-Type: application/json' \
+  -d '{"model":"ministral-3:8b-instruct-2512-q4_K_M","prompt":"Hello"}'
+
+# List models loaded in Ollama
+curl http://localhost:8000/api/tags
+
+# Health check
+curl http://localhost:8000/health
+
+# Prometheus metrics
+curl http://localhost:8000/metrics
+```
+
 Stop: `docker compose -f single-node/docker-compose.yml [-f single-node/docker-compose.gpu.yml] down`
 
 ## Strategy 2: Kubernetes multi-replica
@@ -119,7 +142,7 @@ pip install -r requirements-test.txt
 ./scripts/run-tests.sh
 ```
 
-No external services required — all external calls are mocked.
+No external services required all external calls are mocked.
 
 ## Thesis experiments
 
@@ -129,6 +152,28 @@ No external services required — all external calls are mocked.
 - **`analysis/rq3/`** — repeated-measures reliability of the pipeline's own RAGAS evaluation metrics (ICC(2,1) across runs), plus a Jupyter notebook investigating a faithfulness drift effect.
 
 These scripts run standalone against a live Ollama instance and are decoupled from the serving infrastructure above.
+
+To run an experiment:
+
+Before RQ3: set `RAG_ENABLED=true` and `EVAL_ENABLED=true` (async eval) in `.env`.
+
+```bash
+# 1. Start Ollama only (single-node stack, TARGET=CPU or GPU in .env)
+./scripts/start.sh
+
+# 2. Install the analysis dependencies
+source venv/bin/activate
+pip install -r requirements.txt
+pip install matplotlib pandas numpy
+
+# 3a. Run the RQ2 VRAM sweep for one model tag
+python analysis/rq2/rq2_experiment.py --model-tag ministral-3:8b-instruct-2512-q4_K_M
+
+# 3b. Or run the RQ3 evaluation-reliability experiment
+python analysis/rq3/rq3_experiment.py
+```
+
+Results land in `results/rq2/` and `results/rq3/` (raw CSVs, summary CSVs, plots).
 
 ## VRAM sizing
 
